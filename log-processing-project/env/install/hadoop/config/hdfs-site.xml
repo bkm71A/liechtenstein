@@ -1,0 +1,26 @@
+<configuration>
+ <property>
+   <name>dfs.replication</name>
+   <value>7</value>
+ </property>
+ <property>
+   <name>dfs.namenode.name.dir</name>
+   <value>/hadoop-store/hdfs/namenode</value>
+ </property>
+ <property>
+   <name>fs.checkpoint.dir</name>
+   <value>/hadoop-store/hdfs/namesecondary</value>
+ </property>
+ <property>
+   <name>dfs.datanode.data.dir</name>
+   <value>/hadoop-store/hdfs/datanode</value>
+ </property>
+ <property>
+   <name>dfs.namenode.heartbeat.recheck-interval</name>
+   <value>120</value>
+ </property>
+ <property>
+   <name>dfs.namenode.fs-limits.min-block-size</name>
+   <value>20000</value>
+ </property>
+</configuration>

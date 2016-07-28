@@ -1,0 +1,128 @@
+{
+  "order": 1,
+  "template": "mss-prediction*",
+  "settings": {},
+  "mappings": {
+    "bidding_session_with_prediction": { 
+      "properties": {
+        "ipinyouId": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "tsStart": {
+          "format": "epoch_millis",
+          "type": "date"
+        },
+        "tsEnd": {
+          "format": "epoch_millis",
+          "type": "date"
+        },
+        "tsCurrent": {
+          "format": "epoch_millis",
+          "type": "date"
+        }, 
+        "status": {
+          "type": "long"
+        },
+        "extState": {
+          "properties": {
+            "gsp": {
+              "type": "long"
+            },
+            "name": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "id": {
+              "type": "integer"
+            },
+            "population": {
+              "type": "long"
+            }
+          }
+        },
+        "extCity": {
+          "properties": {
+            "area": {
+              "type": "double"
+            },
+            "density": {
+              "type": "double"
+            },
+            "latitude": {
+              "type": "double"
+            },
+            "stateId": {
+              "type": "long"
+            },
+            "name": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "id": {
+              "type": "long"
+            },
+            "longitude": {
+              "type": "double"
+            },
+            "population": {
+              "type": "long"
+            }
+          }
+        },
+        "extUserAgent": {
+          "properties": {
+            "uaFamily": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "uaType": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "osName": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "device": {
+              "type": "string",
+              "index": "not_analyzed"
+            }
+          }
+        },
+        "adStats": {
+          "properties": {
+            "minWidth": {
+              "type": "long"
+            },
+            "maxWidth": {
+              "type": "long"
+            },
+            "minHeight": {
+              "type": "long"
+            },
+            "maxHeight": {
+              "type": "long"
+            },
+            "minVisibility": {
+              "type": "long"
+            },
+            "maxVisibility": {
+              "type": "long"
+            }
+          }
+        },
+        "keywordCategoryCounters" : {
+          "_all" : {"enabled" : false}
+        },
+        "keywordCounters" : {
+          "_all" : {"enabled" : false}
+        },
+        "prediction": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "aliases": {}
+}

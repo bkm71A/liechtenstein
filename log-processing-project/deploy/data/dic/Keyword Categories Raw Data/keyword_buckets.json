@@ -1,0 +1,1768 @@
+[
+  {
+    "wordlist": [
+      "accessories",
+      "accessori"
+    ],
+    "matches": [
+      28,
+      39,
+      44,
+      49,
+      53,
+      54,
+      55,
+      56,
+      58,
+      59,
+      72,
+      82,
+      83
+    ],
+    "score": 4913,
+    "title": "accessories",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "car",
+      "cars"
+    ],
+    "matches": [
+      2,
+      5,
+      11,
+      21,
+      23,
+      26,
+      35,
+      57,
+      75,
+      125,
+      139,
+      384
+    ],
+    "score": 22425768,
+    "title": "car",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "honda"
+    ],
+    "matches": [
+      253,
+      267,
+      276,
+      376,
+      378,
+      456,
+      464
+    ],
+    "score": 1728,
+    "title": "honda",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "rearview",
+      "rear view"
+    ],
+    "matches": [
+      70,
+      89,
+      107,
+      124,
+      228,
+      271
+    ],
+    "score": 97336,
+    "title": "rearview",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "light",
+      "lights",
+      "lighting"
+    ],
+    "matches": [
+      13,
+      22,
+      52,
+      181,
+      202,
+      366
+    ],
+    "score": 19683,
+    "title": "light",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "security"
+    ],
+    "matches": [
+      29,
+      37,
+      106,
+      109,
+      235,
+      324
+    ],
+    "score": 343,
+    "title": "security",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "system",
+      "systems"
+    ],
+    "matches": [
+      43,
+      143,
+      266,
+      414,
+      479
+    ],
+    "score": 4096,
+    "title": "system",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "hd"
+    ],
+    "matches": [
+      91,
+      145,
+      259,
+      309,
+      422
+    ],
+    "score": 3375,
+    "title": "hd",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "sensor",
+      "sensors"
+    ],
+    "matches": [
+      103,
+      356,
+      427,
+      430,
+      465
+    ],
+    "score": 3375,
+    "title": "sensor",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "wireless"
+    ],
+    "matches": [
+      135,
+      237,
+      371,
+      431,
+      462
+    ],
+    "score": 2744,
+    "title": "wireless",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "display"
+    ],
+    "matches": [
+      69,
+      194,
+      322,
+      360,
+      362
+    ],
+    "score": 2197,
+    "title": "display",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "motorcycle"
+    ],
+    "matches": [
+      27,
+      62,
+      66,
+      77,
+      79
+    ],
+    "score": 1728,
+    "title": "motorcycle",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "back"
+    ],
+    "matches": [
+      172,
+      177,
+      398,
+      420,
+      435
+    ],
+    "score": 729,
+    "title": "back",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "assorted"
+    ],
+    "matches": [
+      270,
+      409,
+      442,
+      444,
+      450
+    ],
+    "score": 512,
+    "title": "assorted",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "motion"
+    ],
+    "matches": [
+      305,
+      320,
+      340,
+      354,
+      407
+    ],
+    "score": 512,
+    "title": "motion",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "buick"
+    ],
+    "matches": [
+      167,
+      176,
+      299,
+      347,
+      449
+    ],
+    "score": 125,
+    "title": "buick",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "hyundai"
+    ],
+    "matches": [
+      212,
+      338,
+      394,
+      412,
+      441
+    ],
+    "score": 125,
+    "title": "hyundai",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "pal"
+    ],
+    "matches": [
+      185,
+      220,
+      273,
+      292,
+      312
+    ],
+    "score": 125,
+    "title": "pal",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "wide"
+    ],
+    "matches": [
+      226,
+      263,
+      288,
+      345
+    ],
+    "score": 50653,
+    "title": "wide",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "24v"
+    ],
+    "matches": [
+      111,
+      269,
+      294,
+      375
+    ],
+    "score": 24389,
+    "title": "24v",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "auto"
+    ],
+    "matches": [
+      67,
+      265,
+      300,
+      437
+    ],
+    "score": 24389,
+    "title": "auto",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "input"
+    ],
+    "matches": [
+      163,
+      179,
+      182,
+      217
+    ],
+    "score": 13824,
+    "title": "input",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "lcd"
+    ],
+    "matches": [
+      100,
+      160,
+      191,
+      317
+    ],
+    "score": 9261,
+    "title": "lcd",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "handsfree"
+    ],
+    "matches": [
+      282,
+      289,
+      346,
+      485
+    ],
+    "score": 6859,
+    "title": "handsfree",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "gprs"
+    ],
+    "matches": [
+      121,
+      132,
+      190,
+      192
+    ],
+    "score": 1000,
+    "title": "gprs",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "antenna"
+    ],
+    "matches": [
+      36,
+      140,
+      156,
+      486
+    ],
+    "score": 729,
+    "title": "antenna",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "bulb",
+      "bulbs"
+    ],
+    "matches": [
+      61,
+      116,
+      150,
+      155
+    ],
+    "score": 343,
+    "title": "bulb",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "dvd"
+    ],
+    "matches": [
+      180,
+      206,
+      242,
+      331
+    ],
+    "score": 343,
+    "title": "dvd",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "tv"
+    ],
+    "matches": [
+      170,
+      223,
+      248,
+      256
+    ],
+    "score": 343,
+    "title": "tv",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "audi"
+    ],
+    "matches": [
+      153,
+      178,
+      201,
+      207
+    ],
+    "score": 216,
+    "title": "audi",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "cell"
+    ],
+    "matches": [
+      78,
+      239,
+      279,
+      307
+    ],
+    "score": 216,
+    "title": "cell",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "720p"
+    ],
+    "matches": [
+      108,
+      157,
+      209,
+      281
+    ],
+    "score": 125,
+    "title": "720p",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "cam"
+    ],
+    "matches": [
+      219,
+      227,
+      308,
+      370
+    ],
+    "score": 125,
+    "title": "cam",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "code"
+    ],
+    "matches": [
+      187,
+      323,
+      388,
+      438
+    ],
+    "score": 125,
+    "title": "code",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "multi"
+    ],
+    "matches": [
+      147,
+      231,
+      286,
+      383
+    ],
+    "score": 125,
+    "title": "multi",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "aux"
+    ],
+    "matches": [
+      195,
+      222,
+      224,
+      385
+    ],
+    "score": 64,
+    "title": "aux",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "bmw"
+    ],
+    "matches": [
+      120,
+      184,
+      188,
+      230
+    ],
+    "score": 64,
+    "title": "bmw",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "chevrolet"
+    ],
+    "matches": [
+      115,
+      245,
+      454,
+      473
+    ],
+    "score": 64,
+    "title": "chevrolet",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "gadgets"
+    ],
+    "matches": [
+      45,
+      51,
+      68,
+      88
+    ],
+    "score": 64,
+    "title": "gadgets",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "html"
+    ],
+    "matches": [
+      95,
+      101,
+      102,
+      104
+    ],
+    "score": 64,
+    "title": "html",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "k6000"
+    ],
+    "matches": [
+      214,
+      329,
+      341,
+      400
+    ],
+    "score": 64,
+    "title": "k6000",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "mercedes"
+    ],
+    "matches": [
+      343,
+      425,
+      445,
+      466
+    ],
+    "score": 64,
+    "title": "mercedes",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "player"
+    ],
+    "matches": [
+      126,
+      290,
+      304,
+      314
+    ],
+    "score": 64,
+    "title": "player",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "q7"
+    ],
+    "matches": [
+      133,
+      136,
+      183,
+      216
+    ],
+    "score": 64,
+    "title": "q7",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "rang",
+      "range"
+    ],
+    "matches": [
+      221,
+      244,
+      291,
+      396
+    ],
+    "score": 64,
+    "title": "rang",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "toyota"
+    ],
+    "matches": [
+      382,
+      397,
+      399,
+      447
+    ],
+    "score": 64,
+    "title": "toyota",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "v1"
+    ],
+    "matches": [
+      334,
+      357,
+      373,
+      423
+    ],
+    "score": 64,
+    "title": "v1",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "wired",
+      "wire"
+    ],
+    "matches": [
+      368,
+      428,
+      487
+    ],
+    "score": 68921,
+    "title": "wired",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "reverse",
+      "reversing"
+    ],
+    "matches": [
+      403,
+      415,
+      433
+    ],
+    "score": 59319,
+    "title": "reverse",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "video"
+    ],
+    "matches": [
+      285,
+      311,
+      404
+    ],
+    "score": 5832,
+    "title": "video",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "vehicle",
+      "vehicles"
+    ],
+    "matches": [
+      315,
+      367,
+      411
+    ],
+    "score": 4913,
+    "title": "vehicle",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "hands",
+      "hand"
+    ],
+    "matches": [
+      97,
+      200,
+      249
+    ],
+    "score": 2197,
+    "title": "hands",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "cmos"
+    ],
+    "matches": [
+      225,
+      297,
+      457
+    ],
+    "score": 1728,
+    "title": "cmos",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "music"
+    ],
+    "matches": [
+      333,
+      365,
+      406
+    ],
+    "score": 729,
+    "title": "music",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "mirror"
+    ],
+    "matches": [
+      84,
+      99,
+      168
+    ],
+    "score": 512,
+    "title": "mirror",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "transmitter",
+      "transmitters"
+    ],
+    "matches": [
+      42,
+      129,
+      166
+    ],
+    "score": 343,
+    "title": "transmitter",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "battery",
+      "batteries"
+    ],
+    "matches": [
+      9,
+      448,
+      480
+    ],
+    "score": 216,
+    "title": "battery",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "ii"
+    ],
+    "matches": [
+      174,
+      328,
+      353
+    ],
+    "score": 216,
+    "title": "ii",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "mobile"
+    ],
+    "matches": [
+      96,
+      372,
+      482
+    ],
+    "score": 216,
+    "title": "mobile",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "parts",
+      "part"
+    ],
+    "matches": [
+      8,
+      12,
+      90
+    ],
+    "score": 216,
+    "title": "parts",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "blue"
+    ],
+    "matches": [
+      73,
+      275,
+      301
+    ],
+    "score": 125,
+    "title": "blue",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "calling",
+      "calls",
+      "call"
+    ],
+    "matches": [
+      142,
+      258,
+      268
+    ],
+    "score": 125,
+    "title": "calling",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "chip"
+    ],
+    "matches": [
+      413,
+      419,
+      424
+    ],
+    "score": 125,
+    "title": "chip",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "connector",
+      "connectors"
+    ],
+    "matches": [
+      128,
+      380,
+      476
+    ],
+    "score": 125,
+    "title": "connector",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "scan"
+    ],
+    "matches": [
+      98,
+      277,
+      337
+    ],
+    "score": 125,
+    "title": "scan",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "smart"
+    ],
+    "matches": [
+      189,
+      355,
+      390
+    ],
+    "score": 125,
+    "title": "smart",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "two"
+    ],
+    "matches": [
+      94,
+      215,
+      477
+    ],
+    "score": 125,
+    "title": "two",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "water"
+    ],
+    "matches": [
+      198,
+      280,
+      361
+    ],
+    "score": 125,
+    "title": "water",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "0mp"
+    ],
+    "matches": [
+      161,
+      164,
+      241
+    ],
+    "score": 64,
+    "title": "0mp",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "crv"
+    ],
+    "matches": [
+      233,
+      389,
+      392
+    ],
+    "score": 64,
+    "title": "crv",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "dc"
+    ],
+    "matches": [
+      114,
+      151,
+      257
+    ],
+    "score": 64,
+    "title": "dc",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "ford"
+    ],
+    "matches": [
+      272,
+      342,
+      440
+    ],
+    "score": 64,
+    "title": "ford",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "headset",
+      "headsets"
+    ],
+    "matches": [
+      74,
+      351,
+      475
+    ],
+    "score": 64,
+    "title": "headset",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "ir"
+    ],
+    "matches": [
+      154,
+      199,
+      284
+    ],
+    "score": 64,
+    "title": "ir",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "lebosh"
+    ],
+    "matches": [
+      298,
+      313,
+      426
+    ],
+    "score": 64,
+    "title": "lebosh",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "modulator",
+      "module"
+    ],
+    "matches": [
+      208,
+      210,
+      405
+    ],
+    "score": 64,
+    "title": "modulator",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "mount"
+    ],
+    "matches": [
+      110,
+      117,
+      232
+    ],
+    "score": 64,
+    "title": "mount",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "personal"
+    ],
+    "matches": [
+      159,
+      238,
+      421
+    ],
+    "score": 64,
+    "title": "personal",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "real"
+    ],
+    "matches": [
+      211,
+      246,
+      374
+    ],
+    "score": 64,
+    "title": "real",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "rotating",
+      "rotation"
+    ],
+    "matches": [
+      118,
+      295,
+      335
+    ],
+    "score": 64,
+    "title": "rotating",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "slot"
+    ],
+    "matches": [
+      251,
+      287,
+      336
+    ],
+    "score": 64,
+    "title": "slot",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "speed"
+    ],
+    "matches": [
+      243,
+      468,
+      472
+    ],
+    "score": 64,
+    "title": "speed",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "voltmeter"
+    ],
+    "matches": [
+      186,
+      261,
+      326
+    ],
+    "score": 64,
+    "title": "voltmeter",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "accessoires"
+    ],
+    "matches": [
+      60,
+      64,
+      80
+    ],
+    "score": 27,
+    "title": "accessoires",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "card"
+    ],
+    "matches": [
+      134,
+      255,
+      352
+    ],
+    "score": 27,
+    "title": "card",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "cigarette"
+    ],
+    "matches": [
+      387,
+      455,
+      458
+    ],
+    "score": 27,
+    "title": "cigarette",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "cleaning"
+    ],
+    "matches": [
+      33,
+      87,
+      484
+    ],
+    "score": 27,
+    "title": "cleaning",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "cold"
+    ],
+    "matches": [
+      149,
+      173,
+      204
+    ],
+    "score": 27,
+    "title": "cold",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "decoration",
+      "decorations"
+    ],
+    "matches": [
+      16,
+      113,
+      350
+    ],
+    "score": 27,
+    "title": "decoration",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "definition"
+    ],
+    "matches": [
+      105,
+      196,
+      395
+    ],
+    "score": 27,
+    "title": "definition",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "emergency"
+    ],
+    "matches": [
+      40,
+      306,
+      478
+    ],
+    "score": 27,
+    "title": "emergency",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "equipment",
+      "equip"
+    ],
+    "matches": [
+      76,
+      92,
+      234
+    ],
+    "score": 27,
+    "title": "equipment",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "european"
+    ],
+    "matches": [
+      252,
+      348,
+      349
+    ],
+    "score": 27,
+    "title": "european",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "film"
+    ],
+    "matches": [
+      332,
+      386,
+      460
+    ],
+    "score": 27,
+    "title": "film",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "foldable"
+    ],
+    "matches": [
+      169,
+      262,
+      327
+    ],
+    "score": 27,
+    "title": "foldable",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "fuse"
+    ],
+    "matches": [
+      130,
+      131,
+      141
+    ],
+    "score": 27,
+    "title": "fuse",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "golf"
+    ],
+    "matches": [
+      401,
+      410,
+      469
+    ],
+    "score": 27,
+    "title": "golf",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "gs8000l"
+    ],
+    "matches": [
+      325,
+      330,
+      393
+    ],
+    "score": 27,
+    "title": "gs8000l",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "hatchback"
+    ],
+    "matches": [
+      283,
+      303,
+      339
+    ],
+    "score": 27,
+    "title": "hatchback",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "head"
+    ],
+    "matches": [
+      205,
+      236,
+      481
+    ],
+    "score": 27,
+    "title": "head",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "hot"
+    ],
+    "matches": [
+      112,
+      171,
+      302
+    ],
+    "score": 27,
+    "title": "hot",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "interior"
+    ],
+    "matches": [
+      85,
+      119,
+      229
+    ],
+    "score": 27,
+    "title": "interior",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "ios"
+    ],
+    "matches": [
+      250,
+      379,
+      402
+    ],
+    "score": 27,
+    "title": "ios",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "mitsubishi"
+    ],
+    "matches": [
+      137,
+      470,
+      483
+    ],
+    "score": 27,
+    "title": "mitsubishi",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "navigation"
+    ],
+    "matches": [
+      293,
+      429,
+      474
+    ],
+    "score": 27,
+    "title": "navigation",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "plastic"
+    ],
+    "matches": [
+      123,
+      165,
+      316
+    ],
+    "score": 27,
+    "title": "plastic",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "power",
+      "powerfully"
+    ],
+    "matches": [
+      162,
+      218,
+      358
+    ],
+    "score": 27,
+    "title": "power",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "products",
+      "product"
+    ],
+    "matches": [
+      4,
+      193,
+      408
+    ],
+    "score": 27,
+    "title": "products",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "realtime"
+    ],
+    "matches": [
+      310,
+      363,
+      377
+    ],
+    "score": 27,
+    "title": "realtime",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "red"
+    ],
+    "matches": [
+      432,
+      453,
+      463
+    ],
+    "score": 27,
+    "title": "red",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "repair"
+    ],
+    "matches": [
+      146,
+      254,
+      319
+    ],
+    "score": 27,
+    "title": "repair",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "samsung"
+    ],
+    "matches": [
+      197,
+      240,
+      264
+    ],
+    "score": 27,
+    "title": "samsung",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "side"
+    ],
+    "matches": [
+      158,
+      260,
+      278
+    ],
+    "score": 27,
+    "title": "side",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "skoda"
+    ],
+    "matches": [
+      122,
+      436,
+      461
+    ],
+    "score": 27,
+    "title": "skoda",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "speaker",
+      "speakers"
+    ],
+    "matches": [
+      247,
+      443,
+      467
+    ],
+    "score": 27,
+    "title": "speaker",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "stickers",
+      "sticker"
+    ],
+    "matches": [
+      19,
+      203,
+      213
+    ],
+    "score": 27,
+    "title": "stickers",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "strobe",
+      "strobing"
+    ],
+    "matches": [
+      127,
+      318,
+      369
+    ],
+    "score": 27,
+    "title": "strobe",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "subaru"
+    ],
+    "matches": [
+      416,
+      439,
+      471
+    ],
+    "score": 27,
+    "title": "subaru",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "switch"
+    ],
+    "matches": [
+      148,
+      364,
+      417
+    ],
+    "score": 27,
+    "title": "switch",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "theft"
+    ],
+    "matches": [
+      274,
+      434,
+      452
+    ],
+    "score": 27,
+    "title": "theft",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "trail"
+    ],
+    "matches": [
+      138,
+      381,
+      391
+    ],
+    "score": 27,
+    "title": "trail",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "vag"
+    ],
+    "matches": [
+      144,
+      152,
+      175
+    ],
+    "score": 27,
+    "title": "vag",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "visor",
+      "visors"
+    ],
+    "matches": [
+      321,
+      344,
+      451
+    ],
+    "score": 27,
+    "title": "visor",
+    "del": false
+  },
+  {
+    "wordlist": [
+      "yuanbotong"
+    ],
+    "matches": [
+      296,
+      446,
+      459
+    ],
+    "score": 27,
+    "title": "yuanbotong",
+    "del": false
+  },
+  {
+    "wordlist": [],
+    "matches": [
+      0,
+      1,
+      3,
+      6,
+      7,
+      10,
+      14,
+      15,
+      17,
+      18,
+      20,
+      24,
+      25,
+      30,
+      31,
+      32,
+      34,
+      38,
+      41,
+      46,
+      47,
+      48,
+      50,
+      63,
+      65,
+      71,
+      81,
+      86,
+      93,
+      359,
+      418
+    ],
+    "score": 0,
+    "title": "ungrouped",
+    "del": false
+  }
+]

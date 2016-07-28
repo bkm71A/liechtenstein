@@ -1,0 +1,3 @@
+Байес с опцией bernoulli 
+val model = NaiveBayes.train(training, lambda = 1.0, modelType = "bernoulli")
+нам не подходит, т.к. принимает на вход значения 1 или 0 . 

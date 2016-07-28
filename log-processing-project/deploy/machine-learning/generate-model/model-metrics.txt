@@ -1,0 +1,66 @@
+---------------- DecisionTree ----------------
+Area under ROC = 0.9998135256091496
+Precision = 0.9997527608373167
+ConfusionMatrix:
+8041.0  3.0
+0.0     4090.0
+---------------- Logistic Regression ----------------
+Area under ROC = 0.9988355304991252
+Precision = 0.9990934564034943
+ConfusionMatrix:
+8041.0  3.0
+8.0     4082.0
+---------------- Linear Support Vector Machines (SVMs) ----------------
+Area under ROC = 0.5
+Precision = 0.6629306082083402
+ConfusionMatrix:
+8044.0  0.0
+4090.0  0.0
+---------------- Naive Bayes (multinomial) ----------------
+Area under ROC = 0.503658241529777
+Precision = 0.3870941157079281
+ConfusionMatrix:
+1174.0  6870.0
+567.0   3523.0
+---------------- Gradient Boosted Trees ----------------
+Area under ROC = 0.9998135256091496
+Precision = 0.9997527608373167
+ConfusionMatrix:
+8041.0  3.0
+0.0     4090.0
+---------------- Random Forests ----------------
+
+
+
+================ 'WITHOUT SITE_IMPRESSION_COUNT' ================
+---------------- Logistic Regression ----------------
+Area under ROC = 0.5659713087783228
+Precision = 0.9817119461525969
+ConfusionMatrix:
+1225740.0  14199.0
+8662.0     1450.0
+---------------- DecisionTree ----------------
+Area under ROC = 0.5672995552249682
+Precision = 0.9791904490296796
+ConfusionMatrix:
+1222535.0  17404.0
+8609.0     1503.0
+---------------- Gradient Boosted Trees ----------------
+Area under ROC = 0.5708963546297771
+Precision = 0.9644350510499171
+ConfusionMatrix:
+1203865.0  36074.0
+8384.0     1728.0
+---------------- Naive Bayes (multinomial) ----------------
+Area under ROC = 0.5009335376712999
+Precision = 0.8912164383693145
+ConfusionMatrix:
+1113012.0  126927.0
+9058.0     1054.0
+---------------- Linear Support Vector Machines (SVMs) ----------------
+Area under ROC = 0.4999931448240599
+Precision = 0.9918971305970716
+ConfusionMatrix:
+1239922.0  17.0
+10112.0    0.0
+================ END OF 'WITHOUT SITE_IMPRESSION_COUNT' ================

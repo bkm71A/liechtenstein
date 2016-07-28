@@ -1,0 +1,7 @@
+Id	Name	Description
+1	AdX	Google DoubleClick AdX
+2	TANX	Alibaba
+3	Baidu	Baidu
+4	Youku	Youku
+5	Tencent	Tencent
+6	Amx	Google Mobile

@@ -1,0 +1,97 @@
+Classification with J48 trees with Weka.
+Weka->Explorer->Open File(weka-log-entries-feature-vector.arff)->Classify->
+->Choose J48->Start
+
+=== Run information ===
+
+Scheme:weka.classifiers.trees.J48 -C 0.25 -M 2
+Relation:     log-entries
+Instances:    30336
+Attributes:   27
+              start_time
+              current_time
+              end_time
+              time_span
+              weekday
+              min_width
+              max_width
+              min_height
+              max_height
+              min_visibility
+              max_visibility
+              city_id
+              state_id
+              city_population
+              city_area
+              ua_type
+              ua_family
+              os_name
+              device
+              unknown_count
+              site_impression_count
+              site_click_count
+              site_paid_count
+              site_qk_search_count
+              site_full_search_count
+              site_basket_count
+              site_search
+Test mode:10-fold cross-validation
+
+=== Classifier model (full training set) ===
+
+J48 pruned tree
+------------------
+
+site_impression_count <= 0
+|   site_click_count <= 0
+|   |   site_basket_count <= 0: Y (8775.0/9.0)
+|   |   site_basket_count > 0
+|   |   |   min_width <= 300
+|   |   |   |   max_width <= 468: N (14.0/1.0)
+|   |   |   |   max_width > 468: Y (4.0)
+|   |   |   min_width > 300: N (34.0)
+|   site_click_count > 0: N (148.0/6.0)
+site_impression_count > 0
+|   time_span <= 0
+|   |   site_impression_count <= 1
+|   |   |   min_width <= 300
+|   |   |   |   max_width <= 300: N (7007.0/207.0)
+|   |   |   |   max_width > 300: Y (245.0/9.0)
+|   |   |   min_width > 300: N (12103.0/237.0)
+|   |   site_impression_count > 1: N (1140.0/227.0)
+|   time_span > 0
+|   |   site_impression_count <= 1: Y (335.0/7.0)
+|   |   site_impression_count > 1: N (531.0/100.0)
+
+Number of Leaves  : 	11
+
+Size of the tree : 	21
+
+
+Time taken to build model: 1.5 seconds
+
+=== Stratified cross-validation ===
+=== Summary ===
+
+Correctly Classified Instances       29530               97.3431 %
+Incorrectly Classified Instances       806                2.6569 %
+Kappa statistic                          0.9391
+Mean absolute error                      0.0481
+Root mean squared error                  0.1552
+Relative absolute error                 10.831  %
+Root relative squared error             32.9317 %
+Total Number of Instances            30336     
+
+=== Detailed Accuracy By Class ===
+
+               TP Rate   FP Rate   Precision   Recall  F-Measure   ROC Area  Class
+                 0.923     0.001      0.997     0.923     0.959      0.976    Y
+                 0.999     0.077      0.963     0.999     0.98       0.976    N
+Weighted Avg.    0.973     0.052      0.974     0.973     0.973      0.976
+
+=== Confusion Matrix ===
+
+     a     b   <-- classified as
+  9331   781 |     a = Y
+    25 20199 |     b = N
+

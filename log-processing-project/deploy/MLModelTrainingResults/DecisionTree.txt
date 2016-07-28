@@ -1,0 +1,53 @@
+hadoop fs -rm -r -skipTrash /user/hadoop/ml_data 
+hadoop fs -mkdir -p /user/hadoop/ml_data 
+hadoop fs -put /share/project/bidding_session.parquet/1200K/* /user/hadoop/ml_data/
+
+/usr/bin/spark-shell --master yarn-client --driver-memory 512m --executor-memory 512m
+import org.apache.spark.SparkContext
+import org.apache.spark.mllib.classification.{LogisticRegressionWithLBFGS, LogisticRegressionModel}
+import org.apache.spark.mllib.evaluation.MulticlassMetrics
+import org.apache.spark.mllib.evaluation.BinaryClassificationMetrics
+import org.apache.spark.mllib.regression.LabeledPoint
+import org.apache.spark.mllib.linalg.Vectors
+import org.apache.spark.mllib.tree.DecisionTree
+import org.apache.spark.mllib.tree.model.DecisionTreeModel
+import org.apache.spark.mllib.util.MLUtils
+
+val parquetFile = sqlContext.read.parquet("/user/hadoop/ml_data/")
+parquetFile.registerTempTable("log_data")
+// Use undersampling to deal with imbalanced classes : site-search is 1,112 out of all 1,250,051 or 0.089%
+val siteSearch = sqlContext.sql("SELECT * FROM log_data t1 WHERE nvl(t1.bid_counters['site-search'],0) > 0")
+val others = sqlContext.sql("SELECT * FROM log_data t1 WHERE nvl(t1.bid_counters['site-search'],0) = 0 LIMIT 20224")
+val valueSet =  siteSearch.unionAll(others)
+valueSet.registerTempTable("log_data_subset")
+val denormalized = sqlContext.sql("SELECT CASE WHEN nvl(t1.bid_counters['site-search'],0)>0 THEN 1.0 ELSE 0.0 END as site_search, hour(t1.ts_start)*1.0 + minute(t1.ts_start)/60.0 as start_time, hour(t1.ts_current)*1.0 + minute(t1.ts_current)/60.0 as current_time, hour(t1.ts_end)*1.0 + minute(t1.ts_end)/60.0 as end_time, date_format(t1.ts_end,'mmssSSS') - date_format(t1.ts_start,'mmssSSS') as time_span, cast(date_format(t1.ts_start,'u') as double) as weekday, t1.ad_stats.min_width*1.0 as min_width, t1.ad_stats.max_width*1.0 as max_width, t1.ad_stats.min_height*1.0 as min_height, t1.ad_stats.max_height*1.0 as max_height, t1.ad_stats.min_visibility*1.0 as min_visibility, t1.ad_stats.max_visibility*1.0 as max_visibility, t1.ext_city.id*1.0 as city_id, t1.ext_city.state_id*1.0 as state_id, t1.ext_city.population*1.0 as city_population, t1.ext_city.area*1.0 as city_area, 1.0*CASE ltrim(rtrim(t1.ext_user_agent.ua_type)) WHEN 'unknown' THEN 0 WHEN 'Browser' THEN 1 WHEN 'Browser (mobile)' THEN 2 WHEN 'Robot' THEN 3 ELSE 4 END as ua_type, 1.0*CASE ltrim(rtrim(t1.ext_user_agent.ua_family)) WHEN 'Apple WebKit' THEN 0 WHEN 'CFNetwork' THEN 1 WHEN 'Camino' THEN 2 WHEN 'Chrome' THEN 3 WHEN 'Downloading Tool' THEN 4 WHEN 'Firefox' THEN 5 WHEN 'Flock' THEN 6 WHEN 'Internet Explorer' THEN 7 WHEN 'Konqueror' THEN 8 WHEN 'Microsoft Edge' THEN 9 WHEN 'Mozilla' THEN 10 WHEN 'NetFront' THEN 11 WHEN 'Omniweb' THEN 12 WHEN 'Opera' THEN 13 WHEN 'Outlook' THEN 14 WHEN 'Robot/Spider' THEN 15 WHEN 'Safari' THEN 16 WHEN 'Samsung Dolphin 2' THEN 17 WHEN 'SeaMonkey' THEN 18 WHEN 'Thunderbird' THEN 19 WHEN 'Unknown' THEN 20 ELSE  21 END as ua_family,  1.0*CASE ltrim(rtrim(t1.ext_user_agent.os_name)) WHEN 'Android' THEN 0 WHEN 'Android (Google TV)' THEN 1 WHEN 'Android 1.x' THEN 2 WHEN 'Android 2.x' THEN 3 WHEN 'Android 2.x Tablet' THEN 4 WHEN 'Android 3.x Tablet' THEN 5 WHEN 'Android 4.x' THEN 6 WHEN 'Android 4.x Tablet' THEN 7 WHEN 'Android 5.x' THEN 8 WHEN 'Android 5.x Tablet' THEN 9 WHEN 'Android 6.x' THEN 10 WHEN 'Android 6.x Tablet' THEN 11 WHEN 'Android Mobile' THEN 12 WHEN 'Android Tablet' THEN 13 WHEN 'Bada' THEN 14 WHEN 'BlackBerry 6' THEN 15 WHEN 'BlackBerry 7' THEN 16 WHEN 'BlackBerry Tablet OS' THEN 17 WHEN 'BlackBerryOS' THEN 18 WHEN 'Chrome OS' THEN 19 WHEN 'Linux' THEN 20 WHEN 'Mac OS' THEN 21 WHEN 'Mac OS X' THEN 22 WHEN 'Mac OS X (iPad)' THEN 23 WHEN 'Mac OS X (iPhone)' THEN 24 WHEN 'Mac OS X (iPod)' THEN 25 WHEN 'Maemo' THEN 26 WHEN 'MeeGo' THEN 27 WHEN 'Nintendo Wii' THEN 28 WHEN 'PalmOS' THEN 29 WHEN 'Series 40' THEN 30 WHEN 'Sony Ericsson' THEN 31 WHEN 'Sony Playstation' THEN 32 WHEN 'SunOS' THEN 33 WHEN 'Symbian OS' THEN 34 WHEN 'Symbian OS 7.x' THEN 35 WHEN 'Symbian OS 8.x' THEN 36 WHEN 'Symbian OS 9.x' THEN 37 WHEN 'Ubuntu' THEN 38 WHEN 'Unknown' THEN 39 WHEN 'Unknown mobile' THEN 40 WHEN 'Unknown tablet' THEN 41 WHEN 'WebOS' THEN 42 WHEN 'Windows' THEN 43 WHEN 'Windows 2000' THEN 44 WHEN 'Windows 7' THEN 45 WHEN 'Windows 8' THEN 46 WHEN 'Windows 8.1' THEN 47 WHEN 'Windows 98' THEN 48 WHEN 'Windows Mobile' THEN 49 WHEN 'Windows Phone 7' THEN 50 WHEN 'Windows Phone 8' THEN 51 WHEN 'Windows Vista' THEN 52 WHEN 'Windows XP' THEN 53 WHEN 'Xbox OS' THEN 54 WHEN 'iOS' THEN 55 WHEN 'iOS 4 (iPhone)' THEN 56 WHEN 'iOS 5 (iPhone)' THEN 57 WHEN 'iOS 6 (iPad)' THEN 58 WHEN 'iOS 6 (iPhone)' THEN 59 WHEN 'iOS 7 (iPhone)' THEN 60 ELSE 61 END as ua_os_name, 1.0*CASE ltrim(rtrim(t1.ext_user_agent.device)) WHEN 'Computer' THEN 0 WHEN 'Digital media receiver' THEN 1 WHEN 'Game console' THEN 2 WHEN 'Mobile' THEN 3 WHEN 'Tablet' THEN 4 WHEN 'Unknown' THEN 5 ELSE 6 END as ua_device, nvl(t1.bid_counters['unknown'],0)*1.0 as unknown_count, nvl(t1.bid_counters['site-impression'],0)*1.0 as site_impression_count, nvl(t1.bid_counters['site-click'],0)*1.0 as site_click_count, nvl(t1.bid_counters['site-paid'],0)*1.0 as site_paid_count, nvl(t1.bid_counters['site-qk-search'],0)*1.0 as site_qk_search_count, nvl(t1.bid_counters['site-full-search'],0)*1.0 as site_full_search_count, nvl(t1.bid_counters['site-basket'],0)*1.0 as site_basket_count FROM log_data_subset t1")
+val featureVector = denormalized.map(row => new LabeledPoint(row.getDouble(0),Vectors.dense(row.getDouble(1), row.getDouble(2), row.getDouble(3), row.getDouble(4), row.getDouble(5), row.getDouble(6), row.getDouble(7), row.getDouble(8), row.getDouble(9), row.getDouble(10), row.getDouble(11), row.getDouble(12), row.getDouble(13), row.getDouble(14), row.getDouble(15), row.getDouble(16), row.getDouble(17), row.getDouble(18), row.getDouble(19), row.getDouble(20), row.getDouble(21), row.getDouble(22), row.getDouble(23), row.getDouble(24), row.getDouble(25), row.getDouble(26))))
+val splits = featureVector.randomSplit(Array(0.6, 0.4), 98765L)
+val training = splits(0).cache()
+val test = splits(1)
+val categoricalFeaturesInfo = Map[Int, Int]()
+val impurity = "variance"
+val maxDepth = 5
+val maxBins = 32
+val model = DecisionTree.trainRegressor(training, categoricalFeaturesInfo, impurity, maxDepth, maxBins)
+val predictionAndLabels = test.map { case LabeledPoint(label, features) =>
+  val prediction = model.predict(features)
+  (prediction, label)
+}
+model.save(sc, "hdfs:///user/hadoop/project_model")
+val metrics = new MulticlassMetrics(predictionAndLabels)
+println("Precision = " + metrics.precision)
+println("ConfusionMatrix:\n" + metrics.confusionMatrix)
+// Save same feature vector in csv for Weka analyses
+val denormalizedWeka = sqlContext.sql("SELECT hour(t1.ts_start)*1.0 + minute(t1.ts_start)/60.0 as start_time, hour(t1.ts_current)*1.0 + minute(t1.ts_current)/60.0 as current_time, hour(t1.ts_end)*1.0 + minute(t1.ts_end)/60.0 as end_time, date_format(t1.ts_end,'mmssSSS') - date_format(t1.ts_start,'mmssSSS') as time_span, date_format(t1.ts_start,'E') as weekday, t1.ad_stats.min_width, t1.ad_stats.max_width, t1.ad_stats.min_height, t1.ad_stats.max_height, concat('VISIBN',cast(t1.ad_stats.min_visibility as string)) as min_visibility, concat('VISIBX',cast(t1.ad_stats.max_visibility as string)) as max_visibility, concat('city_',cast(t1.ext_city.id as string)) as city_id, concat('state_',cast(t1.ext_city.state_id as string)) as state_id, t1.ext_city.population as city_population, t1.ext_city.area as city_area, t1.ext_user_agent.ua_type, t1.ext_user_agent.ua_family, t1.ext_user_agent.os_name, t1.ext_user_agent.device, nvl(t1.bid_counters['unknown'],0) as unknown_count, nvl(t1.bid_counters['site-impression'],0) as site_impression_count, nvl(t1.bid_counters['site-click'],0) as site_click_count, nvl(t1.bid_counters['site-paid'],0) as site_paid_count, nvl(t1.bid_counters['site-qk-search'],0) as site_qk_search_count, nvl(t1.bid_counters['site-full-search'],0) as site_full_search_count, nvl(t1.bid_counters['site-basket'],0) as site_basket_count, CASE WHEN nvl(t1.bid_counters['site-search'],0)>0 THEN 'Y' ELSE 'N' END as site_search  FROM log_data_subset t1")
+denormalizedWeka.rdd.saveAsTextFile("hdfs://sandbox.hortonworks.com:8020/user/hadoop/weka")
+val bcMetrics = new BinaryClassificationMetrics(predictionAndLabels)
+println("Area under ROC = " + bcMetrics.areaUnderROC)
+
+Precision = 0.309955496950717
+
+ConfusionMatrix:
+75.0  11.0
+6.0   3686.0
+
+Area under ROC = 0.969926103253621

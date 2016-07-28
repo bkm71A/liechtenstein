@@ -1,0 +1,40 @@
+# 1. Configure HDFS
+hadoop fs -mkdir -p /data/mss/raw
+hadoop fs -mkdir -p /data/mss/stg
+hadoop fs -mkdir -p /data/mss/export
+hadoop fs -mkdir -p /data/mss/dic
+hadoop fs -mkdir -p /data/mss/ml
+hadoop fs -mkdir -p /data/mss/ml/model/logistic-regression
+hadoop fs -mkdir -p hdfs://sandbox.hortonworks.com/user/spark/streamingapp/checkpoint
+hadoop fs -put /git/deploy/data/dic/* hdfs://sandbox.hortonworks.com/data/mss/dic/
+hadoop fs -chmod a+rwx /data/mss/dic/*
+
+# 2. Configure Cassandra
+vi /etc/cassandra/default.conf/cassandra.yaml
+  authenticator: org.apache.cassandra.auth.PasswordAuthenticator
+  authorizer: org.apache.cassandra.auth.CassandraAuthorizer
+  listen_address:  localhost /// ????? 192.168.56.101
+  rpc_address: 0.0.0.0 /// ????? localhost
+  broadcast_rpc_address: localhost
+
+sudo service cassandra start
+sudo service cassandra status
+/usr/bin/nodetool status
+/usr/bin/cqlsh localhost -u cassandra -p cassandra
+cqlsh>CREATE KEYSPACE IF NOT EXISTS mss WITH replication = {
+ 'class' : 'NetworkTopologyStrategy',
+ 'datacenter1' : 3
+};
+cqlsh> exit;
+sudo service cassandra stop
+
+# 3. Deploy ML model, model is in git - https://git.epam.com/ivan_zhuravel/big-data-project/tree/master/deploy/machine-learning/model/logistic-regression
+hadoop fs -put /XXXXX/logistic-regression/* /data/mss/ml/model/logistic-regression/
+
+# 4. Configure ElasticSearch
+curl -XPUT 'http://localhost:9201/_template/mss-event' -H "Content-Type: application/json" --data "@/XXXXX/XXXXX/mss-index_template.json"
+curl -XPUT 'http://localhost:9201/_template/mss-prediction' -H "Content-Type: application/json" --data "@/XXXXX/XXXXX/mss-prediction_index_template.json"
+curl 'localhost:9201/_cat/indices?v'
+curl -XGET 'http://localhost:9201/_mapping'
+
+#  transport.tcp.port: 9301???
