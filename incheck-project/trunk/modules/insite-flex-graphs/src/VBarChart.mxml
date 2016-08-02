@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 width="100%" height="100%"
+		 implements="IChart">
+
+	<fx:Declarations>
+
+		<s:Power id="powerEasing"
+				 exponent="5" />
+
+		<s:Parallel id="scaleEffect">
+
+			<s:Scale duration="1500" easer="{powerEasing}" scaleYFrom="{currentYScale}" scaleYTo="{_yScale}" target="{bar}" effectEnd="scaleEffectEndHandler(event)" />
+
+		</s:Parallel>
+
+	</fx:Declarations>
+
+	<fx:Script>
+		<![CDATA[
+			import mx.events.EffectEvent;
+			
+			import spark.filters.DropShadowFilter;
+
+			// Private
+			[Bindable]
+			private var _yScale:Number = 0;
+
+			[Bindable]
+			private var _minValue:Number = 0;
+
+			[Bindable]
+			private var _midValue:Number = 50;
+
+			[Bindable]
+			private var _maxValue:Number = 80;
+
+			private var _rmsValue:Number = 0;
+			
+			private var displayRmsValue:Number = 0;
+
+			private var _warningValue:Number = 0;
+			
+			private var _alertValue:Number = 1;
+			
+			[Bindable]
+			private var _displayedPrecision:Number = 3;
+			
+			// Public
+			[Embed(source='/assets/gauge/assets.swf', symbol='com.exadel.barchart.BarGreen')]
+			public static var barGreen:Class;
+
+			[Embed(source='/assets/gauge/assets.swf', symbol='com.exadel.barchart.BarYellow')]
+			public static var barYellow:Class;
+			
+			[Embed(source='/assets/gauge/assets.swf', symbol='com.exadel.barchart.BarRed')]
+			public static var barRed:Class;
+
+
+			[Bindable]
+			public function get rmsValue():Number
+			{
+				return _rmsValue;
+			}
+
+
+			public function set rmsValue(value:Number):void
+			{
+				_rmsValue = value;
+				
+				/* if (value < _minValue)
+				{
+					_minValue = Math.round(value * 10) / 10;
+				}
+				if (value > _maxValue)
+				{
+					_maxValue = Math.round(value * 10) / 10;
+				} */
+				
+				if(value<=0){
+					_maxValue = 40;
+					_minValue = -40;
+				}else{
+					while((value < 0.2 * _maxValue) || (value > 0.8 * _maxValue)){
+						if(value < 0.2 * _maxValue)
+							_maxValue = 0.5*_maxValue;
+						else if(value > 0.8 * _maxValue)
+							_maxValue = 2*_maxValue;
+					}
+				}
+				
+				displayRmsValue = _rmsValue / _maxValue;
+				
+				_yScale = Math.abs(displayRmsValue);
+				_midValue = Math.round((_maxValue - _minValue) / 2 * 10) / 10;
+				
+				scaleEffect.play();
+			}
+
+
+			public function get warningValue():Number
+			{
+				return _warningValue;
+			}
+			
+			
+			public function set warningValue(value:Number):void
+			{
+				_warningValue = value;
+			}
+			
+			
+			public function get alertValue():Number
+			{
+				return _warningValue;
+			}
+			
+			
+			public function set alertValue(value:Number):void
+			{
+				_alertValue = value;
+			}
+			
+			
+			[Bindable]
+			public function get currentYScale():Number
+			{
+				return bar.height;
+			}
+
+
+			public function set currentYScale(value:Number):void
+			{
+			}
+
+			
+			protected function scaleEffectEndHandler(event:EffectEvent):void
+			{
+				bar.source = barGreen;
+				if (displayRmsValue >= _warningValue)
+				{	
+					bar.source = barYellow;
+				}	
+				if (displayRmsValue >= _alertValue)
+				{	
+					bar.source = barRed;
+				}
+				bar.scaleY = _yScale;
+			}
+			
+			public function set displayedPrecision(value:Number):void{
+				_displayedPrecision = value; 
+			}
+			
+		]]>
+	</fx:Script>
+
+	<s:layout>
+		<s:VerticalLayout paddingLeft="5" paddingRight="5" paddingTop="5" paddingBottom="10"
+						  horizontalAlign="center" />
+	</s:layout>
+
+	<s:Group>
+
+		<mx:Image id="barBackground"
+				  x="45" y="9"
+				  source="@Embed(source='/assets/gauge/assets.swf', symbol='com.exadel.barchart.BarBackground')"
+				  cacheAsBitmap="true" />
+
+		<mx:Image id="bar"
+				  x="45" y="121"
+				  toolTip="{rmsValue.toFixed(1)}"
+				  cacheAsBitmap="true" />
+
+		<mx:Image x="7" source="@Embed(source='/assets/gauge/assets.swf', symbol='com.exadel.barchart.BarRect')"
+				  cacheAsBitmap="true" />
+
+		<s:Label id="minValue"
+				 y="112"
+				 width="35"
+				 text="{_minValue}"
+				 textAlign="right" fontWeight="bold" />
+
+		<s:Label id="midValue"
+				 y="60"
+				 width="35"
+				 text="{_midValue}"
+				 textAlign="right" fontWeight="bold" />
+
+		<s:Label id="maxValue"
+				 y="5"
+				 width="35"
+				 text="{_maxValue}"
+				 textAlign="right" fontWeight="bold" />
+
+	</s:Group>
+
+</s:Panel>

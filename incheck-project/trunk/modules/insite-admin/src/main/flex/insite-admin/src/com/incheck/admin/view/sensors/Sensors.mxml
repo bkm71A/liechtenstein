@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sensors:SensorBase xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:view="com.incheck.admin.view.*"
+                    xmlns:sensors="com.incheck.admin.view.sensors.*">
+    <mx:Label text="Setup/edit Sensor"/>
+    <mx:HBox>
+        <mx:Label text="Sensor Type" width="100"/>
+        <mx:ComboBox id="sensorType" prompt="Select type" dataProvider="{sensorTypes}" selectedItem="{sensor.sensorType}"/>
+    </mx:HBox>
+    <mx:HBox>
+        <mx:Label text="Select Channel" width="100"/>
+        <mx:ComboBox id="selectedChannel" prompt="Select channel" dataProvider="{availableChannels}" labelField="channelID" selectedItem="{channel}"/>
+    </mx:HBox>
+    <mx:HBox>
+        <mx:Label text="Serial Number" width="100"/>
+        <mx:TextInput id="serialNumber" text="{sensor.serialNumber}"/>
+    </mx:HBox>
+    <mx:HBox>
+        <mx:Label text="Sensitivity" width="100"/>
+        <mx:TextInput id="sensitivity" text="{sensor.sensitivity}"/>
+    </mx:HBox>
+    <mx:HBox>
+        <mx:Label width="100"/>
+        <mx:Button label="Save"
+                click="onSaveSensor(sensorType.selectedItem as String, selectedChannel.selectedItem as Channel, serialNumber.text, sensitivity.text)"/>
+        <mx:Button label="Clear"
+                click="sensor = new Sensor();"/>
+    </mx:HBox>
+    <mx:Script><![CDATA[
+        import com.incheck.admin.model.Channel;
+        import com.incheck.admin.model.Sensor;
+        ]]></mx:Script>
+</sensors:SensorBase>

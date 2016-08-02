@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>incheck.flex</groupId>
+  <artifactId>playerfds</artifactId>
+  <version>3.4</version>
+  <versioning>
+    <versions>
+      <version>3.4</version>
+    </versions>
+    <lastUpdated>20100314132036</lastUpdated>
+  </versioning>
+</metadata>

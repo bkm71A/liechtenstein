@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"  width="800" height="600" name="adminuserCanvas">
+
+<fx:Script>
+	<![CDATA[
+		[Bindable]
+		public var industrylist:Array = ['Manufacturing', 'Electrical', 'Motion', 'Semiconductors' ];
+		public var userlist:Array = ['user1', 'user2', 'user3', 'user4' ];
+		
+		Alert.show("blah");
+	]]>
+</fx:Script>
+
+
+	<mx:Grid x="10" y="38" width="420">
+		<mx:GridRow width="100%" height="100%">
+			<mx:GridItem width="100%" height="100%">
+				<mx:Label text="User Name *"/>
+			</mx:GridItem>
+			<mx:GridItem width="100%" height="100%">
+				<mx:TextInput id="userNameTextInput"/>
+			</mx:GridItem>
+		</mx:GridRow>
+		<mx:GridRow width="100%" height="100%">
+			<mx:GridItem width="100%" height="100%">
+				<mx:Label text="Password *"/>
+			</mx:GridItem>
+			<mx:GridItem width="100%" height="100%">
+				<mx:TextInput id="passwordTextInput"/>
+			</mx:GridItem>
+		</mx:GridRow>
+		<mx:GridRow width="100%" height="100%">
+			<mx:GridItem width="100%" height="100%">
+				<mx:Label text="First Name *"/>
+			</mx:GridItem>
+			<mx:GridItem width="100%" height="100%">
+				<mx:TextInput id="firstNameTextInput"/>
+			</mx:GridItem>
+		</mx:GridRow>
+		<mx:GridRow width="100%" height="100%">
+			<mx:GridItem width="100%" height="100%">
+				<mx:Label text="Last Name *"/>
+			</mx:GridItem>
+			<mx:GridItem width="100%" height="100%">
+				<mx:TextInput id="lastNameTextInput"/>
+			</mx:GridItem>
+		</mx:GridRow>
+		<mx:GridRow width="100%" height="100%">
+			<mx:GridItem width="100%" height="100%">
+				<mx:Label text="Email *"/>
+			</mx:GridItem>
+			<mx:GridItem width="100%" height="100%">
+				<mx:TextInput id="emailTextInput"/>
+			</mx:GridItem>
+		</mx:GridRow>
+		<mx:GridRow width="100%" height="100%">
+			<mx:GridItem width="100%" height="100%">
+				<mx:Label text="Organization"/>
+			</mx:GridItem>
+			<mx:GridItem width="100%" height="100%">
+				<mx:TextInput id="organizationTextInput"/>
+			</mx:GridItem>
+		</mx:GridRow>
+		<mx:GridRow width="100%" height="100%">
+			<mx:GridItem width="100%" height="100%">
+				<mx:Label text="Industry"/>
+			</mx:GridItem>
+			<mx:GridItem width="100%" height="100%">
+				<mx:ComboBox id="industryComboBox"></mx:ComboBox>
+			</mx:GridItem>
+		</mx:GridRow>
+		<mx:GridRow width="100%" height="100%">
+			<mx:GridItem width="100%" height="100%">
+				<mx:Label text="How did you hear?"/>
+			</mx:GridItem>
+			<mx:GridItem width="100%" height="100%">
+				<mx:TextInput id="howDidYouHearTextInput"/>
+			</mx:GridItem>
+		</mx:GridRow>
+		<mx:GridRow width="100%" height="100%">
+			<mx:GridItem width="100%" height="100%">
+			</mx:GridItem>
+			<mx:GridItem width="100%" height="100%">
+				<mx:CheckBox label="Contacted By Rep?" id="contactByRepCheckBox"/>
+			</mx:GridItem>
+		</mx:GridRow>
+		<mx:GridRow width="100%" height="100%">
+			<mx:GridItem width="100%" height="100%">
+			</mx:GridItem>
+			<mx:GridItem width="100%" height="100%">
+				<mx:CheckBox label="Add to maillist?" id="addToMailListCheckBox"/>
+			</mx:GridItem>
+		</mx:GridRow>
+		<mx:GridRow width="100%" height="100%">
+			<mx:GridItem width="100%" height="100%">
+			</mx:GridItem>
+			<mx:GridItem width="100%" height="100%">
+				<mx:CheckBox label="Enabled *" id="enabledCheckBox"/>
+			</mx:GridItem>
+		</mx:GridRow>
+		<mx:GridRow width="100%" height="100%">
+			<mx:GridItem width="100%" height="100%">
+			</mx:GridItem>
+			<mx:GridItem width="100%" height="100%">
+				<mx:CheckBox label="Verified *" id="verifiedCheckBox"/>
+			</mx:GridItem>
+		</mx:GridRow>
+	</mx:Grid>
+
+	<mx:Button x="212" y="533" label="Modify User"/>
+	<mx:Button x="313" y="533" label="Reset Password"/>
+	<mx:Button x="10" y="533" label="Add New User" width="93"/>
+	<mx:Button x="111" y="533" label="Delete User"/>
+	<mx:Label x="10" y="418" text="User in role" width="80"/>
+	<mx:Label x="115" y="418" text="Role name" width="80"/>
+	<mx:Label x="218" y="418" text="Role Description" width="99"/>
+	<mx:Grid x="10" y="444" width="420">
+		<mx:GridRow width="100%" height="100%">
+			<mx:GridItem width="22" height="100%">
+				<mx:CheckBox />
+			</mx:GridItem>
+			<mx:GridItem width="100%" height="100%">
+				<mx:Label  text="Admin"/>
+			</mx:GridItem>
+			<mx:GridItem width="100%" height="100%">
+				<mx:Label  text="Administrator"/>
+			</mx:GridItem>
+		</mx:GridRow>
+		<mx:GridRow width="100%" height="100%">
+			<mx:GridItem width="100%" height="100%">
+				<mx:CheckBox />
+			</mx:GridItem>
+			<mx:GridItem width="100%" height="100%">
+				<mx:Label  text="Configurator"/>
+			</mx:GridItem>
+			<mx:GridItem width="100%" height="100%">
+				<mx:Label  text="Configurator"/>
+			</mx:GridItem>
+		</mx:GridRow>
+				<mx:GridRow width="100%" height="100%">
+			<mx:GridItem width="100%" height="100%">
+				<mx:CheckBox selected="true"/>
+			</mx:GridItem>
+			<mx:GridItem width="100%" height="100%">
+				<mx:Label  text="Viewer"/>
+			</mx:GridItem>
+			<mx:GridItem width="100%" height="100%">
+				<mx:Label  text="Viewer"/>
+			</mx:GridItem>
+		</mx:GridRow>
+	</mx:Grid>
+	<mx:Grid x="10" y="8">
+		<mx:GridRow width="421" height="100%">
+			<mx:GridItem width="204" height="100%">
+				<mx:Label text="Select a user:" width="205"/>
+			</mx:GridItem>
+			<mx:GridItem width="158" height="100%">
+				<mx:ComboBox id="userListComboBox"></mx:ComboBox>
+			</mx:GridItem>
+		</mx:GridRow>
+	</mx:Grid>
+</mx:Canvas>

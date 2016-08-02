@@ -1,0 +1,19 @@
+1. Update context in server.xml like following:
+ <Context . . .>
+   . . .
+   <Resource name="jdbc/incheckdb" auth="Container" type="javax.sql.DataSource"
+               maxActive="100" maxIdle="30" maxWait="10000"
+               username="INSITE" password="incheck_dev" driverClassName="com.mysql.jdbc.Driver"
+               url="jdbc:mysql://dev.inchecktech.net:3306/insite?autoReconnect=true"  removeAbandoned="true" logAbandoned="true" />
+
+    <Resource name="mail/Session" auth="Container" type="javax.mail.Session" mail.smtp.auth="true" 
+               mail.smtp.host="mail.inchecktech.com" mail.smtp.port="587" 
+               mail.smtp.user="spi_monitoring_alert+inchecktech.com" password="high2817" 
+               mail.from="incheck_admin@inchecktech.com"/>
+ </Context>
+ 
+ 
+Customize this configuration in accrotding with your data base.
+
+2. After you will build the application by maven you must take file 'mysql-connector-java-5.0.8.jar' from 
+folder like 'insite-server\target\insite-server-0.0.1-SNAPSHOT\WEB-INF\lib' and put in tomcat libs.

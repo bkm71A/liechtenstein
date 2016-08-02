@@ -1,0 +1,19 @@
+    DataInputStream dis = new DataInputStream(is);
+    byte restOfThem[] = new byte[dataSize];
+    try {
+      dis.readFully(restOfThem);
+    } catch (IOException e1) {
+      // TODO Auto-generated catch block
+    }
+    ByteBuffer bb = ByteBuffer.wrap(restOfThem);
+    bb.order(ByteOrder.LITTLE_ENDIAN);    
+
+    
+    int[] dataArray = new int[dataSize];
+    for (int j = 0; j < dataSize; j++) {
+      dataArray[j] =  bb.getInt();
+    }
+============================        
+http://www.javafaq.nu/java-example-code-classes-1878.html 
+    
+//    int[] dataArray = new int[dataSize];

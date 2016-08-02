@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml"
+        width="100%"
+        height="50">
+    <mx:Script><![CDATA[
+        import com.incheck.admin.model.Channel;
+
+        [Bindable("dataChange")]
+        public function get model():Channel {
+            return data as Channel;
+        }
+
+        private function onChannelClick() : void {
+            var event : ModuleRendererEvent = new ModuleRendererEvent(ModuleRendererEvent.CHANNEL_CLICKED);
+            event.channel = model;
+            dispatchEvent(event);
+        }
+        ]]></mx:Script>
+    <mx:Image source="@Embed(source='/../imgs/blue_line.png')"
+            visible="{model.sensor}"/>
+    <mx:Canvas width="100%" height="100%">
+        <mx:HBox width="100%">
+            <mx:Image source="@Embed(source='/../imgs/channel.png')" />
+            <mx:Label text="{model.channelID}" />
+        </mx:HBox>
+        <mx:Label text="{model.sensor.serialNumber}" y="20"/>
+    </mx:Canvas>
+
+</mx:HBox>

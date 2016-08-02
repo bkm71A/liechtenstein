@@ -1,0 +1,18 @@
+<!-- NOTE: If you're working offline, you might have to change the DOCTYPE to the following:-->
+<!--DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd"-->
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+        <mapping class="com.incheck.ng.model.User"/>
+        <mapping class="com.incheck.ng.model.Role"/>
+        <mapping class="com.incheck.ng.model.OverallType"/>
+        <mapping class="com.incheck.ng.model.ChannelMeasureType"/>        
+        <mapping class="com.incheck.ng.model.Channel"/>
+        <mapping class="com.incheck.ng.model.Sensor"/>
+        <mapping class="com.incheck.ng.model.DataAcquisitionModule"/>
+        <mapping class="com.incheck.ng.model.Band"/>        
+    </session-factory>
+</hibernate-configuration>

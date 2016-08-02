@@ -1,0 +1,45 @@
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace mx "library://ns.adobe.com/flex/mx";
+
+
+.loginPanel 
+{
+	background-color: #eaeaea;
+}	
+
+.btnPlay 
+{
+	icon: Embed("/assets/play.png");
+}
+
+.btnPause 
+{
+	icon: Embed("/assets/pause.png");
+}
+
+.btnAcquire 
+{
+	icon: Embed("/assets/acquire.png");
+}
+
+.btnAnalyse 
+{
+	icon: Embed("/assets/analyse.png");
+}
+
+.btnSetup 
+{
+	icon: Embed("/assets/setup.png");
+}
+
+.btnBack
+{
+	
+}
+
+.textDefault
+{
+	fontSize: 14px;
+	paddingTop: 4;
+}
+

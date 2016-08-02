@@ -1,0 +1,31 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.incheck</groupId>
+	<artifactId>insite</artifactId>
+	<packaging>pom</packaging>
+	<version>1.0.0-SNAPSHOT</version>
+	<name>Incheck Web Application</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		
+		<flex.sdk.version>4.5.1.21328</flex.sdk.version> 
+		<flexmojos.version>4.0-beta-7</flexmojos.version>
+		<flash.player.version>10.2.0</flash.player.version>
+		<flash.player.shortversion>10.2</flash.player.shortversion>
+		<flash.swf.version>11</flash.swf.version>
+
+		<incheck.repository.dir>${basedir}/../repository</incheck.repository.dir>
+    </properties>
+
+    <modules>
+        <module>insite-flex-graphs</module>
+        <module>insite-flex</module>
+        <module>insite-flex-air</module> 
+        <module>insite-admin</module>
+        <module>insite-server</module>
+    </modules>
+
+</project>

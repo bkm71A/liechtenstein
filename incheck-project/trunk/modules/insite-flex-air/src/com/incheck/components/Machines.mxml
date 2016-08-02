@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:mx="http://www.adobe.com/2006/mxml"
+		 xmlns:ns1="com.incheck.*"
+		 xmlns:components="com.incheck.components.*"
+		 width="100%" height="100%"
+		 paddingLeft="5"
+		 verticalGap="0">
+
+	<fx:Script>
+		<![CDATA[
+			
+			import com.incheck.IncheckModel;
+			import com.incheck.common.ICNode;
+			import com.incheck.components.model.MachineVO;
+			
+			import mx.collections.ArrayCollection;
+
+
+			[Bindable]
+			private var _machinesData:ArrayCollection;			
+			
+			private var _machinesDataChanged:Boolean;
+			
+			
+			public function get machinesData():ArrayCollection
+			{
+				return _machinesData;
+			}
+
+			
+			public function set machinesData(value:ArrayCollection):void
+			{
+				var pumpNode:ICNode = ((value.getItemAt(1) as ICNode).children.getItemAt(0) as ICNode);
+				var channels:ArrayCollection = pumpNode.children;
+				_machinesData = new ArrayCollection();
+				var vo:MachineVO;
+				for each (var machineNode:ICNode in channels)
+				{
+					vo = new MachineVO();
+					vo.channel = machineNode.desc;
+					vo.title = pumpNode.name;
+					vo.location = machineNode.name;
+					_machinesData.addItem(vo);
+				}
+			}
+			
+		]]>
+	</fx:Script>
+
+	
+	<mx:Repeater id="channels"
+				 width="100%" height="100%"
+				 dataProvider="{_machinesData}">
+		
+		<components:ChannelDescriptor width="100%"
+									  data="{channels.currentItem}" />
+		
+	</mx:Repeater>
+
+</s:VGroup>

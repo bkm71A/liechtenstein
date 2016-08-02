@@ -1,0 +1,453 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://
+www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://
+maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+
+		<artifactId>insite</artifactId>
+		<groupId>com.incheck</groupId>
+		<version>1.0.0-SNAPSHOT</version>
+
+	</parent>
+
+	<groupId>com.incheck</groupId>
+
+	<artifactId>insite-flex-air</artifactId>
+
+	<version>1.0.0-SNAPSHOT</version>
+
+	<name>InSite Machine Condition Monitoring</name>
+
+	<properties>
+
+		<!-- the application name which must match the main mxml file and application descriptor file names -->
+		<application.name>InCheck</application.name>
+		<swf.name>insite-flex-air-1.0.0-SNAPSHOT.swf</swf.name>
+		<!-- flex.sdk.version>4.5.0.17855</flex.sdk.version --> 
+		<flex.sdk.version>4.5.1.21328</flex.sdk.version> 
+		<flexmojos.version>4.0-beta-7</flexmojos.version>
+		<incheck.repository.dir>${basedir}/../repository</incheck.repository.dir>
+		<source.dir>src</source.dir>
+		<target.dir>target</target.dir>
+		<keystore.file>InCheck.p12</keystore.file>
+		<keystore.password>incheck</keystore.password>
+
+	</properties>
+
+	<packaging>swf</packaging>
+
+	<repositories>
+
+		<repository>
+
+			<id>incheck-local-repository</id>
+			<url>file://${incheck.repository.dir}</url>
+
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+
+		</repository>
+
+		<repository>
+
+			<id>flex-mojos-repository</id>
+			<url>http://repository.sonatype.org/content/groups/public</url>
+
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+
+		</repository>
+
+		<repository>
+
+			<id>flex-tracermedia-repository</id>
+			<url>https://repo.tracermedia.com/artifactory/list/libs-releases</url>
+
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+
+		</repository>
+
+		<repository>
+
+			<id>flex-openscales-repository</id>
+			<url>http://openscales.org/nexus/content/repositories/public</url>
+
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+
+		</repository>
+
+		<repository>
+
+			<id>flexgroup-repository</id>
+			<url>http://repository.sonatype.org/content/groups/flexgroup</url>
+
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+
+		</repository>
+
+		<repository>
+
+			<id>flex-mojos-flyti-repository</id>
+			<url>http://repository.flyti.org/</url>
+
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+
+		</repository>
+
+	</repositories>
+
+	<pluginRepositories>
+
+		<pluginRepository>
+
+			<id>incheck-plugin-repository</id>
+			<url>file://${incheck.repository.dir}</url>
+
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+
+		</pluginRepository>
+
+		<pluginRepository>
+
+			<id>flex-mojos-repository</id>
+			<url>http://repository.sonatype.org/content/groups/public</url>
+
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+
+		</pluginRepository>
+
+		<pluginRepository>
+
+			<id>flex-flashnexus-repository</id>
+			<url>http://www.flashnexus.org/nexus/content/groups/public</url>
+
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+
+		</pluginRepository>
+
+		<pluginRepository>
+
+			<id>nexus-cestpasdur-repository</id>
+			<url>http://nexus.cestpasdur.com/nexus/content/repositories/sonatype-forge</url>
+
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+
+		</pluginRepository>
+
+		<pluginRepository>
+
+			<id>maven-glassfish-repository</id>
+			<url>http://maven.glassfish.org/content/repositories/sonatype-forge</url>
+
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+
+		</pluginRepository>
+
+		<pluginRepository>
+
+			<id>maven-serverbox-repository</id>
+			<url>http://maven.servebox.org/repository</url>
+
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+
+		</pluginRepository>
+
+	</pluginRepositories>
+
+	<dependencies>
+
+		<!-- Compiler -->
+		<dependency>
+			<groupId>com.adobe.flex.compiler</groupId>
+			<artifactId>adt</artifactId>            
+			<version>${flex.sdk.version}</version>
+			<type>pom</type>
+		</dependency>
+
+		<!-- Framework -->
+		<dependency>
+			<groupId>com.adobe.flex.framework</groupId>
+			<artifactId>air-framework</artifactId>
+			<version>${flex.sdk.version}</version>
+			<type>pom</type>
+		</dependency>
+
+		<dependency>
+			<groupId>com.adobe.flex.framework</groupId>
+			<artifactId>flex-framework</artifactId>
+			<version>${flex.sdk.version}</version>
+			<type>pom</type>
+		</dependency>
+
+		<dependency>
+			<groupId>com.adobe.flex.framework</groupId>
+			<artifactId>spark</artifactId>
+			<version>${flex.sdk.version}</version>
+			<type>swc</type>
+			<scope>theme</scope>
+		</dependency>
+
+		<!-- Internal libs -->
+		<dependency>
+			<groupId>incheck.flex</groupId>
+			<artifactId>fds</artifactId>
+			<!-- version>3.0.0.3.0.0.477</version -->
+			<version>3.5.0.12683</version>
+			<type>swc</type>
+		</dependency>
+
+		<dependency>
+			<groupId>incheck.flex</groupId>
+			<artifactId>fds</artifactId>
+			<!-- version>3.0.0.3.0.0.477</version -->
+			<version>3.5.0.12683</version>
+			<type>swc</type>
+			<classifier>en_US</classifier>
+		</dependency>
+
+		<dependency>
+			<groupId>incheck.flex</groupId>
+			<artifactId>playerfds</artifactId>
+			<!-- version>3.0.0.3.0.0.477</version -->
+			<version>3.5.0.12683</version>
+			<type>swc</type>
+		</dependency>
+
+		<dependency>
+			<groupId>incheck.flex</groupId>
+			<artifactId>alivePdf</artifactId>
+			<version>1.0.0</version>
+			<type>swc</type>
+		</dependency>
+
+		<dependency>
+			<groupId>incheck.flex</groupId>
+			<artifactId>degrafaFlex3</artifactId>
+			<version>1.0.0</version>
+			<type>swc</type>
+		</dependency>
+
+		<dependency>
+			<groupId>incheck.flex</groupId>
+			<artifactId>flexlib</artifactId>
+			<version>1.0.0</version>
+			<type>swc</type>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+
+		<sourceDirectory>${source.dir}</sourceDirectory>
+
+		<plugins>
+
+			<plugin>
+
+				<groupId>org.sonatype.flexmojos</groupId>
+				<artifactId>flexmojos-maven-plugin</artifactId>
+				<version>${flexmojos.version}</version>
+				<extensions>true</extensions>
+
+				<dependencies>
+
+					<dependency>
+						<groupId>com.adobe.flex</groupId>
+						<artifactId>compiler</artifactId>
+						<version>${flex.sdk.version}</version>
+						<type>pom</type>
+					</dependency>
+
+				</dependencies>
+
+				<configuration>
+					
+					<swfVersion>11</swfVersion>
+					<targetPlayer>10.2.0</targetPlayer>
+					<sourceFile>${application.name}.mxml</sourceFile>
+					<descriptorTemplate>${source.dir}/${application.name}-app.xml</descriptorTemplate>
+					<keystore>${keystroke.file}</keystore>
+					<storepass>${keystore.password}</storepass>
+					<storetype>pkcs12</storetype>
+					<flexBuilderCompatibility>false</flexBuilderCompatibility>
+					<debug>false</debug>
+                    <optimize>true</optimize>
+					<ignoreVersionIssues>true</ignoreVersionIssues>
+					<licenses>
+						<flexbuilder3>1377-4166-7168-4640-1879-6658</flexbuilder3>
+					</licenses>
+
+					<locales>
+						<param>en_US</param>
+					</locales>
+
+					<contextRoot>/insite-server</contextRoot>
+
+					<services>
+						../insite-server/src/main/webapp/WEB-INF/flex/services-config-air.xml
+					</services>
+
+				</configuration>
+
+			</plugin>
+
+			<plugin>
+
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.2</version>
+
+				<executions>
+
+					<execution>
+
+						<id>generate-cert</id>
+						<phase>package</phase>
+
+						<goals>
+							<goal>exec</goal>
+						</goals>
+
+
+						<configuration>
+
+							<executable>java</executable>
+							<workingDirectory>${target.dir}</workingDirectory>
+
+							<arguments>
+								<argument>-jar</argument>
+								<argument>${incheck.repository.dir}/com/adobe/flex/compiler/adt/${flex.sdk.version}/adt-${flex.sdk.version}.jar</argument>
+								<argument>-certificate</argument>
+								<argument>-cn</argument>
+								<argument>${swf.name}</argument>
+								<argument>2048-RSA</argument>
+								<argument>InCheck.p12</argument>
+								<argument>${keystore.password}</argument>
+							</arguments>
+
+						</configuration>
+
+					</execution>
+
+					<execution>
+						<phase>package</phase>
+
+						<goals>
+							<goal>exec</goal>
+						</goals>
+
+						<configuration>
+
+							<executable>java</executable>
+							<workingDirectory>./</workingDirectory>
+
+							<arguments>
+								<argument>-jar</argument>
+								<argument>${incheck.repository.dir}/com/adobe/flex/compiler/adt/${flex.sdk.version}/adt-${flex.sdk.version}.jar</argument>
+								<argument>-package</argument>
+								<argument>-storetype</argument>
+								<argument>pkcs12</argument>
+								<argument>-storepass</argument>
+								<argument>${keystore.password}</argument>
+								<argument>-keystore</argument>
+								<argument>${target.dir}/${keystore.file}</argument>
+								<argument>-keypass</argument>
+								<argument>${keystore.password}</argument>
+								<argument>-tsa</argument>
+								<argument>none</argument>
+								<argument>${target.dir}/${application.name}.air</argument>
+								<argument>${source.dir}/${application.name}-app.xml</argument>
+								<argument>${target.dir}/${swf.name}</argument>
+							</arguments>
+
+						</configuration>
+
+					</execution>
+
+				</executions>
+
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.0-alpha-4</version>
+			</plugin>
+
+		</plugins>
+
+	</build>
+
+</project>

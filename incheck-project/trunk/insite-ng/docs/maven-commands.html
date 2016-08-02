@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+  <title>Incheck Maven Tasks</title>
+</head>
+<body>
+  <table border="1">
+    <tr><th>Command</th><th>Description</th></tr>
+    <tr><td>mvn clean</td><td>Deletes all files in target directory or directories (for multi-module projects)</td></tr>
+    <tr><td>mvn compile</td><td>Compiles Project</td></tr>
+    <tr><td>mvn war:war</td><td>Build war file</td></tr>
+    <tr><td>mvn test</td><td>Runs all tests in src/test/java. Use "-Dtest=ClassName" (not fully-qualified) to run individual tests.</td></tr>
+    <tr><td>mvn surefire-report:report</td><td>Generate html report for tests</td></tr>
+    <tr><td>mvn surefire:test</td><td>Run surefire tests</td></tr>
+    <tr><td>mvn jetty:run-war</td><td>Packages and deploys your application to Jetty, reachable at http://localhost:8080</td></tr>
+    
+    
+    <tr><td>mvn cargo:start -Dcargo.wait=true</td><td>application will be deployed to Tomcat and available at http://localhost:8081/applicationname-version.<br/>
+You can also add the Maven 2 Tomcat Plugin to your pom.xml and use mvn tomcat:run and mvn tomcat:run-war</td></tr>
+    
+    
+    <tr><td>mvn package</td><td>Creates a WAR or JAR depending on your project type</td></tr>
+    <tr><td>mvn site</td><td>Creates project site and reports</td></tr>
+    <tr><td>mvn integration-test</td><td>Runs UI tests in Tomcat using Cargo</td></tr>
+    <tr><td>mvn --help</td><td>See full list of optional commands</td></tr>
+    <tr><td>mvn dbunit:export -Ddest=some-data-sample-data.xml</td><td>To generate dbunit data from database existing entries</td></tr>
+    <tr><th>Command Switches</th><th>Description</th></tr>
+    <tr><td>mvn ... -U</td><td>Checks for updated plugins and downloads if they exist</td></tr>
+    <tr><td>mvn ... -o</td><td>Work offline</td></tr>
+    <tr><td>mvn ... -DskipTests=true</td><td>Do not run tests</td></tr>
+    <tr><td>mvn ... -Dcargo.wait=true</td><td>Packages and deploys your application to active Cargo profile (Tomcat 5.5.x by default), reachable at http://localhost:8080/yourapp-version</td></tr>  
+    <tr><td>mvn ... -Dsurefire.useFile=false</td><td>Use if you want to see test failures in your console (like Ant)</td></tr>  
+    <tr><td>mvn ... -Dmaven.surefire.debug</td><td>if you want to open a debugger on port 5005 w/ suspend=y</td></tr>  
+    <tr><td></td><td></td></tr>
+  </table>
+</body>
+</html>

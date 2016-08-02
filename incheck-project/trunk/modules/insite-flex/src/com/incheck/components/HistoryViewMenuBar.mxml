@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:commn="com.incheck.common.*"
+		 xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 horizontalGap="10"
+		 creationComplete="initHistoryMenu();">
+
+	<fx:Script>
+		<![CDATA[
+			import com.incheck.Constants;
+			import com.incheck.IncheckModel;
+			import com.incheck.common.DataViewScalingTypes;
+			
+			import mx.collections.ArrayCollection;
+			import mx.events.MenuEvent;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.remoting.RemoteObject;
+
+			private var parameters:ArrayCollection;
+
+			private var bands:ArrayCollection;
+
+			private var dateRanges:Array = [];
+
+			[Bindable]
+			private var currentDateRange:Number = 0;
+
+
+			public function get fromDate():Date
+			{
+				return dateRanges[currentDateRange].from;
+			}
+
+
+			public function get toDate():Date
+			{
+				return dateRanges[currentDateRange].to;
+			}
+
+
+			public function initHistoryMenu():void
+			{
+				//getParameters();
+				//getBand(); //this logic was moved to ChannelHistoryWidget
+				var dateTo:Date = new Date();
+				histToDate.selectedDate = dateTo;
+				var dateFrom:Date = new Date()
+				dateFrom.month -= 2;
+				histFromDate.selectedDate = dateFrom;
+				dateRanges[currentDateRange] = {from:histFromDate.selectedDate, to:dateTo};
+
+				setMenuItemsToUserPreferences();
+			}
+
+
+//    		private function getParameters():void {
+//    			var ro:RemoteObject = new RemoteObject("icNodes");
+//				ro.addEventListener(ResultEvent.RESULT, this.getParMenuCallBack);
+//				ro.addEventListener(FaultEvent.FAULT, this.histError);
+//				ro.getParamatersForHistoryMenu();
+//    		}
+
+//    		private function getParMenuCallBack(event:ResultEvent):void {
+//    			parameters = event.result as ArrayCollection;
+//    			parameterMenu.children = [];
+//    			var menuItem:MenuItem;
+//    			for each (var parameter:String in parameters) {
+//    				menuItem = new MenuItem();
+//    				menuItem.label = parameter;
+//    				menuItem.type = "radio";
+//    				menuItem.group = "overalls";
+//    				menuItem.toggled = false;
+//    				parameterMenu.addChild(menuItem);
+//    			}
+//    			(parameterMenu.getChildAt(0) as MenuItem).toggled = true;
+//				IncheckModel.instance().historyParameter = parameters.getItemAt(0) as String;
+//    		}
+
+//    		private function onParameterChanged(event:MenuEvent):void {
+//    			var menuItem:MenuItem = event.item as MenuItem;
+//    			
+//    			// TODO change this
+//    			IncheckModel.instance().historyParameter=menuItem.label;
+//    			IncheckModel.instance().right.historyChart.refreshData();
+//    		}
+
+			/* private function getBand():void
+			{
+				var ro:RemoteObject = new RemoteObject("icNodes");
+				ro.addEventListener(ResultEvent.RESULT, this.getBandMenuCallBack);
+				ro.addEventListener(FaultEvent.FAULT, this.histError);
+				ro.getBandForHistoryMenu();
+			}
+
+
+			private function getBandMenuCallBack(event:ResultEvent):void
+			{
+				bands = event.result as ArrayCollection;
+				IncheckModel.instance().historyBands = event.result as ArrayCollection;
+			} */
+
+
+			private function histError(event:FaultEvent):void
+			{
+				trace("Error getting parameters or band for menu");
+			}
+
+
+			public function updateDateRanges(fromDate:Date, toDate:Date):void
+			{
+				histFromDate.selectedDate = fromDate;
+				histToDate.selectedDate = toDate;
+				currentDateRange++;
+				dateRanges[currentDateRange] = {from:fromDate, to:toDate};
+				(IncheckModel.instance().right as RightNavigator).historyChart.dateRangeChanged();
+			}
+
+
+			private function onDateChaged():void
+			{
+				currentDateRange++;
+				dateRanges[currentDateRange] = {from:histFromDate.selectedDate, to:histToDate.selectedDate};
+				(IncheckModel.instance().right as RightNavigator).historyChart.dateRangeChanged();
+			}
+
+
+			private function onBack():void
+			{
+				currentDateRange--;
+				histFromDate.selectedDate = dateRanges[currentDateRange].from;
+				histToDate.selectedDate = dateRanges[currentDateRange].to;
+				(IncheckModel.instance().right as RightNavigator).historyChart.dateRangeChanged();
+			}
+
+
+			public function setMenuItemsToUserPreferences():void
+			{
+				var val:String = IncheckModel.instance().getUserAccelerationUnits();
+				setMenuItemWithLabel(accelerationUnitsMenu, val);
+				IncheckModel.instance().histAccEUnit = val;
+
+				val = IncheckModel.instance().getUserVelocityUnits();
+				setMenuItemWithLabel(velocityUnitsMenu, val);
+				IncheckModel.instance().histVelEUnit = val;
+
+				val = IncheckModel.instance().getUserTemperatureUnits();
+				setMenuItemWithLabel(temperatureUnitsMenu, val);
+				IncheckModel.instance().histTempEUnit = val;
+
+				val = IncheckModel.instance().getUserPressureUnits();
+				setMenuItemWithLabel(pressureUnitsMenu, val);
+				IncheckModel.instance().histPressEUnit = val;
+
+				val = IncheckModel.instance().getUserMeasurementType();
+				setMenuItemWithLabel(parameterMenu, val);
+				IncheckModel.instance().historyParameter = val;
+
+				IncheckModel.instance().right.historyChart.refreshData();
+			}
+
+
+			private function setMenuItemWithLabel(menu:MenuItem, label:String):void
+			{
+				for each (var menuItem:MenuItem in menu.children)
+				{
+					menuItem.toggled = (menuItem.label == label);
+				}
+			}
+
+
+			private function historyMenuItemEventHandler(event:MenuEvent):void
+			{
+				switch (event.item.label)
+				{
+					case "Acceleration":
+					{
+						IncheckModel.instance().historyGraphMenuSelection = "Accel";
+						IncheckModel.instance().right.historyChart.refreshData();
+						break;
+					}
+					case "Velocity":
+					{
+						IncheckModel.instance().historyGraphMenuSelection = "Vel";
+						IncheckModel.instance().right.historyChart.refreshData();
+						break;
+					}
+				}		
+				var val:String = event.item.label;
+				var groupName:String = (event.item as MenuItem).group;
+				if (groupName == "acceleration")
+				{
+					IncheckModel.instance().histAccEUnit = val;
+					(IncheckModel.instance().right as RightNavigator).historyChart.regenLineSeriesWithZoomReset();
+				}
+				else if (groupName == "velocity")
+				{
+					IncheckModel.instance().histVelEUnit = val;
+					(IncheckModel.instance().right as RightNavigator).historyChart.regenLineSeriesWithZoomReset();
+				}
+				else if (groupName == "temperature")
+				{
+					IncheckModel.instance().histTempEUnit = val;
+					(IncheckModel.instance().right as RightNavigator).historyChart.regenLineSeriesWithZoomReset();
+				}
+				else if (groupName == "pressure")
+				{
+					IncheckModel.instance().histPressEUnit = val;
+					(IncheckModel.instance().right as RightNavigator).historyChart.regenLineSeriesWithZoomReset();
+				}
+				else if (groupName == "overalls")
+				{
+					IncheckModel.instance().historyParameter = val;
+					(IncheckModel.instance().right as RightNavigator).historyChart.refreshData();
+				}
+				else if (groupName == "scaling")
+				{
+					switch (val)
+					{
+						case "VZoom":
+						{
+							IncheckModel.instance().setHistoryScalingSelection(DataViewScalingTypes.VZoom);
+							break;
+						}
+						case "Pan":
+						{
+							IncheckModel.instance().setHistoryScalingSelection(DataViewScalingTypes.Pan);
+							(IncheckModel.instance().right as RightNavigator).historyChart.clearSeriesZoomFlag();
+							break;
+						}
+						case "Autoscale":
+						{
+							IncheckModel.instance().setHistoryScalingSelection(DataViewScalingTypes.Disabled);
+							(IncheckModel.instance().right as RightNavigator).historyChart.clearSeriesZoomFlag();
+							(IncheckModel.instance().right as RightNavigator).historyChart.regenLineSeriesWithZoomReset();
+							break;
+						}
+						case "Reset":
+						{
+							IncheckModel.instance().setHistoryScalingSelection(DataViewScalingTypes.Disabled);
+							(IncheckModel.instance().right as RightNavigator).historyChart.clearSeriesZoomFlag();
+							(IncheckModel.instance().right as RightNavigator).historyChart.resetVerticalZoom();
+							zreset.toggled = false;
+						}
+					}
+				}
+			}
+
+
+			private function onShowMinMaxValues():void
+			{
+				(IncheckModel.instance().right as RightNavigator).historyChart.showMinMax = showMinMax.selected;
+			}
+
+		]]>
+	</fx:Script>
+
+	<mx:MenuBar id="histMenu"
+				showRoot="false"
+				itemClick="historyMenuItemEventHandler(event)">
+		<commn:MenuItem id="rootHistMenu">
+			<commn:MenuItem id="graphMenu"
+							label="Function">
+				<commn:MenuItem id="accel"
+								label="Acceleration" group="graph" toggled="true" type="radio" />
+				
+				<commn:MenuItem id="velo"
+								label="Velocity" group="graph" toggled="false" type="radio" />
+			</commn:MenuItem>
+			<commn:MenuItem id="parameterMenu"
+							label="Parameter">
+				<commn:MenuItem label="{Constants.OVERALL_PEAK}" group="overalls" toggled="true" type="radio" />
+
+				<commn:MenuItem label="{Constants.OVERALL_RMS}" group="overalls" toggled="false" type="radio" />
+			</commn:MenuItem>
+
+			<commn:MenuItem id="unitsMenu"
+							label="Units">
+				<commn:MenuItem id="accelerationUnitsMenu"
+								label="Acceleration">
+					<commn:MenuItem label="{Constants.MEASUREMENT_LABEL_G}" group="acceleration" toggled="true" type="radio" />
+
+					<commn:MenuItem label="{Constants.MEASUREMENT_LABEL_IN_S_2}" group="acceleration" toggled="false" type="radio" />
+
+					<commn:MenuItem label="{Constants.MEASUREMENT_LABEL_M_S_2}" group="acceleration" toggled="false" type="radio" />
+
+					<commn:MenuItem label="{Constants.MEASUREMENT_LABEL_MM_S_2}" group="acceleration" toggled="false" type="radio" />
+
+					<commn:MenuItem label="{Constants.MEASUREMENT_LABEL_DB}" group="acceleration" toggled="false" type="radio" />
+				</commn:MenuItem>
+
+				<commn:MenuItem id="velocityUnitsMenu"
+								label="Velocity">
+					<commn:MenuItem label="{Constants.MEASUREMENT_LABEL_IN_S}" group="velocity" toggled="true" type="radio" />
+
+					<commn:MenuItem label="{Constants.MEASUREMENT_LABEL_M_S}" group="velocity" toggled="false" type="radio" />
+
+					<commn:MenuItem label="{Constants.MEASUREMENT_LABEL_MM_S}" group="velocity" toggled="false" type="radio" />
+
+					<commn:MenuItem label="{Constants.MEASUREMENT_LABEL_DB}" group="velocity" toggled="false" type="radio" />
+				</commn:MenuItem>
+
+				<commn:MenuItem id="temperatureUnitsMenu"
+								label="Temperature">
+					<commn:MenuItem label="{Constants.MEASUREMENT_LABEL_C}" group="temperature" toggled="true" type="radio" />
+
+					<commn:MenuItem label="{Constants.MEASUREMENT_LABEL_F}" group="temperature" toggled="false" type="radio" />
+				</commn:MenuItem>
+
+				<commn:MenuItem id="pressureUnitsMenu"
+								label="Pressure">
+					<commn:MenuItem label="{Constants.MEASUREMENT_LABEL_PSI}" group="pressure" toggled="true" type="radio" />
+
+					<commn:MenuItem label="{Constants.MEASUREMENT_LABEL_PA}" group="pressure" toggled="false" type="radio" />
+
+					<commn:MenuItem label="{Constants.MEASUREMENT_LABEL_BAR}" group="pressure" toggled="false" type="radio" />
+
+					<commn:MenuItem label="{Constants.MEASUREMENT_LABEL_KGF_CM_2}" group="pressure" toggled="false" type="radio" />
+				</commn:MenuItem>
+			</commn:MenuItem>
+
+			<commn:MenuItem id="Scaling"
+							label="Scaling">
+				<commn:MenuItem id="vzoom"
+								label="VZoom" group="scaling" toggled="false" type="radio" />
+
+				<!--commn:MenuItem id="panzoom" label="Pan" type="radio" group="scaling" toggled="false"/-->
+				<commn:MenuItem id="autoScale"
+								label="Autoscale" group="scaling" toggled="false" type="radio" />
+				<commn:MenuItem id="zreset"
+								label="Reset" group="scaling" toggled="false" type="radio" />
+			</commn:MenuItem>
+		</commn:MenuItem>
+	</mx:MenuBar>
+
+	<mx:CheckBox id="showMinMax"
+				 label="Show min/max values"
+				 selected="false"
+				 click="onShowMinMaxValues()" />
+
+	<mx:HBox>
+		<mx:DateField id="histFromDate"
+					  change="onDateChaged()" />
+
+		<mx:DateField id="histToDate"
+					  change="onDateChaged()" />
+
+		<mx:Button id="backBtn"
+				   enabled="{currentDateRange>0}"
+				   label="Back"
+				   click="onBack()" />
+	</mx:HBox>
+
+</mx:HBox>

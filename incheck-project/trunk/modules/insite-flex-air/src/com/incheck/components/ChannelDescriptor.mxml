@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:mx="http://www.adobe.com/2006/mxml"
+				 xmlns:ns1="com.incheck.*"
+				 width="100%" height="100">
+
+	<fx:Script>
+		<![CDATA[
+			
+			import com.incheck.components.model.MachineVO;
+			
+			import mx.collections.ArrayCollection;
+
+			
+			[Bindable]
+			private var _machineData:MachineVO;			
+
+			[Bindable]
+			private var _location:String;			
+			
+			
+			override public function get data():Object
+			{
+				return data;
+			}
+
+			
+			override public function set data(value:Object):void
+			{
+				super.data = value;
+				if (value is MachineVO && value != _machineData)
+				{	
+					_machineData = value as MachineVO;
+				}	
+			}
+			
+		]]>
+	</fx:Script>
+
+	
+    <s:VGroup id="machine"
+             width="100%" height="100%">
+		
+		<mx:Label text="{_machineData.channel.length > 0 ? _machineData.channel : 'Unnamed Channel'}"
+				  fontSize="14" fontWeight="bold" />
+
+		<s:Group width="100%">
+			
+			<mx:Label text="Machine: " />
+			
+			<mx:TextInput x="60" 
+						  width="{machine.width - 65}"
+						  text="{_machineData.title.length > 0 ? _machineData.title : 'Unnamed Machine'}" />
+				
+		</s:Group>
+
+		<s:Group width="100%">
+			
+			<mx:Label text="Location: " />
+			
+			<mx:TextInput x="60" 
+						  width="{machine.width - 65}"
+						  text="{_machineData.location}" />
+				
+		</s:Group>
+
+    </s:VGroup>
+
+</s:VGroup>

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<directory:DirectoryBase xmlns:mx="http://www.adobe.com/2006/mxml"
+						 xmlns:directory="com.incheck.admin.view.directory.*"
+						 xmlns:renderer="com.incheck.admin.view.directory.renderer.*"
+						 width="100%" height="100%"
+						 creationComplete="onCreationComplete()"
+						 backgroundColor="0xd2dbde"
+						 paddingTop="10" paddingLeft="10">
+	<mx:Script><![CDATA[
+		import com.incheck.admin.view.directory.renderer.ModuleRendererEvent;
+
+		private function onCreationComplete() : void {
+			addEventListener(ModuleRendererEvent.MODULE_CLICKED, onModuleClicked, true);
+			addEventListener(ModuleRendererEvent.CHANNEL_CLICKED, onChannelClicked, true);
+		}
+		]]></mx:Script>
+	<directory:DirectoryTree id="list"
+							 width="100%" height="100%"
+							 dataProvider="{modules}"
+							 iconFunction="DirectoryTree.icIconFunction"
+							 itemRenderer="com.incheck.admin.view.directory.renderer.TreeRenderer"
+							 backgroundColor="0xd2dbde">
+	</directory:DirectoryTree>
+</directory:DirectoryBase>

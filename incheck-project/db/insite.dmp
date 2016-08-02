@@ -1,0 +1,1611 @@
+-- MySQL dump 10.13  Distrib 5.1.34, for unknown-linux-gnu (x86_64)
+--
+-- Host: localhost    Database: insite
+-- ------------------------------------------------------
+-- Server version	5.1.34-community-log
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `analysis_bands`
+--
+
+DROP TABLE IF EXISTS `analysis_bands`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `analysis_bands` (
+  `band_id` tinyint(4) NOT NULL,
+  `band_coefficient` decimal(10,0) NOT NULL,
+  `start_freq` int(11) DEFAULT NULL,
+  `end_freq` int(11) DEFAULT NULL,
+  `band_name` varchar(32) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL DEFAULT 'All',
+  `active_flag` char(1) CHARACTER SET latin1 COLLATE latin1_bin DEFAULT NULL,
+  PRIMARY KEY (`band_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `auditlog`
+--
+
+DROP TABLE IF EXISTS `auditlog`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `auditlog` (
+  `auditlog_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `action` varchar(100) NOT NULL,
+  `timestmp` datetime NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`auditlog_id`),
+  KEY `fk_reference_20` (`user_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=2197 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `channel`
+--
+
+DROP TABLE IF EXISTS `channel`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `channel` (
+  `channel_id` bigint(20) NOT NULL DEFAULT '0',
+  `default_rpm` int(11) NOT NULL DEFAULT '0',
+  `sensor_id` int(11) DEFAULT NULL,
+  `device_id` int(11) NOT NULL,
+  `channel_type` tinyint(1) NOT NULL,
+  `measure_type` varchar(3) NOT NULL DEFAULT 'Vib',
+  `device_channel_id` tinyint(4) DEFAULT NULL,
+  `sensor_channel_id` tinyint(4) DEFAULT NULL,
+  `sc_offset` decimal(16,8) DEFAULT NULL,
+  `sc_gain` decimal(16,8) DEFAULT NULL,
+  `comments` varchar(300) DEFAULT NULL,
+  `installdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_date` date DEFAULT NULL,
+  `update_by` int(11) DEFAULT NULL,
+  `enabled` tinyint(1) NOT NULL,
+  PRIMARY KEY (`channel_id`),
+  KEY `fk_reference_13` (`sensor_id`) USING BTREE,
+  KEY `fk_reference_6` (`device_id`) USING BTREE,
+  CONSTRAINT `fk_reference_13` FOREIGN KEY (`sensor_id`) REFERENCES `sensor` (`sensor_id`),
+  CONSTRAINT `fk_reference_6` FOREIGN KEY (`device_id`) REFERENCES `device` (`device_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`%`*/ /*!50003 TRIGGER `insert_channel` AFTER INSERT ON `channel` 
+    FOR EACH ROW BEGIN
+  DECLARE inserted_channel_type TINYINT;
+  SET inserted_channel_type = NEW.channel_type;
+  IF inserted_channel_type IN (1, 2) THEN
+    INSERT
+     config_properties_channels
+    SELECT DISTINCT
+      property_id, NEW.channel_id, default_value, default_value, default_value
+    FROM
+      insite.config_properties
+    WHERE
+      config_properties.config_type_id = inserted_channel_type;
+  END IF; 
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+
+--
+-- Table structure for table `channel_band`
+--
+
+DROP TABLE IF EXISTS `channel_band`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `channel_band` (
+  `channel_id` bigint(20) NOT NULL,
+  `band_id` tinyint(11) NOT NULL,
+  PRIMARY KEY (`channel_id`,`band_id`),
+  KEY `FK_channel_band_key` (`band_id`),
+  CONSTRAINT `FK_channel_band` FOREIGN KEY (`channel_id`) REFERENCES `channel` (`channel_id`),
+  CONSTRAINT `FK_channel_band_key` FOREIGN KEY (`band_id`) REFERENCES `analysis_bands` (`band_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `config_groups`
+--
+
+DROP TABLE IF EXISTS `config_groups`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `config_groups` (
+  `group_id` int(11) NOT NULL DEFAULT '0',
+  `group_name` varchar(48) CHARACTER SET latin1 DEFAULT NULL,
+  `group_description` varchar(256) CHARACTER SET latin1 DEFAULT NULL,
+  PRIMARY KEY (`group_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `config_properties`
+--
+
+DROP TABLE IF EXISTS `config_properties`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `config_properties` (
+  `property_id` int(11) NOT NULL AUTO_INCREMENT,
+  `group_id` int(11) NOT NULL,
+  `property_name` varchar(256) CHARACTER SET latin1 NOT NULL,
+  `config_type_id` smallint(6) NOT NULL,
+  `description` varchar(256) CHARACTER SET latin1 DEFAULT NULL,
+  `unit_id` smallint(6) NOT NULL,
+  `default_value` varchar(256) DEFAULT NULL,
+  `config_value` varchar(256) DEFAULT NULL,
+  `run_value` varchar(256) DEFAULT NULL,
+  `usr_control_level` tinyint(4) DEFAULT NULL,
+  `data_type` varchar(60) CHARACTER SET latin1 NOT NULL COMMENT 'The field to be used for validating data on the front-end',
+  PRIMARY KEY (`property_id`),
+  KEY `fk_prporties_units` (`unit_id`) USING BTREE,
+  KEY `fk_prporties_groups` (`group_id`) USING BTREE,
+  KEY `fk_proporties_types` (`config_type_id`) USING BTREE,
+  CONSTRAINT `fk_proporties_types` FOREIGN KEY (`config_type_id`) REFERENCES `config_types` (`config_type_id`),
+  CONSTRAINT `fk_prporties_groups` FOREIGN KEY (`group_id`) REFERENCES `config_groups` (`group_id`),
+  CONSTRAINT `fk_prporties_units` FOREIGN KEY (`unit_id`) REFERENCES `units` (`unit_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=175 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `config_properties_channels`
+--
+
+DROP TABLE IF EXISTS `config_properties_channels`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `config_properties_channels` (
+  `property_id` int(11) NOT NULL DEFAULT '0',
+  `channel_id` bigint(20) NOT NULL DEFAULT '0',
+  `default_value` varchar(256) CHARACTER SET latin1 DEFAULT NULL,
+  `config_value` varchar(256) CHARACTER SET latin1 DEFAULT NULL,
+  `run_value` varchar(256) CHARACTER SET latin1 DEFAULT NULL,
+  PRIMARY KEY (`property_id`,`channel_id`),
+  KEY `channel_properties_channel` (`channel_id`) USING BTREE,
+  CONSTRAINT `FK_config_properties_channels` FOREIGN KEY (`channel_id`) REFERENCES `channel` (`channel_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `config_properties_old`
+--
+
+DROP TABLE IF EXISTS `config_properties_old`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `config_properties_old` (
+  `property_id` int(11) NOT NULL AUTO_INCREMENT,
+  `group_id` int(11) NOT NULL,
+  `property_name` varchar(256) CHARACTER SET latin1 NOT NULL,
+  `config_type_id` smallint(6) NOT NULL,
+  `description` varchar(256) CHARACTER SET latin1 DEFAULT NULL,
+  `unit_id` smallint(6) NOT NULL,
+  `default_value` varchar(256) CHARACTER SET latin1 DEFAULT NULL,
+  `usr_control_level` tinyint(4) DEFAULT NULL,
+  `data_type` varchar(60) CHARACTER SET latin1 NOT NULL COMMENT 'The field to be used for validating data on the front-end',
+  PRIMARY KEY (`property_id`),
+  KEY `reference_22_fk` (`unit_id`) USING BTREE,
+  KEY `fk_reference_36` (`group_id`) USING BTREE,
+  KEY `fk_reference_40` (`config_type_id`) USING BTREE,
+  CONSTRAINT `fk_reference_36` FOREIGN KEY (`group_id`) REFERENCES `config_groups` (`group_id`),
+  CONSTRAINT `fk_reference_39` FOREIGN KEY (`unit_id`) REFERENCES `units` (`unit_id`),
+  CONSTRAINT `fk_reference_40` FOREIGN KEY (`config_type_id`) REFERENCES `config_types` (`config_type_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `config_properties_usr_sel`
+--
+
+DROP TABLE IF EXISTS `config_properties_usr_sel`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `config_properties_usr_sel` (
+  `allowable_property_id` int(11) NOT NULL AUTO_INCREMENT,
+  `property_id` int(11) NOT NULL,
+  `allowable_value` varchar(256) CHARACTER SET latin1 DEFAULT NULL,
+  `description` varchar(256) CHARACTER SET latin1 DEFAULT NULL,
+  PRIMARY KEY (`allowable_property_id`),
+  KEY `fk_config_properties_usr_sel_1` (`property_id`) USING BTREE,
+  CONSTRAINT `fk_config_properties_usr_sel_1` FOREIGN KEY (`property_id`) REFERENCES `config_properties_old` (`property_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=128 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `config_spectr_analysis`
+--
+
+DROP TABLE IF EXISTS `config_spectr_analysis`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `config_spectr_analysis` (
+  `dam_sampling_rate` int(11) NOT NULL DEFAULT '0',
+  `analysis_bandwidth` int(11) NOT NULL DEFAULT '0',
+  `spectrum_lines` int(11) NOT NULL DEFAULT '0',
+  `dam_block_size` int(11) NOT NULL,
+  `dsp_sampling_rate` int(11) NOT NULL,
+  PRIMARY KEY (`dam_sampling_rate`,`analysis_bandwidth`,`spectrum_lines`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `config_spectr_analysis_new`
+--
+
+DROP TABLE IF EXISTS `config_spectr_analysis_new`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `config_spectr_analysis_new` (
+  `analysis_bandwidth` int(11) NOT NULL DEFAULT '0',
+  `spectrum_lines` int(11) NOT NULL DEFAULT '0',
+  `dam_block_size` int(11) NOT NULL,
+  `dam_sampling_rate` int(11) NOT NULL,
+  PRIMARY KEY (`analysis_bandwidth`,`spectrum_lines`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `config_spectr_analysis_selector`
+--
+
+DROP TABLE IF EXISTS `config_spectr_analysis_selector`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `config_spectr_analysis_selector` (
+  `selector_name` varchar(32) DEFAULT NULL,
+  `select_value` int(11) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `config_spectr_temp`
+--
+
+DROP TABLE IF EXISTS `config_spectr_temp`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `config_spectr_temp` (
+  `analysis_bandwidth` int(11) NOT NULL DEFAULT '0'
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `config_types`
+--
+
+DROP TABLE IF EXISTS `config_types`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `config_types` (
+  `config_type_id` smallint(6) NOT NULL DEFAULT '0',
+  `type_name` varchar(48) CHARACTER SET latin1 DEFAULT NULL,
+  `description` varchar(256) CHARACTER SET latin1 DEFAULT NULL,
+  PRIMARY KEY (`config_type_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `delivery_options`
+--
+
+DROP TABLE IF EXISTS `delivery_options`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `delivery_options` (
+  `delivery_option_id` int(11) NOT NULL AUTO_INCREMENT,
+  `option_name` varchar(254) NOT NULL,
+  `options_value` varchar(254) DEFAULT NULL,
+  PRIMARY KEY (`delivery_option_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 PACK_KEYS=1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `delivery_path`
+--
+
+DROP TABLE IF EXISTS `delivery_path`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `delivery_path` (
+  `delivery_id` int(11) NOT NULL AUTO_INCREMENT,
+  `delivery_type` varchar(3) DEFAULT NULL,
+  `delivery_group_id` int(11) DEFAULT NULL,
+  `retry_interval` smallint(6) DEFAULT NULL,
+  `retry_attempts` smallint(6) DEFAULT NULL,
+  `escalation_delivery_id` int(11) DEFAULT NULL,
+  `delivery_address` varchar(255) NOT NULL,
+  `delivery_name` varchar(255) NOT NULL,
+  `delivery_notes` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`delivery_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `device`
+--
+
+DROP TABLE IF EXISTS `device`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `device` (
+  `device_id` int(11) NOT NULL DEFAULT '0',
+  `device_type` tinyint(1) NOT NULL,
+  `ip_addr` varchar(19) DEFAULT NULL,
+  `ip_port` int(11) DEFAULT NULL,
+  `mac` char(36) NOT NULL,
+  `nbrfastchannels` tinyint(4) NOT NULL,
+  `nbrslowchannels` tinyint(4) NOT NULL,
+  `version_id` tinyint(4) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `sold_date` date DEFAULT NULL,
+  `installdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `powersupplyid` char(1) DEFAULT NULL,
+  `external_ip` varchar(19) DEFAULT NULL,
+  `dpm_ip` varchar(19) DEFAULT NULL,
+  `dpm_port` int(11) DEFAULT NULL,
+  `ser_nbr` varchar(12) DEFAULT NULL,
+  PRIMARY KEY (`device_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `domain_types`
+--
+
+DROP TABLE IF EXISTS `domain_types`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `domain_types` (
+  `domain_type_id` smallint(6) NOT NULL AUTO_INCREMENT,
+  `domain_type_name` varchar(255) NOT NULL,
+  `domain_type_desc` varchar(255) NOT NULL,
+  PRIMARY KEY (`domain_type_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `dpm_config`
+--
+
+DROP TABLE IF EXISTS `dpm_config`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `dpm_config` (
+  `channel_id` bigint(20) NOT NULL,
+  `channel_key` varchar(255) NOT NULL,
+  `channel_value` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `dpmdevicelist`
+--
+
+DROP TABLE IF EXISTS `dpmdevicelist`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `dpmdevicelist` (
+  `device_id` int(11) NOT NULL,
+  `deviceip` varchar(50) NOT NULL,
+  `deviceport` int(11) DEFAULT NULL,
+  `dpmid` varchar(45) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `employee`
+--
+
+DROP TABLE IF EXISTS `employee`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `employee` (
+  `employee_id` int(11) NOT NULL DEFAULT '0',
+  `fname` varchar(255) DEFAULT NULL,
+  `lname` varchar(255) DEFAULT NULL,
+  `group_id` smallint(6) DEFAULT NULL,
+  `role_id` smallint(6) DEFAULT NULL,
+  `position` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`employee_id`),
+  KEY `fk_reference_18` (`role_id`) USING BTREE,
+  CONSTRAINT `fk_reference_18` FOREIGN KEY (`role_id`) REFERENCES `roles` (`role_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `empsec`
+--
+
+DROP TABLE IF EXISTS `empsec`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `empsec` (
+  `employee_id` int(11) NOT NULL,
+  `login` varchar(32) NOT NULL,
+  `pass` longblob,
+  `pexp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  KEY `fk_reference_7` (`employee_id`) USING BTREE,
+  CONSTRAINT `fk_reference_7` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`employee_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `event_delivery`
+--
+
+DROP TABLE IF EXISTS `event_delivery`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `event_delivery` (
+  `event_tr_id` int(11) NOT NULL DEFAULT '0',
+  `delivery_id` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`event_tr_id`,`delivery_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `event_log`
+--
+
+DROP TABLE IF EXISTS `event_log`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `event_log` (
+  `event_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `channel_id` bigint(20) NOT NULL,
+  `sample_id` bigint(20) DEFAULT NULL,
+  `event_tr_id` smallint(6) DEFAULT NULL,
+  `event_ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `ack_by` int(10) unsigned DEFAULT NULL,
+  `ack_ts` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `notes` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`event_id`),
+  KEY `event_ts_idx` (`event_tr_id`) USING BTREE,
+  KEY `fk_reference_12` (`sample_id`) USING BTREE,
+  KEY `fk_reference_5` (`channel_id`) USING BTREE,
+  KEY `ts_index` (`event_ts`) USING BTREE,
+  CONSTRAINT `fk_reference_12` FOREIGN KEY (`sample_id`) REFERENCES `sample_master` (`sample_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_reference_5` FOREIGN KEY (`channel_id`) REFERENCES `channel` (`channel_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=118 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`%`*/ /*!50003 TRIGGER `event_log_insert` AFTER INSERT ON `event_log` 
+    FOR EACH ROW BEGIN
+  DECLARE channel, event_id                                           BIGINT;
+  DECLARE old_severity, new_severity                                  TINYINT;
+  DECLARE old_severity_desc, new_severity_desc                        VARCHAR (32);
+  DECLARE toAddress, fromAddress, fromName, message_txt, location     VARCHAR (255);
+  DECLARE needToSend                                                  BOOL;
+  SET channel = NEW.channel_id;
+  SET event_id = NEW.event_id;
+  SELECT
+    es.severity_id, description
+  INTO
+    new_severity, new_severity_desc
+  FROM
+    event_severity es, event_treshold et
+  WHERE
+    es.severity_id = et.severity_id AND
+    et.event_tr_id = NEW.event_tr_id
+    AND
+    et.channel_id = NEW.channel_id;
+  SET needtosend = insite.needtosend(channel, new_severity);
+  IF needtosend THEN
+    BEGIN
+      SET toAddress = insite.gettoaddress(channel, new_severity);
+      SELECT
+        config_value
+      INTO
+        fromaddress
+      FROM
+        config_properties cp
+      WHERE
+        cp.property_name = 'site.server.alert.from.address' LIMIT 1;
+      SELECT
+        config_value
+      INTO
+        fromname
+      FROM
+        config_properties cp
+      WHERE
+        cp.property_name = 'site.server.event.notification.mail.fromName'LIMIT 1;
+      SET message_txt = alarm_trigger_name(new.sample_id);
+      SET location = location_name(new.channel_id);
+     /* INSERT INTO notify_delivery (
+      channel_id, event_id, notify_type, from_name, to_address, message_value, new_severity, location,
+      delivery_status) VALUES (channel, event_id, 'e', fromName, toAddress, message_txt, new_severity_desc,
+      location, 'N'); */
+    END;
+  END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+
+--
+-- Table structure for table `event_severity`
+--
+
+DROP TABLE IF EXISTS `event_severity`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `event_severity` (
+  `severity_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `description` varchar(255) DEFAULT NULL,
+  `longdescription` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`severity_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `event_treshold`
+--
+
+DROP TABLE IF EXISTS `event_treshold`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `event_treshold` (
+  `event_tr_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `channel_id` bigint(20) NOT NULL,
+  `overall_type_id` int(11) NOT NULL,
+  `lower_bound` float DEFAULT NULL,
+  `upper_bound` float DEFAULT NULL,
+  `unit_id` smallint(6) DEFAULT NULL,
+  `severity_id` smallint(6) NOT NULL,
+  `delivery_id` int(11) DEFAULT NULL,
+  `action` varchar(12) DEFAULT NULL,
+  PRIMARY KEY (`event_tr_id`),
+  UNIQUE KEY `channel_id` (`channel_id`,`overall_type_id`,`severity_id`) USING BTREE,
+  KEY `fk_reference_15` (`unit_id`) USING BTREE,
+  KEY `fk_reference_17` (`overall_type_id`) USING BTREE,
+  KEY `fk_reference_4` (`channel_id`) USING BTREE,
+  CONSTRAINT `evt_channel` FOREIGN KEY (`channel_id`) REFERENCES `channel` (`channel_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `evt_unt` FOREIGN KEY (`unit_id`) REFERENCES `units` (`unit_id`),
+  CONSTRAINT `fk_evnt_ovt` FOREIGN KEY (`overall_type_id`) REFERENCES `overall_types` (`overall_type_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `events_tresholds`
+--
+
+DROP TABLE IF EXISTS `events_tresholds`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `events_tresholds` (
+  `event_tr_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `overall_type_id` int(11) NOT NULL DEFAULT '0',
+  `event_tr_value` decimal(8,0) DEFAULT NULL,
+  `unit_id` smallint(6) DEFAULT NULL,
+  `severity` smallint(6) NOT NULL DEFAULT '0',
+  `delivery_id` int(11) DEFAULT NULL,
+  `action` varchar(12) DEFAULT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `longdescription` varchar(255) DEFAULT NULL,
+  `channel_id` bigint(20) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`event_tr_id`,`channel_id`,`overall_type_id`,`severity`),
+  KEY `fk_reference_15` (`unit_id`) USING BTREE,
+  KEY `fk_reference_17` (`overall_type_id`) USING BTREE,
+  KEY `fk_reference_4` (`channel_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `graphics`
+--
+
+DROP TABLE IF EXISTS `graphics`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `graphics` (
+  `image_id` int(11) NOT NULL DEFAULT '0',
+  `picpath` varchar(255) DEFAULT NULL,
+  `picfile` varchar(255) DEFAULT NULL,
+  `pich` int(11) DEFAULT NULL,
+  `picw` int(11) DEFAULT NULL,
+  `pic_size` int(11) DEFAULT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `pic_type` varchar(6) DEFAULT NULL,
+  PRIMARY KEY (`image_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `groups`
+--
+
+DROP TABLE IF EXISTS `groups`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `groups` (
+  `group_id` smallint(6) NOT NULL DEFAULT '0',
+  `groupname` varchar(32) DEFAULT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`group_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `location`
+--
+
+DROP TABLE IF EXISTS `location`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `location` (
+  `location_id` int(11) NOT NULL DEFAULT '0',
+  `close_icon` int(11) DEFAULT NULL,
+  `open_icon` int(11) DEFAULT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `comments` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`location_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `machine`
+--
+
+DROP TABLE IF EXISTS `machine`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `machine` (
+  `machine_id` int(11) NOT NULL DEFAULT '0',
+  `vendor_id` int(11) NOT NULL,
+  `machine_type` varchar(25) DEFAULT NULL,
+  `description` longtext,
+  `open_icon` int(11) DEFAULT NULL,
+  `close_icon` int(11) DEFAULT NULL,
+  PRIMARY KEY (`machine_id`),
+  KEY `fk_reference_27` (`vendor_id`) USING BTREE,
+  CONSTRAINT `fk_reference_27` FOREIGN KEY (`vendor_id`) REFERENCES `vendor` (`vendor_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `machine_property`
+--
+
+DROP TABLE IF EXISTS `machine_property`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `machine_property` (
+  `machine_id` int(11) NOT NULL,
+  `property_id` int(11) NOT NULL,
+  `unitid` smallint(6) NOT NULL,
+  `machine_value` decimal(8,0) DEFAULT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  KEY `fk_reference_9` (`machine_id`) USING BTREE,
+  CONSTRAINT `fk_reference_9` FOREIGN KEY (`machine_id`) REFERENCES `machine` (`machine_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `mail_config`
+--
+
+DROP TABLE IF EXISTS `mail_config`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `mail_config` (
+  `config_name` varchar(250) NOT NULL DEFAULT '',
+  `config_value` varchar(250) DEFAULT NULL,
+  PRIMARY KEY (`config_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `maintlog`
+--
+
+DROP TABLE IF EXISTS `maintlog`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `maintlog` (
+  `event_id` int(11) NOT NULL,
+  `maint_id` int(11) NOT NULL,
+  `linkmaint_id` int(11) DEFAULT NULL,
+  `requestdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `requestemployee_id` int(11) DEFAULT NULL,
+  `requestdescription` varchar(255) DEFAULT NULL,
+  `machine_id` char(1) DEFAULT NULL,
+  `point_id` int(11) DEFAULT NULL,
+  `mainttype` char(1) DEFAULT NULL,
+  `approvaldate` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `approvemployee_id` int(11) DEFAULT NULL,
+  `performemployee_id` int(11) DEFAULT NULL,
+  `performdate` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `status` char(1) DEFAULT NULL,
+  `closeddate` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `closedemployee_id` int(11) DEFAULT NULL,
+  `canceldate` char(1) DEFAULT NULL,
+  `cancelempoyee_id` int(11) DEFAULT NULL,
+  KEY `maintid` (`maint_id`) USING BTREE,
+  KEY `statusmachineid` (`status`,`machine_id`) USING BTREE,
+  KEY `fk_reference_11` (`point_id`) USING BTREE,
+  CONSTRAINT `fk_reference_11` FOREIGN KEY (`point_id`) REFERENCES `point` (`point_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `message_log`
+--
+
+DROP TABLE IF EXISTS `message_log`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `message_log` (
+  `mail_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `message_type` char(1) DEFAULT 'M',
+  `from_address` varchar(96) DEFAULT NULL,
+  `to_address` varchar(256) DEFAULT NULL,
+  `priority` varchar(8) DEFAULT NULL,
+  `location` varchar(254) DEFAULT NULL,
+  `message_body` varchar(254) DEFAULT NULL,
+  PRIMARY KEY (`mail_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `notify_delivery`
+--
+
+DROP TABLE IF EXISTS `notify_delivery`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `notify_delivery` (
+  `notify_id` int(11) NOT NULL AUTO_INCREMENT,
+  `channel_id` bigint(20) DEFAULT NULL,
+  `event_id` bigint(20) DEFAULT NULL,
+  `notify_type` char(1) DEFAULT NULL,
+  `from_name` varchar(255) DEFAULT 'InCheck Monitoring',
+  `to_address` varchar(255) DEFAULT 'monitor@inchecktech.com',
+  `message_value` varchar(255) NOT NULL,
+  `new_severity` varchar(255) DEFAULT NULL,
+  `location` varchar(256) DEFAULT NULL,
+  `delivery_status` varchar(45) DEFAULT NULL,
+  `notify_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `old_severity` varchar(50) DEFAULT '''N/A''',
+  PRIMARY KEY (`notify_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `overall_types`
+--
+
+DROP TABLE IF EXISTS `overall_types`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `overall_types` (
+  `overall_type_id` int(11) NOT NULL DEFAULT '0',
+  `overall_type` varchar(32) NOT NULL DEFAULT ''' ''',
+  `overall_description` varchar(32) NOT NULL DEFAULT ''' ''',
+  `active_flag` char(1) NOT NULL DEFAULT 'N',
+  `long_description` varchar(255) NOT NULL DEFAULT ''' ''',
+  PRIMARY KEY (`overall_type_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `point`
+--
+
+DROP TABLE IF EXISTS `point`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `point` (
+  `point_id` int(11) NOT NULL DEFAULT '0',
+  `machine_id` int(11) NOT NULL,
+  `location_id` int(11) DEFAULT NULL,
+  `imagestarth` int(11) DEFAULT NULL,
+  `imagestartw` int(11) DEFAULT NULL,
+  `image_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`point_id`),
+  KEY `fk_reference_10` (`machine_id`) USING BTREE,
+  KEY `fk_reference_8` (`image_id`) USING BTREE,
+  CONSTRAINT `fk_reference_10` FOREIGN KEY (`machine_id`) REFERENCES `machine` (`machine_id`),
+  CONSTRAINT `fk_reference_8` FOREIGN KEY (`image_id`) REFERENCES `graphics` (`image_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `preference`
+--
+
+DROP TABLE IF EXISTS `preference`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `preference` (
+  `preference_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `preference_key` varchar(255) NOT NULL,
+  `preference_value` varchar(255) DEFAULT NULL,
+  `preference_type` varchar(45) DEFAULT NULL,
+  `preference_level` int(10) unsigned DEFAULT '1',
+  `preference_description` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`preference_id`),
+  UNIQUE KEY `Index_2` (`preference_key`)
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `roles`
+--
+
+DROP TABLE IF EXISTS `roles`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `roles` (
+  `role_id` smallint(6) NOT NULL DEFAULT '0',
+  `rolename` varchar(32) NOT NULL,
+  `roledesc` varchar(255) NOT NULL,
+  PRIMARY KEY (`role_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `sample_main`
+--
+
+DROP TABLE IF EXISTS `sample_main`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `sample_main` (
+  `sample_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `channel_id` bigint(20) DEFAULT NULL,
+  `sample_ts` timestamp NULL DEFAULT NULL,
+  `sample_rate` decimal(10,0) DEFAULT NULL,
+  `rpm` int(11) DEFAULT NULL,
+  `alarm_log_available` tinyint(1) DEFAULT NULL,
+  `unit_id` smallint(6) NOT NULL,
+  `comments` varchar(100) COLLATE latin1_bin DEFAULT NULL,
+  PRIMARY KEY (`sample_id`),
+  KEY `Channel_times_idx` (`channel_id`,`sample_ts`),
+  KEY `NewIndex1` (`unit_id`),
+  CONSTRAINT `FK_sample_main` FOREIGN KEY (`channel_id`) REFERENCES `channel` (`channel_id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `FK_sample_main_unit` FOREIGN KEY (`unit_id`) REFERENCES `units` (`unit_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=164520 DEFAULT CHARSET=latin1 COLLATE=latin1_bin CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `sample_master`
+--
+
+DROP TABLE IF EXISTS `sample_master`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `sample_master` (
+  `sample_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `channel_id` bigint(20) NOT NULL,
+  `sample_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `sample_rate` int(11) DEFAULT NULL,
+  `sample_length` int(11) DEFAULT NULL,
+  `rpm` float NOT NULL,
+  `overall_value` float DEFAULT NULL,
+  `unit_id` smallint(6) DEFAULT NULL,
+  `alarm_log_available` tinyint(1) DEFAULT NULL,
+  `comments` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `sample_value` longblob,
+  `overall_type_id` int(11) DEFAULT NULL,
+  `domain_type` set('ACC','VEL','DIS') CHARACTER SET utf8 NOT NULL,
+  `domain_type_id` smallint(6) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`sample_id`),
+  KEY `fk_reference_14` (`unit_id`) USING BTREE,
+  KEY `fk_reference_16` (`overall_type_id`) USING BTREE,
+  KEY `fk_reference_2` (`channel_id`) USING BTREE,
+  KEY `fk_sample_master_domain_types` (`domain_type_id`) USING BTREE,
+  KEY `over_all` (`sample_time`,`overall_value`,`channel_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=36353 DEFAULT CHARSET=latin1 COLLATE=latin1_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `sample_overall`
+--
+
+DROP TABLE IF EXISTS `sample_overall`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `sample_overall` (
+  `sample_id` bigint(20) unsigned NOT NULL,
+  `overall_type` varchar(256) COLLATE latin1_bin NOT NULL,
+  `band_id` tinyint(6) NOT NULL DEFAULT '1',
+  `overall_value` double NOT NULL,
+  PRIMARY KEY (`sample_id`,`overall_type`,`band_id`),
+  KEY `band_idx` (`band_id`),
+  KEY `overall_type_idx` (`overall_type`),
+  KEY `NewIndex1` (`sample_id`),
+  CONSTRAINT `FK_111` FOREIGN KEY (`sample_id`) REFERENCES `sample_main` (`sample_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_sample__band_overall` FOREIGN KEY (`band_id`) REFERENCES `analysis_bands` (`band_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_bin CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `sample_vibration`
+--
+
+DROP TABLE IF EXISTS `sample_vibration`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `sample_vibration` (
+  `sample_id` bigint(20) unsigned NOT NULL,
+  `sample_value` longblob,
+  PRIMARY KEY (`sample_id`),
+  CONSTRAINT `FK_sample_vibration` FOREIGN KEY (`sample_id`) REFERENCES `sample_main` (`sample_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `sensor`
+--
+
+DROP TABLE IF EXISTS `sensor`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `sensor` (
+  `sensor_id` int(11) NOT NULL DEFAULT '0',
+  `vendor_id` int(11) DEFAULT NULL,
+  `sensor_type` char(4) DEFAULT NULL,
+  `channel_id` tinyint(4) DEFAULT NULL,
+  `sens_unit_id` smallint(6) DEFAULT NULL,
+  `unit_id` char(10) DEFAULT NULL,
+  `sensitivity` float DEFAULT NULL,
+  `highrange` int(11) DEFAULT NULL,
+  `lowrange` int(11) DEFAULT NULL,
+  `vendorsn` varchar(255) DEFAULT NULL,
+  `lastcalibratedate` date DEFAULT NULL,
+  PRIMARY KEY (`sensor_id`),
+  KEY `fk_reference_25` (`sens_unit_id`) USING BTREE,
+  KEY `fk_reference_28` (`vendor_id`) USING BTREE,
+  CONSTRAINT `fk_reference_25` FOREIGN KEY (`sens_unit_id`) REFERENCES `units` (`unit_id`),
+  CONSTRAINT `fk_reference_28` FOREIGN KEY (`vendor_id`) REFERENCES `vendor` (`vendor_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `treenodes`
+--
+
+DROP TABLE IF EXISTS `treenodes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `treenodes` (
+  `treenode_id` int(11) NOT NULL DEFAULT '0',
+  `parent_id` int(11) DEFAULT NULL,
+  `name` varchar(32) DEFAULT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `machine_id` int(11) DEFAULT NULL,
+  `channel_id` bigint(20) DEFAULT NULL,
+  `point_id` int(11) DEFAULT NULL,
+  `treenode_type` varchar(10) DEFAULT NULL,
+  `status` int(11) DEFAULT NULL,
+  PRIMARY KEY (`treenode_id`),
+  KEY `fk_reference_26` (`machine_id`) USING BTREE,
+  KEY `fk_reference_3` (`channel_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `units`
+--
+
+DROP TABLE IF EXISTS `units`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `units` (
+  `unit_id` smallint(6) NOT NULL AUTO_INCREMENT,
+  `unittype` varchar(32) NOT NULL,
+  `unit` varchar(32) NOT NULL,
+  `unit_measure` varchar(32) DEFAULT 'Vib',
+  `description` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`unit_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `user_preference`
+--
+
+DROP TABLE IF EXISTS `user_preference`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user_preference` (
+  `user_id` int(11) NOT NULL,
+  `preference_id` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`user_id`,`preference_id`),
+  KEY `FK_user_preference_2` (`preference_id`),
+  CONSTRAINT `FK_user_preference_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `FK_user_preference_2` FOREIGN KEY (`preference_id`) REFERENCES `preference` (`preference_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `userrole`
+--
+
+DROP TABLE IF EXISTS `userrole`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `userrole` (
+  `user_id` int(11) NOT NULL DEFAULT '0',
+  `role_id` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`user_id`,`role_id`),
+  CONSTRAINT `fk_reference_21` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `users` (
+  `user_id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(255) NOT NULL,
+  `userpass` varchar(255) NOT NULL,
+  `firstname` varchar(32) NOT NULL,
+  `lastname` varchar(32) NOT NULL,
+  `title` varchar(32) DEFAULT NULL,
+  `enabled` tinyint(1) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `verified` tinyint(1) NOT NULL,
+  `regtoken` varchar(255) DEFAULT NULL,
+  `organization` varchar(255) DEFAULT NULL,
+  `industry` varchar(255) DEFAULT NULL,
+  `maillist` tinyint(1) NOT NULL,
+  `contactlist` tinyint(1) NOT NULL,
+  `howdidyouhear` varchar(255) DEFAULT NULL,
+  `timezone` varchar(256) NOT NULL DEFAULT 'GMT',
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `u_user` (`username`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `usersession`
+--
+
+DROP TABLE IF EXISTS `usersession`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `usersession` (
+  `user_id` int(11) NOT NULL,
+  `session_id` varchar(32) NOT NULL,
+  `createdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifydate` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  KEY `fk_reference_22` (`user_id`) USING BTREE,
+  CONSTRAINT `fk_reference_22` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `userstate`
+--
+
+DROP TABLE IF EXISTS `userstate`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `userstate` (
+  `user_id` int(11) NOT NULL,
+  `state` longblob NOT NULL,
+  KEY `fk_reference_23` (`user_id`) USING BTREE,
+  CONSTRAINT `fk_reference_23` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `vendor`
+--
+
+DROP TABLE IF EXISTS `vendor`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `vendor` (
+  `vendor_id` int(11) NOT NULL DEFAULT '0',
+  `name` varchar(255) DEFAULT NULL,
+  `contact` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`vendor_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping routines for database 'insite'
+--
+/*!50003 DROP FUNCTION IF EXISTS `alarm_trigger_name` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`INSITE`@`%`*/ /*!50003 FUNCTION `alarm_trigger_name`(sample  BIGINT ) RETURNS varchar(254) CHARSET utf8
+BEGIN
+  DECLARE name1, sample_value, sample_type   VARCHAR (254);
+  SELECT
+    CAST(SAMPLE_MASTER.overall_value AS CHAR (10)), IFNULL(overall_types.overall_type, 'RMS')
+  INTO
+    sample_value, sample_type
+  FROM
+    sample_master
+    LEFT OUTER JOIN overall_types ON
+    sample_master.overall_type_id = overall_types.overall_type_id
+  WHERE
+    sample_master.sample_id = sample;
+  SET name1 = CONCAT(sample_type, ' = ', sample_value);
+  RETURN name1;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `gettoaddress` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`INSITE`@`%`*/ /*!50003 FUNCTION `gettoaddress`(channel  BIGINT , severity  TINYINT ) RETURNS varchar(512) CHARSET utf8
+BEGIN
+  DECLARE cur_address VARCHAR (32) DEFAULT '';
+  DECLARE toAddress   VARCHAR (512) DEFAULT '';
+  DECLARE done        BOOL DEFAULT FALSE;
+  DECLARE addr_cur CURSOR FOR
+  SELECT
+    delivery_address
+  FROM
+    delivery_path dp, event_treshold et, event_delivery ed
+  WHERE
+    dp.delivery_id = ed.delivery_id AND
+    et.event_tr_id = ed.event_tr_id AND
+    et.severity_id = severity AND
+    et.channel_id = channel;
+  DECLARE
+  CONTINUE HANDLER FOR
+  SQLSTATE '02000'
+  SET done = TRUE;
+  OPEN addr_cur;
+addrLoop:
+  LOOP
+    FETCH addr_cur INTO cur_address;
+    IF done THEN
+      CLOSE addr_cur;
+      LEAVE addrloop;
+    END IF;
+    IF toAddress = '' THEN
+      SET toAddress = cur_address;
+    ELSE
+      SET toAddress = CONCAT(toAddress, ',', cur_address);
+    END IF;
+  END LOOP;
+  RETURN toAddress;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `get_channel_name_by_channel_id` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`INSITE`@`%`*/ /*!50003 FUNCTION `get_channel_name_by_channel_id`(channel_id BIGINT) RETURNS varchar(254) CHARSET latin1
+BEGIN
+  DECLARE channel_loc1  VARCHAR (200);
+  DECLARE parent_id1    BIGINT;
+  DECLARE parent_name2  VARCHAR (254);
+  DECLARE channel_name3 VARCHAR (254);
+  DECLARE parent_id5    BIGINT;
+  DECLARE parent_name6  VARCHAR (254);
+  DECLARE channel_name7 VARCHAR (254);
+  SELECT DISTINCT
+    `NAME`
+  INTO
+    channel_name3
+  FROM
+    insite.treenodes
+  WHERE
+    `CHANNEL_ID` = `channel_id` LIMIT 1;
+  SELECT DISTINCT
+    `PARENT_ID`
+  INTO
+    parent_id1
+  FROM
+    insite.treenodes
+  WHERE
+    `CHANNEL_ID` = `channel_id` LIMIT 1;
+  SELECT DISTINCT
+    NAME
+  INTO
+    parent_name2
+  FROM
+    insite.treenodes
+  WHERE
+    treenode_id = `parent_id1`;
+  SET channel_name3 = CONCAT(':', parent_name2, ':', channel_name3);
+  WHILE `parent_id1` > 0
+  DO
+    SELECT
+      NAME, parent_id
+    INTO
+      parent_name6, parent_id5
+    FROM
+      insite.treenodes
+    WHERE
+      treenode_id = `parent_id5`;
+    SET channel_name7 = CONCAT(parent_name6, '::', channel_name3);
+  END WHILE;
+  RETURN channel_name7;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `location_name` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`root`@`%`*/ /*!50003 FUNCTION `location_name`(CH_ID  BIGINT ) RETURNS varchar(254) CHARSET latin1
+    SQL SECURITY INVOKER
+BEGIN
+  DECLARE name1, name2     VARCHAR (254);
+  DECLARE parent, parent2  INT;
+  SELECT
+    NAME, parent_id
+  INTO
+    name1, parent
+  FROM
+    treenodes
+  WHERE
+    channel_id = CH_ID;
+  SELECT
+    CONCAT('/', NAME, '/', name1), parent_id
+  INTO
+    name1, parent2
+  FROM
+    treenodes
+  WHERE
+    treenode_id = parent;
+  
+  RETURN name1;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `needtosend` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`INSITE`@`%`*/ /*!50003 FUNCTION `needtosend`(channel  BIGINT , severity  TINYINT ) RETURNS tinyint(1)
+BEGIN
+  DECLARE needToSend     BOOL DEFAULT FALSE;
+  DECLARE email_interval INT;
+  DECLARE last_delivery  TIMESTAMP;
+  SELECT
+    CAST(CONFIG_VALUE AS SIGNED)
+  INTO
+    email_interval
+  FROM
+    config_properties cp
+  WHERE
+    cp.property_name = 'site.server.event.notification.mail.interval' LIMIT 1;
+  SELECT
+    IFNULL(MAX(notify_timestamp), '1990-01-01')
+  INTO
+    last_delivery
+  FROM
+    notify_delivery nd, event_log el
+  WHERE
+    nd.channel_id = channel AND
+    nd.new_severity = severity AND
+    el.event_id = nd.event_id;
+  IF TIMESTAMPDIFF(MINUTE, LAST_DELIVERY, CURRENT_TIMESTAMP) > EMAIL_INTERVAL THEN
+    SET needToSend = TRUE;
+  END IF;
+  RETURN needToSend;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_channel_name_by_channel_id` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`INSITE`@`%`*/ /*!50003 PROCEDURE `get_channel_name_by_channel_id`(IN channel_id BIGINT, IN channel_name VARCHAR (254))
+BEGIN
+  DECLARE channel_loc1 VARCHAR (200);
+  DECLARE parent_id    BIGINT;
+  DECLARE parent_name  VARCHAR (255);
+  SET channel_name = "XUY PETROV SSSS";
+  SET parent_id = 19;
+  SET parent_name = '';
+  SELECT
+    `NAME`
+  INTO
+    channel_name
+  FROM
+    treenodes
+  WHERE
+    `CHANNEL_ID` = channel_id LIMIT 1;
+  SELECT
+    `PARENT_ID`
+  INTO
+    parent_id
+  FROM
+    treenodes
+  WHERE
+    `CHANNEL_ID` = channel_id LIMIT 1;
+  SELECT
+    channel_id, channel_name, parent_id;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `insert_sample` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`INSITE`@`%`*/ /*!50003 PROCEDURE `insert_sample`(in_channel BIGINT,in_sample_time timestamp,in_rate DECIMAL(10,0), in_rpm INT, in_alarm_log tinyint, in_comments varchar(100),sample blob, OUT LAST_ID bigint )
+    MODIFIES SQL DATA
+    DETERMINISTIC
+BEGIN
+       declare last_sample int;
+      START TRANSACTION;
+      INSERT INTO SAMPLE_MAIN
+       (channel_id,sample_ts,sample_rate,rpm,alarm_log_avaialable,comments)
+      valuES
+       (in_channel, in_sample_time ,in_rate,in_alarm_log ,in_comments);
+       SET last_sample = LAST_INSERT_ID();
+       insert sample_vibration
+       (sample_id,sample_value)
+       values
+       (last_sample, sample);
+       SET LAST_ID=last_sample;
+       COMMIT;
+    END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `is_severity_increased` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`INSITE`@`%`*/ /*!50003 PROCEDURE `is_severity_increased`(IN channel_id  BIGINT , IN new_severity  TINYINT , OUT old_severity  TINYINT , OUT event_id  BIGINT , OUT last_event_timestamp  TIMESTAMP , OUT is_increased  BOOL )
+BEGIN
+  DECLARE mail_delay, time_diff  INT;
+  SELECT
+    config_value
+  INTO
+    mail_delay
+  FROM
+    insite.config_properties
+  WHERE
+    property_name = 'site.server.alert.mail.delay';
+  SELECT
+    MAX(event_ts)
+  INTO
+    last_event_timestamp
+  FROM
+    event_log
+  WHERE
+    CHANNEL_ID = channel_id AND
+    ack_by IS NULL;
+  SET time_diff = TIME_TO_SEC(NOW()) - TIME_TO_SEC(last_event_timestamp);
+  IF time_diff > mail_delay THEN
+    SET is_increased = TRUE;
+    SELECT
+      EVENT_ID, severity_id
+    INTO
+      event_id, old_severity
+    FROM
+      event_log a, event_treshold b
+    WHERE
+      a.CHANNEL_ID = channel_id AND
+      a.CHANNEL_ID = b.CHANNEL_ID AND
+      a.event_tr_id = b.event_tr_id AND
+      a.event_ts = last_event_timestamp;
+  ELSE
+    SET is_increased = FALSE;
+  END IF;
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_get_bands_dd` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`root`@`%`*/ /*!50003 PROCEDURE `sp_get_bands_dd`()
+    READS SQL DATA
+    COMMENT 'Populate Bands Drop Down'
+BEGIN
+	SELECT DISTINCT b.band_id, band_name
+	FROM analysis_bands b
+	JOIN sample_overall s ON b.band_id = s.band_id;
+    END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_get_grouped_by_hist_data` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`INSITE`@`%`*/ /*!50003 PROCEDURE `sp_get_grouped_by_hist_data`(in in_channel_id int, in in_overall varchar(25),     in in_band_id int ,in start_date date ,end_date date )
+    READS SQL DATA
+BEGIN
+	SELECT MIN(overall_value) , MAX(overall_value), AVG(overall_value),date(sample_ts)
+	from sample_main sm
+	JOIN sample_overall so on  sm.sample_id=so.sample_id
+	where 
+	sm.channel_id = in_channel_id AND
+	so.band_id = in_band_id AND
+	so.overall_type = in_overall AND
+	sample_ts BETWEEN start_date and end_date
+	group by DATE(sample_ts);
+    END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_get_hist_data` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`root`@`%`*/ /*!50003 PROCEDURE `sp_get_hist_data`( IN in_channel_id INT, IN in_overall VARCHAR(25),     IN in_band_id INT ,IN start_date TIMESTAMP ,end_date TIMESTAMP )
+    READS SQL DATA
+BEGIN
+	SELECT overall_value, sample_ts
+	FROM sample_overall  so JOIN sample_main sm ON so.sample_id = sm.sample_id
+	WHERE sm.channel_id=in_channel_id AND
+	       so.overall_type=in_overall AND
+	       so.band_id=in_band_id AND
+	       sm.sample_ts BETWEEN start_date  AND end_date;
+    END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_get_overalls_dd` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = '' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`INSITE`@`%`*/ /*!50003 PROCEDURE `sp_get_overalls_dd`()
+    READS SQL DATA
+    COMMENT 'Populate Parameter drop down'
+BEGIN
+	Select distinct overall_type from sample_overall;
+    END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2010-02-20  4:02:49

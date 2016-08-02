@@ -1,0 +1,759 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:components="com.incheck.components.*"
+		 xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:ns1="com.incheck.*"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:restfulservice="services.restfulservice.*"
+		 width="100%" height="100%" creationComplete="onCreationComplete()"
+		 stateChangeComplete="onStateChangeComplete(event)">
+
+	<fx:Declarations>
+
+		<s:HTTPService id="httpService"
+					   url="http://localhost:8080/insite-server/rest/data" useProxy="false" method="POST"
+					   showBusyCursor="true"
+					   result="onWebServiceSaveResult(event)"
+					   fault="onWebServiceSaveFault(event)" />
+
+		<mx:DateFormatter id="dateFormatter"
+						  formatString="MM/DD/YYYY HH:NN:SS" />
+
+	</fx:Declarations>
+
+
+	<fx:Script>
+		<![CDATA[
+
+			import com.incheck.Constants;
+			import com.incheck.IncheckModel;
+			import com.incheck.TreeDataDescriptor;
+			import com.incheck.common.ICNode;
+			
+			import mx.controls.Alert;
+			import mx.core.FlexGlobals;
+			import mx.events.ChildExistenceChangedEvent;
+			import mx.events.FlexEvent;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+
+
+			public var selectedHistoryChannel:ChannelWidget = null;
+
+			public var statusTabRefreshTime:Timer = new Timer(2000);
+
+			private var selectedNode:ICNode;
+
+			private var _started:Boolean = false;
+
+
+			private function onCreationComplete():void
+			{
+				IncheckModel.instance().registerLeft(this);
+				tabs.getTabAt(0).addEventListener(FlexEvent.BUTTON_DOWN, onBackTabClick);
+				tabs.enabled = true;
+
+				analysisWidgets.addEventListener(ChildExistenceChangedEvent.CHILD_ADD, updateLabelForAnalysis, false, 0, true);
+				scopeWidgets.addEventListener(ChildExistenceChangedEvent.CHILD_REMOVE, updateLabelForScope, false, 0, true);
+
+				statusTabRefreshTime.addEventListener(TimerEvent.TIMER, refreshStatusBarHandler, false, 0, true);
+				statusTabRefreshTime.start();
+				selectState();
+			}
+
+
+			public function showScopeTabs():void
+			{
+				if (tabs.enabled)
+				{
+					// Hide
+					tabs.getTabAt(1).visible = false;
+					tabs.getTabAt(1).includeInLayout = false;
+					tabs.getTabAt(2).visible = false;
+					tabs.getTabAt(2).includeInLayout = false;
+					// Show
+					tabs.getTabAt(3).visible = true;
+					tabs.getTabAt(3).includeInLayout = true;
+					tabs.getTabAt(3).width = 80;
+					tabs.getTabAt(4).visible = true;
+					tabs.getTabAt(4).includeInLayout = true;
+					tabs.getTabAt(4).width = 80;
+					tabs.selectedIndex = 3;
+					tabs.getTabAt(0).width = 38;
+				}
+			}
+
+
+			public function showAnalysisTabs():void
+			{
+				if (tabs.enabled)
+				{
+					// Hide
+					tabs.getTabAt(4).visible = false;
+					tabs.getTabAt(4).includeInLayout = false;
+					tabs.getTabAt(3).visible = false;
+					tabs.getTabAt(3).includeInLayout = false;
+					// Show
+					tabs.getTabAt(1).visible = true;
+					tabs.getTabAt(1).includeInLayout = true;
+					tabs.getTabAt(1).width = 80;
+					tabs.getTabAt(2).visible = true;
+					tabs.getTabAt(2).includeInLayout = true;
+					tabs.getTabAt(2).width = 80;
+					tabs.selectedIndex = 1;
+					tabs.getTabAt(0).width = 38;
+				}
+			}
+
+
+			public function showSetupTabs():void
+			{
+				if (tabs.enabled)
+				{
+					// Hide
+					tabs.getTabAt(2).visible = false;
+					tabs.getTabAt(2).includeInLayout = false;
+					tabs.getTabAt(3).visible = false;
+					tabs.getTabAt(3).includeInLayout = false;
+					tabs.getTabAt(4).visible = false;
+					tabs.getTabAt(4).includeInLayout = false;
+					// Show
+					tabs.getTabAt(1).visible = true;
+					tabs.getTabAt(1).includeInLayout = true;
+					tabs.getTabAt(1).width = 80;
+					tabs.selectedIndex = 1;
+					tabs.getTabAt(0).width = 38;
+				}
+			}
+
+
+			public function updateSelection(selWidget:ChannelWidget):void
+			{
+				var widgets:Array = getWidgets(analysisWidgets);
+				for each (var widg:ChannelWidget in widgets)
+				{
+					if (widg.selected && widg != selWidget)
+					{
+						widg.selected = false;
+					}
+				}
+				selWidget.selected = true;
+				IncheckModel.instance().selectedChannel = selWidget;
+			}
+
+
+			public function updateScopeSelection(selWidget:ChannelWidgetScope):void
+			{
+				var widgets:Array = getWidgets(scopeWidgets);
+				for each (var widg:ChannelWidgetScope in scopeWidgets)
+				{
+					if (widg.selected && widg != selWidget)
+					{
+						widg.selected = false;
+					}
+				}
+				selWidget.selected = true;
+				IncheckModel.instance().selectedScopeChannel = selWidget;
+			}
+
+
+			public function removeWidget(widget:ChannelWidget):void
+			{
+				if (analysisWidgets.getElementIndex(widget) >= 0)
+				{
+					analysisWidgets.removeElement(widget);
+				}
+				widget = null;
+			}
+
+
+			public function removeWidgetScope(widget:ChannelWidgetScope):void
+			{
+				if (scopeWidgets.getElementIndex(widget) >= 0)
+				{
+					scopeWidgets.removeElement(widget);
+				}
+				widget = null;
+			}
+
+
+			private function refreshStatusBarHandler(event:TimerEvent = null):void
+			{
+				var l:int = FlexGlobals.topLevelApplication.mainContent.channelsList.length;
+				if (!IncheckModel.instance().left || l == 0 /*  || currentState != "acquireState" */)
+				{
+					return;
+				}
+				IncheckModel.instance().getLastDeviceEvents();
+				if (!_started /*  && getWidgets(scopeWidgets).length == 0 */)
+				{
+					_started = true;
+					for (var i:int = 0; i < l; i++)
+					{
+						addScopeChannel(FlexGlobals.topLevelApplication.mainContent.channelsList.getItemAt(i) as ICNode);
+					}
+				}
+				if (IncheckModel.instance().autoRefresh && IncheckModel.instance().requestEnabled)
+				{
+					IncheckModel.instance().requestEnabled = false;
+					var children:Array = getWidgets(scopeWidgets);
+					for each (var widget:ChannelWidgetScope in children)
+					{
+						widget.doOneRefresh();
+					}
+				}
+			}
+
+
+			private function updateLabelForAnalysis(e:Event):void
+			{
+				navigationTab.invalidateDisplayList();
+				navigationTab.validateDisplayList();
+				//				selectedChannelsTab.label = "Off-Route (" + selectedChannelsBox.numChildren + ")";
+				//				setTimeout(updateLabelForDataViewBox1, 100);
+			}
+
+
+			private function updateLabelForScope(e:Event):void
+			{
+				quickViewTab.invalidateDisplayList();
+				quickViewTab.validateDisplayList();
+				//				selectedChannelsTab.label = "Off-Route (" + selectedChannelsBox.numChildren + ")";
+				//				setTimeout(updateLabelForDataViewBox1, 100);
+			}
+
+
+			private function updateLabelForDataViewBox1():void
+			{
+				//				selectedChannelsBox.label = "Off-Route (" + selectedChannelsBox.numChildren + ")";
+			}
+
+
+			private function updateLabelForHistoryViewBox(e:Event):void
+			{
+				//				selectedHistoryBox.invalidateDisplayList();
+				//				selectedHistoryBox.validateDisplayList();
+				//				selectedHistoryBox.label = "History (" + selectedHistoryBox.numChildren + ")";
+				//				setTimeout(selectedHistoryBox1, 100);
+			}
+
+
+			private function selectedHistoryBox1():void
+			{
+				//				selectedHistoryBox.label = "History (" + selectedHistoryBox.numChildren + ")";
+			}
+
+
+			public function getChannelImages(bitmap:BitmapData, childIndex:int, offset:Number):void
+			{
+				//				var cont:Container = widgetViewAccordion.getChildAt(childIndex) as Container;
+				var matrix:Matrix = new Matrix();
+				matrix.translate(offset + 20, 0);
+
+				var widgets:Array = IncheckModel.instance().getScopeWidgets();
+
+				for each (var widget:ChannelWidgetScope in widgets)
+				{
+					if (widget.showGraphOption.selected)
+					{
+						bitmap.draw(widget.toPrint as DisplayObject, matrix);
+						matrix.translate(0, widget.height + 10);
+					}
+				}
+			}
+
+
+			private function treeClicked(event:MouseEvent):void
+			{
+				if (tree.selectedIndex >= 0 && tree.selectedItem != null)
+				{
+					if (event.type == MouseEvent.CLICK)
+					{
+						// Node clicked
+						selectedNode = tree.selectedItem as ICNode;
+						if (selectedNode.type == TreeDataDescriptor.NODE_TYPE_CHANNEL)
+						{
+							// IncheckModel.instance().channelClicked(selectedNode);
+						}
+						else
+						{
+							if (tree.isItemOpen(tree.selectedItem))
+							{
+								tree.expandItem(tree.selectedItem, false);
+							}
+							else
+							{
+								tree.expandItem(tree.selectedItem, true);
+							}
+						}
+					}
+					if (event.type == MouseEvent.DOUBLE_CLICK)
+					{
+						if (selectedNode.type == TreeDataDescriptor.NODE_TYPE_CHANNEL)
+						{
+							channelClicked(selectedNode);
+						}
+						else if (selectedNode.type == TreeDataDescriptor.NODE_TYPE_MACHINE)
+						{
+							channelClicked(selectedNode);
+						}
+						else
+						{
+							if (!tree.isItemOpen(tree.selectedItem))
+							{
+								tree.expandChildrenOf(tree.selectedItem, true);
+							}
+						}
+					}
+				}
+				else
+				{
+					IncheckModel.instance().right.tabs.selectedIndex = 1;
+				}
+			}
+
+
+			public function channelClicked(node:ICNode):void
+			{
+				selectedNode = node;
+				if (node.type == TreeDataDescriptor.NODE_TYPE_CHANNEL)
+				{
+					if (node.state == -1)
+					{
+						return;
+					}
+					IncheckModel.instance().addChart(node, null);
+				}
+				else if (IncheckModel.instance().right.dashboardTab.visible)
+				{
+					if (node.state == -1)
+					{
+						return;
+					}
+				}
+				else if (node.type == TreeDataDescriptor.NODE_TYPE_CHANNEL)
+				{
+					IncheckModel.instance().getAlerts(node);
+				}
+				else if (node.type == TreeDataDescriptor.NODE_TYPE_CHANNEL)
+				{
+					IncheckModel.instance().addHistoryChart(node);
+					IncheckModel.instance().changeLeftTabSelectedIndex(1);
+					IncheckModel.instance().changeLeftAccordionSelectedIndex(1);
+				}
+			/* 				else if (IncheckModel.instance().right.daqSetup.visible && node.type == TreeDataDescriptor.NODE_TYPE_CHANNEL)
+							{
+								if (IncheckModel.instance().right.settingsNav.selectedIndex == 0)
+								{
+									var widget1:Settings1Widg;
+									var widget2:Settings2Widg;
+									var settingsWidgetNode:ICNode;
+									for each (var eachOne:Object in IncheckModel.instance().right.specConfig.getChildren())
+									{
+										if (eachOne is Settings1Widg)
+										{
+											widget1 = eachOne as Settings1Widg;
+											settingsWidgetNode = Settings1Widg(widget1).myNode as ICNode;
+											if (settingsWidgetNode.id == node.id)
+											{
+												return;
+											}
+										}
+										if (eachOne is Settings2Widg)
+										{
+											widget2 = eachOne as Settings2Widg;
+											settingsWidgetNode = widget2.myNode as ICNode;
+											if (settingsWidgetNode.id == node.id)
+											{
+												return;
+											}
+										}
+									}
+									// spectrum config widget for dynamic sensors
+									if (node.channelType == 1)
+									{
+										var setw:Settings1Widg = new Settings1Widg();
+										setw.initialize();
+										setw.setNode(node);
+										setw.channelName.text = node.name;
+										IncheckModel.instance().right.specConfig.addChild(setw);
+										IncheckModel.instance().right.specConfig.validateNow();
+										IncheckModel.instance().right.specConfig.validateDisplayList();
+										IncheckModel.instance().right.specConfig.invalidateDisplayList();
+										IncheckModel.instance().right.specConfig.validateDisplayList();
+										if (IncheckModel.instance().SpectrumConfigApplyToAllmodeOn)
+										{
+											IncheckModel.instance().applySameSettingsToTheRestOfSpectrumConfigWIdgets();
+											setw.disableMe();
+										}
+									}
+									// settings widget for static sensors
+									if (node.channelType == 2)
+									{
+										var setw2:Settings2Widg = new Settings2Widg();
+										IncheckModel.instance().right.specConfig.addChild(setw2);
+										setw2.setNode(node);
+										setw2.channelName.text = node.name;
+									}
+								}
+							}
+			 */
+			}
+
+
+			public function addScopeChannel(node:ICNode):void
+			{
+				selectedNode = node;
+				if (node.type == TreeDataDescriptor.NODE_TYPE_CHANNEL)
+				{
+					if (node.state == -1)
+					{
+						return;
+					}
+					addChartScope(node, null);
+				}
+				else if (IncheckModel.instance().right.dashboardTab.visible)
+				{
+					if (node.state == -1)
+					{
+						return;
+					}
+				}
+			/* 				else if (IncheckModel.instance().right.routeSetup.visible && node.type == TreeDataDescriptor.NODE_TYPE_CHANNEL)
+							{
+								if (IncheckModel.instance().right.settingsNav.selectedIndex == 0)
+								{
+									for each (var eachOne:Object in IncheckModel.instance().right.specConfig.getChildren())
+									{
+										if (eachOne is Settings1Widg)
+										{
+											if ((eachOne as Settings1Widg).myNode.id == node.id)
+											{
+												return;
+											}
+										}
+										if (eachOne is Settings2Widg)
+										{
+											if ((eachOne as Settings2Widg).myNode.id == node.id)
+											{
+												return;
+											}
+										}
+									}
+									// spectrum config widget for dynamic sensors
+									if (node.channelType == 1)
+									{
+										var setw:Settings1Widg = new Settings1Widg();
+										setw.initialize();
+										setw.setNode(node);
+										setw.channelName.text = node.name;
+										IncheckModel.instance().right.specConfig.addChild(setw);
+										IncheckModel.instance().right.specConfig.validateNow();
+										IncheckModel.instance().right.specConfig.validateDisplayList();
+										IncheckModel.instance().right.specConfig.invalidateDisplayList();
+										IncheckModel.instance().right.specConfig.validateDisplayList();
+										if (IncheckModel.instance().SpectrumConfigApplyToAllmodeOn)
+										{
+											IncheckModel.instance().applySameSettingsToTheRestOfSpectrumConfigWIdgets();
+											setw.disableMe();
+										}
+									}
+									// settings widget for static sensors
+									if (node.channelType == 2)
+									{
+										var setw2:Settings2Widg = new Settings2Widg();
+										IncheckModel.instance().right.specConfig.addChild(setw2);
+										setw2.setNode(node);
+										setw2.channelName.text = node.name;
+									}
+								}
+							}
+			 */
+			}
+
+
+			public function addChartScope(node:ICNode, dt:Date):void
+			{
+				if (((dt != null) && node.processedDataKeysString.contains("Recent Trend")) || (node.channelType == Constants.STATIC_CHANNEL))
+				{
+					Alert.show("Cannot add this type of channel to the Scope window")
+					return;
+				}
+
+				var isFromHistory:Boolean = (dt ? true : false);
+				var w:ChannelWidgetScope = new ChannelWidgetScope();
+				w.setNode(node, isFromHistory ? ChannelWidgetScope.HIST_DATA : ChannelWidgetScope.LATEST_DATA, dt);
+				w.fromHistory = isFromHistory;
+				scopeWidgets.addElement(w);
+				updateScopeSelection(w);
+				scopeWidgets.validateNow();
+				w.showGraphOption.selected = true;
+			}
+
+
+			private function onBackTabClick(event:FlexEvent = null):void
+			{
+				if (event)
+				{	
+					event.stopImmediatePropagation();
+				}	
+				tabs.focusManager = FlexGlobals.topLevelApplication.focusManager;
+				FlexGlobals.topLevelApplication.mainContent.currentState = "splashState";
+			}
+
+
+			private function treeNodeTooltip(data:ICNode):String
+			{
+				return (data.incomingDataTimestamp ? dateFormatter.format(data.incomingDataTimestamp) : null);
+			}
+
+
+			private function getWidgets(container:DisplayObjectContainer):Array
+			{
+				var widgets:Array = new Array();
+				var l:int = container.numChildren;
+				for (var i:int = 0; i < l; i++)
+				{
+					widgets.push(container.getChildAt(i));
+				}
+				return widgets;
+			}
+
+
+			protected function playClick(event:MouseEvent):void
+			{
+				IncheckModel.instance().enableRequest();
+				IncheckModel.instance().autoRefresh = true;
+			}
+
+
+			protected function pauseClick(event:MouseEvent):void
+			{
+				IncheckModel.instance().autoRefresh = false;
+			}
+
+
+			protected function saveClick(event:MouseEvent):void
+			{
+//				IncheckModel.instance().saveLocalData();
+				/* Save channel data to webservice */
+				httpService.contentType = "application/json";
+				httpService.send(IncheckModel.instance().encodeChannelDataToJSON(IncheckModel.instance().getSelectedChannelWidget()));
+				/* Test JSON data */
+//				httpService.send("{'MESSAGE_TYPE':'DATA','PROTOCOL_VERSION':'1.0','DEVICE_ID':'0','TIMESTAMP':'111111','DEVICE_CHANNEL_ID':'1000','SAMPLING_RATE':'60000','RPM':'1000','SAMPLE_SIZE':'0','DATA':[],'UNIT':0}");
+			}
+
+
+			protected function discardClick(event:MouseEvent):void
+			{
+//				IncheckModel.instance().loadLocalData();
+			}
+
+
+			private function onWebServiceSaveResult(event:ResultEvent):void
+			{
+				Alert.show(event.result.toString(), event.message.toString());
+			}
+
+
+			private function onWebServiceSaveFault(event:FaultEvent):void
+			{
+				Alert.show(event.fault.faultDetail, event.fault.faultString);
+			}
+
+
+			protected function showSplashBtnClick(event:MouseEvent):void
+			{
+				FlexGlobals.topLevelApplication.mainContent.currentState = "splashState";
+			}
+
+
+			protected function onStateChangeComplete(event:FlexEvent):void
+			{
+				selectState();
+			}
+
+
+			private function selectState():void
+			{
+				if (tabs.enabled)
+				{
+					switch (currentState)
+					{
+						case "acquireState":
+						{
+							showScopeTabs();
+							FlexGlobals.topLevelApplication.mainContent.currentState = "splashState";
+							FlexGlobals.topLevelApplication.mainContent.currentState = "acquireState";
+							break;
+						}
+						case "analyseState":
+						{
+							showAnalysisTabs();
+							FlexGlobals.topLevelApplication.mainContent.currentState = "splashState";
+							FlexGlobals.topLevelApplication.mainContent.currentState = "analyseState";
+							break;
+						}
+						case "setupState":
+						{
+							showSetupTabs();
+							FlexGlobals.topLevelApplication.mainContent.currentState = "splashState";
+							FlexGlobals.topLevelApplication.mainContent.currentState = "setupState";
+							break;
+						}
+					}
+				}
+			}
+
+		]]>
+	</fx:Script>
+
+
+	<s:states>
+
+		<s:State name="splashState" />
+
+		<s:State name="acquireState" />
+
+		<s:State name="analyseState" />
+
+		<s:State name="setupState" />
+
+	</s:states>
+
+
+	<mx:TabNavigator id="tabs"
+					 paddingTop="5"
+					 width="100%" height="100%"
+					 creationPolicy="all" enabled="false"
+					 horizontalAlign="left" borderStyle="inset" borderColor="#555555">
+
+		<s:NavigatorContent icon="@Embed('/assets/back.png')" styleName="btnBack" />
+
+		<!-- Navigation Tab -->
+		<s:NavigatorContent label="Navigation">
+
+			<s:VGroup id="navigationTab"
+					  y="0"
+					  width="100%" height="100%">
+
+				<ns1:StructureTree id="tree"
+								   width="100%" height="100%"
+								   dataProvider="{FlexGlobals.topLevelApplication.mainContent.channelsList}"
+								   doubleClickEnabled="true" labelField="name"
+								   borderVisible="false" dataTipFunction="treeNodeTooltip" dropShadowVisible="false" iconFunction="StructureTree.icIconFunction" itemRenderer="com.incheck.TreeRenderer" showDataTips="true" tabChildren="true"
+								   click="treeClicked(event)" />
+
+			</s:VGroup>
+
+		</s:NavigatorContent>
+
+
+		<s:NavigatorContent label="Data Sets">
+
+			<s:VGroup id="dataSetsTab"
+					  width="100%" height="100%"
+					  gap="0">
+
+				<s:VGroup id="analysisWidgets"
+						  paddingLeft="5" paddingRight="5"
+						  width="100%" height="100%" />
+
+			</s:VGroup>
+
+		</s:NavigatorContent>
+
+
+		<s:NavigatorContent label="Acquire">
+
+			<s:VGroup id="quickViewTab"
+					  width="100%" height="100%"
+					  gap="0">
+
+				<s:VGroup id="scopeWidgets"
+						  paddingLeft="5" paddingRight="5"
+						  width="100%" height="100%" />
+
+				<s:VGroup paddingLeft="5" paddingRight="5" paddingBottom="5"
+						  width="100%">
+
+					<s:BorderContainer width="100%"
+									   backgroundColor="#eeeeee" borderColor="#dddddd" borderStyle="solid" cornerRadius="2">
+
+						<s:VGroup paddingLeft="10" paddingRight="10" paddingTop="10" paddingBottom="10"
+								  width="100%" height="100%"
+								  gap="8">
+
+							<s:Label text="DAQ Settings"
+									 fontSize="18" fontWeight="bold" />
+
+							<s:Label text="Fmax"
+									 fontSize="15" fontWeight="bold" />
+
+							<s:Label text="Lines"
+									 fontSize="15" fontWeight="bold" />
+
+							<s:Label text="Averaging"
+									 fontSize="15" fontWeight="bold" />
+
+							<s:Label text="No of Averages"
+									 fontSize="15" fontWeight="bold" />
+
+						</s:VGroup>
+
+					</s:BorderContainer>
+
+					<s:Group height="20" />
+
+					<s:HGroup width="100%">
+
+						<s:Button id="btnPlay"
+								  width="50%" height="35"
+								  enabled="{!IncheckModel.instance().autoRefresh}" styleName="btnPlay"
+								  skinClass="com.incheck.components.skins.ButtonSkin"
+								  alpha="{IncheckModel.instance().autoRefresh ? 0.5 : 1}"
+								  click="playClick(event)" />
+
+						<s:Button id="btnPause"
+								  width="50%" height="35"
+								  enabled="{IncheckModel.instance().autoRefresh}" styleName="btnPause"
+								  skinClass="com.incheck.components.skins.ButtonSkin"
+								  alpha="{IncheckModel.instance().autoRefresh ? 1 : 0.5}"
+								  click="pauseClick(event)" />
+
+					</s:HGroup>
+
+					<s:HGroup width="100%">
+
+						<s:Button width="50%" height="35"
+								  label="Save"
+								  click="saveClick(event)" />
+
+						<s:Button width="50%" height="35"
+								  label="Discard"
+								  click="discardClick(event)" />
+
+					</s:HGroup>
+
+					<s:BitmapImage source="assets/logo_GUI4.png"
+								   horizontalCenter="0" />
+
+				</s:VGroup>
+
+			</s:VGroup>
+
+		</s:NavigatorContent>
+
+
+		<s:NavigatorContent label="Point">
+
+			<s:VGroup id="daqTab"
+					  width="100%" height="100%">
+
+			</s:VGroup>
+
+		</s:NavigatorContent>
+
+	</mx:TabNavigator>
+
+</s:Group>

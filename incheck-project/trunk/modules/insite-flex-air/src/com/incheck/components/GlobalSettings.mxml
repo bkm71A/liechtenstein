@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		  xmlns:s="library://ns.adobe.com/flex/spark"
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  width="100%" height="100%"
+		  creationComplete="onCreationComplete(event)">
+	
+	<fx:Script>
+		<![CDATA[
+			
+			import com.incheck.IncheckModel;
+			import com.incheck.common.GlobalSettingsValues;
+			
+			import mx.events.FlexEvent;
+
+
+			protected function onCreationComplete(event:FlexEvent):void
+			{
+				rotationSpreed.text = GlobalSettingsValues.rotationSpeed + "";
+			}
+
+		]]>
+	</fx:Script>
+
+	<s:layout>
+		<s:FormItemLayout>
+			<s:constraintRows>
+				<s:ConstraintRow id="row1" />
+				<s:ConstraintRow id="row2" baseline="maxAscent:5"/>
+				<s:ConstraintRow id="row3" baseline="30"/>
+			</s:constraintRows>
+		</s:FormItemLayout>
+	</s:layout>	
+
+	<s:Form id="defaultSettingsForm">
+		
+
+		<s:FormItem label="Rotation speed, RPM">
+			
+			<s:TextInput id="rotationSpreed"
+						 text="1750" />
+			
+		</s:FormItem>
+	
+		<s:FormItem label="Default file name (when save PDF/CSV)">
+			
+			<s:TextInput id="defaultFileName"
+						 text="{IncheckModel.instance().defaultFileName}" />
+			
+		</s:FormItem>
+	
+	</s:Form>
+		
+</s:Group>

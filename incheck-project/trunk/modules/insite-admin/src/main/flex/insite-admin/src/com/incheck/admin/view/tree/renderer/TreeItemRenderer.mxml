@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script><![CDATA[
+        import com.incheck.admin.model.TreeNode;
+
+        [Bindable("dataChange")]
+        public function get model() : TreeNode {
+            return data as TreeNode;
+        }
+        ]]></mx:Script>
+    <mx:Image />
+    <mx:Label text="{model.name}" />
+</mx:HBox>

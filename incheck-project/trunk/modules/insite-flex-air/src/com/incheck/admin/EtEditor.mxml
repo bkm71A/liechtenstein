@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" creationComplete="create()"
+		   label="Old Threshold Settings">
+<fx:Script>
+	<![CDATA[
+		import com.incheck.IncheckModel;
+		import com.incheck.common.ICNode;
+		import com.incheck.components.RightNavigator;
+		
+		import mx.binding.utils.BindingUtils;
+		import mx.collections.ArrayCollection;
+		import mx.controls.Alert;
+		import mx.controls.ComboBox;
+		import mx.controls.List;
+		import mx.controls.TextInput;
+		import mx.core.Application;
+		import mx.events.AdvancedDataGridEvent;
+		import mx.events.ListEvent;
+		import mx.events.ValidationResultEvent;
+		import mx.rpc.events.FaultEvent;
+		import mx.rpc.events.ResultEvent;
+		import mx.rpc.remoting.RemoteObject;
+		import mx.validators.ValidationResult;
+		import mx.validators.Validator;
+				
+		[Bindable]
+		private var allowAddEventThreshold:Boolean;
+		
+		[Bindable]
+		private var allowAddDeliveryPath:Boolean;
+		
+		[Bindable]
+		private var dsm:ArrayCollection;
+		
+		[Bindable]
+		private var severity:ArrayCollection;
+		
+		[Bindable]
+		private var delOpt:ArrayCollection;
+		
+		[Bindable]
+		private static var currentEventTrId:String;
+
+		[Bindable]
+		private var selectedNode:ICNode;
+		private var nv:NumberValidator = new NumberValidator();
+		private var focussedFormControl:DisplayObject;
+
+		private function create():void {
+			BindingUtils.bindSetter(selectedNodeChanged,IncheckModel.instance(),"selectedNode");
+		}
+		
+		
+		private function selectedNodeChanged(node:ICNode):void{
+			if((IncheckModel.instance().right as RightNavigator).settingsNav != null && IncheckModel.instance().right.settingsNav.selectedIndex==1){
+				if (null != node){ 
+					if(node.type=="Channel"){
+						dsm=new ArrayCollection();
+						delOpt=new ArrayCollection();
+						selectedNode=node;
+						getDataSources(node.channelid);
+					
+					}
+				}
+			}
+		}
+
+		private function populateSeverity():void{
+			severity = new ArrayCollection;
+			severity.addItem(1);
+			severity.addItem(2);
+		}
+		
+		private function faultHandler(fault:FaultEvent):void{
+			Alert.show("Fault=" + fault);
+		}
+		
+		private function getDataSources(chanId:Number):void{
+			getConfiguredEventresholds(chanId);
+			populateSeverity();
+		}
+		
+		private function getConfiguredEventresholds(chanId:Number):void{	
+			var ro:RemoteObject = new RemoteObject("icNodes");
+			ro.addEventListener(ResultEvent.RESULT, popResult);
+			ro.addEventListener(FaultEvent.FAULT, faultHandler);
+			ro.getEventThresholds(chanId);
+		}
+		
+
+		private function popResult(results:ResultEvent):void{
+				dsm=results.result as ArrayCollection;
+		}
+		
+    	private function whatToDo(event:ListEvent, grid:AdvancedDataGrid):void{
+	   		var colName:String = grid.columns[event.columnIndex].dataField;
+	   		var eId:int = event.itemRenderer.data.event_tr_id;
+	   		trace("what called");
+	   		if (grid.id == 'configuredEventsGrid'){
+				if (colName == 'deleteET'){
+    				deleteEventThreshold(eId);
+    			}
+    			displayDeliveryPath(event, grid);   			
+	   		}
+	   		
+	   		if (grid.id == 'deliveryGridId'){
+	   			if (colName == 'deleteDP'){
+    				var dId:int = event.itemRenderer.data.deliveryId;
+    				deleteDeliveryPath(dId, currentEventTrId);
+    			}	
+	   		}
+      	}
+      
+      	private function deleteEventThreshold(eId:int):void{
+      		var ro:RemoteObject = new RemoteObject("icNodes");
+			ro.addEventListener(FaultEvent.FAULT, faultHandler);
+			ro.addEventListener(ResultEvent.RESULT, genericAlert);
+			ro.deleteEventTreshold(selectedNode.channelid,eId);
+			selectedNodeChanged(selectedNode);
+      	}
+      	
+      	private function deleteDeliveryPath(dId:int, eId:String):void{
+      		var ro:RemoteObject = new RemoteObject("icNodes");
+			ro.addEventListener(FaultEvent.FAULT, faultHandler);
+			ro.addEventListener(ResultEvent.RESULT, genericAlert);
+			ro.deleteDeliveryPath(eId, dId);
+			selectedNodeChanged(selectedNode);
+      	}
+    	
+    	private  function displayDeliveryPath(event:ListEvent, grid:AdvancedDataGrid):void{
+    		delOpt = event.itemRenderer.data.deliveryPathList as ArrayCollection;
+    		currentEventTrId = event.itemRenderer.data.event_tr_id;
+    	}
+    	
+    	private function addEventThreshold(channelId:String, lowerLimit:String, upperLimit:String, severity:String):void{
+ 			var ll:Number = new Number(lowerLimit);
+ 			var ul:Number = new Number(upperLimit);
+			var ro:RemoteObject = new RemoteObject("icNodes");
+			ro.addEventListener(FaultEvent.FAULT, faultHandler);
+			ro.addEventListener(ResultEvent.RESULT, genericAlert);
+			ro.addEventThreshold(channelId, "RMS", ll, ul, severity);
+    		
+    		selectedNodeChanged(selectedNode);
+    	}
+    	
+    	private function addDeliveryPath(eventTrId:String, deliveryName:String, deliveryAddress:String, deliveryNotes:String):void{
+				var ro:RemoteObject = new RemoteObject("icNodes");
+				ro.addEventListener(FaultEvent.FAULT, faultHandler);
+				ro.addEventListener(ResultEvent.RESULT, genericAlert);
+				ro.addDeliveryPath(eventTrId, deliveryName, deliveryAddress, deliveryNotes, 0, 0);
+				deliveryGridId.invalidateDisplayList();
+				deliveryGridId.invalidateList();
+				deliveryGridId.validateNow();
+   			
+   				selectedNodeChanged(selectedNode);
+			
+    	}
+    	private function genericAlert(result:ResultEvent):void{
+    		Alert.show(result.result.message);
+    	}
+    	
+    	private function validateAddDeliveryOption(event:Event):void{
+    		 focussedFormControl = event.target as DisplayObject;
+    		 allowAddDeliveryPath=true;
+    		 validate(emailValidator);
+    		 validate(deliveryNameValidator);
+    	}
+    	
+    	private function validateAddThresholdOption(event:Event):void{
+    		 focussedFormControl = event.target as DisplayObject;
+    		 allowAddEventThreshold=true;
+    		 validate(lowerLimitValidator);
+    		 validate(upperLimitValidator);
+    		 validateUpperLower(event);
+     	}
+    	
+    	private function validateUpperLower(event:Event):void{
+ 			var ll:Number = new Number(lowertext.text);
+ 			var ul:Number = new Number(uppertext.text);
+ 			
+    		if (ul <= ll){
+    			uppertext.errorString=null;
+    			lowertext.errorString="Lower Limit should be lower then upper limit";
+    			allowAddEventThreshold=false;
+    		}else{
+				uppertext.errorString=null;
+				lowertext.errorString=null;
+    		}
+    	}
+    	
+    	private function validate(validator:Validator):Boolean {                
+                var validatorSource:DisplayObject = validator.source as DisplayObject;
+                var suppressEvents:Boolean = (validatorSource != focussedFormControl);
+                var event:ValidationResultEvent = validator.validate(null, suppressEvents); 
+                var currentControlIsValid:Boolean = (event.type == ValidationResultEvent.VALID);
+                allowAddEventThreshold = allowAddEventThreshold && currentControlIsValid;
+                allowAddDeliveryPath = allowAddDeliveryPath && currentControlIsValid;
+                 
+                return currentControlIsValid;
+       }
+       
+       	private function maintainFocus():void{
+   			configuredEventsGrid.editedItemPosition = null;
+		}
+		
+       private function changeThreshBounds(event:AdvancedDataGridEvent, grid:AdvancedDataGrid):void{
+       		var colName:String = grid.columns[event.columnIndex].dataField;
+       		var allowEdit:Boolean= false;
+       		var sev:int = event.itemRenderer.data.severity;
+			var newData:String = TextInput(event.currentTarget.itemEditorInstance).text;
+			var dataField:String = event.dataField;
+			var fCell:Array=[event.columnIndex,event.rowIndex];
+			var upper:Number;
+			var lower:Number;
+			
+			var uVal:NumberValidator = new NumberValidator();
+				uVal.source = event.currentTarget.itemEditorInstance;
+				uVal.property = "text";
+			
+			var lVal:NumberValidator = new NumberValidator();
+				lVal.source = event.currentTarget.itemEditorInstance;
+				lVal.property = "text";
+			
+			var val:*;
+			
+			if (dataField == 'event_tr_upper_bound'){
+  				upper = new Number(newData);
+   				lower = new Number(event.itemRenderer.data.event_tr_lower_bound);
+   				val= uVal.validate(upper);
+
+   				if (val.type =='valid'){
+   					event.preventDefault();
+					updateThresholdValues(selectedNode.channelid, sev, "RMS", lower, upper);
+   				}else{
+   					callLater(maintainEdit, fCell);
+   				}
+			}
+		
+			if (dataField == 'event_tr_lower_bound'){				
+  				lower = new Number(newData);
+   				upper = new Number(event.itemRenderer.data.event_tr_upper_bound);
+   				val = lVal.validate(lower);
+   				if (val.type =='valid'){
+   					event.preventDefault();
+					updateThresholdValues(selectedNode.channelid, sev, "RMS", lower, upper);
+   				}else{
+   					callLater(maintainEdit, fCell);
+   				}								
+			}
+      }
+      
+      private function maintainEdit(colIndex:int,rowIndex:int):void {
+			var editCell:Object = {columnIndex:colIndex, rowIndex: rowIndex};
+			if(configuredEventsGrid.editedItemPosition==null){
+   			configuredEventsGrid.editedItemPosition = editCell;
+			callLater(validateCurrentEditor);
+   		}
+  	 }
+  	
+  	
+  	  private function maintainEmailEdit(colIndex:int,rowIndex:int):void {
+			var editCell:Object = {columnIndex:colIndex, rowIndex: rowIndex};
+			if(deliveryGridId.editedItemPosition==null){
+   			deliveryGridId.editedItemPosition = editCell;
+			callLater(validateCurrentEditorDel);
+   		}
+  	 }
+  	 
+  	 private function validateCurrentEditorDel():void {
+			if(deliveryGridId.itemEditorInstance!=null){
+		    	nv.source = deliveryGridId.itemEditorInstance; 
+		    	nv.property= "text"; 				
+   				nv.validate();
+   		    }
+  	    }
+  	 
+  		private function validateCurrentEditor():void {
+			if(configuredEventsGrid.itemEditorInstance!=null){
+		    	nv.source = configuredEventsGrid.itemEditorInstance;  				
+   				nv.validate();
+   		    }
+  	    }
+      
+      	private function checkIt(myEvent:Event):void{			
+			//configuredEventsGrid.invalidateList();
+		}
+      
+      private function updateThresholdValues(channelId:int, severity:int, type:String, lower:Number, upper:Number):void{
+      	var ro:RemoteObject = new RemoteObject("icNodes");
+		ro.updateThresholdValue(channelId, severity, type, lower, upper);
+      }
+      
+      private function updateEmailAndNotes(deliveryPathId:int, emailAddress:String, notes:String):void{
+      	var ro:RemoteObject = new RemoteObject("icNodes");
+		ro.modifyDeliveryPath(deliveryPathId, emailAddress, notes);
+      }
+      
+       private function modifyDeliveryPath(event:AdvancedDataGridEvent, grid:AdvancedDataGrid):void{
+       		var colName:String = grid.columns[event.columnIndex].dataField;
+			var newData:String = TextInput(event.currentTarget.itemEditorInstance).text;
+			var dataField:String = event.dataField;       				
+       		var allowEdit:Boolean= false;
+       		var fCell:Array=[event.columnIndex,event.rowIndex];
+  			var val:*;
+			
+			if (dataField == 'deliveryAddress'){
+  				var eVal:EmailValidator = new EmailValidator();
+				eVal.source = event.currentTarget.itemEditorInstance;
+				eVal.property = "text";
+				val= eVal.validate(newData);
+
+   				if (val.type =='valid'){
+   					event.preventDefault();
+					updateEmailAndNotes(event.itemRenderer.data.deliveryId, newData, event.itemRenderer.data.deliveryNotes);
+					create();
+					
+   				}else{
+   					callLater(maintainEmailEdit, fCell);
+   				}
+			}
+			
+			if (dataField == 'deliveryNotes'){
+					event.preventDefault();
+					updateEmailAndNotes(event.itemRenderer.data.deliveryId, event.itemRenderer.data.deliveryAddress, newData);
+					create();
+			} 
+       }  
+		
+	]]>
+</fx:Script>
+
+	<mx:NumberValidator id="lowerLimitValidator" source="{lowertext}" property="text"/>
+	<mx:NumberValidator id="upperLimitValidator" source="{uppertext}" property="text"/>
+
+	<fx:StringValidator id="deliveryNameValidator" source="{delnametext}" property="text" minLength="1" required="true"/>
+	<mx:EmailValidator id="emailValidator" source="{emailtext}" property="text" required="true" />
+		
+		
+	<mx:Label text="{selectedNode.name}" x="10" y="0"/>
+	<mx:ApplicationControlBar x="10" y="10" width="60%">
+	<mx:AdvancedDataGrid x="10" y="25"
+		 id="configuredEventsGrid"
+		 designViewDataType="flat"
+		 dataProvider="{dsm}"
+		 editable="true"
+		 selectable="true"
+		 change="checkIt(event)"
+		 itemEditEnd="changeThreshBounds(event,configuredEventsGrid);"
+		 itemClick="whatToDo(event, configuredEventsGrid);"
+		 width="100%"
+		  >
+		<mx:columns>
+			<mx:AdvancedDataGridColumn headerText="Severity" dataField="severity" editable="false" itemRenderer="mx.controls.Label"/>
+			<mx:AdvancedDataGridColumn headerText="Overall Type" editable="false" dataField="overall_tr_type"/>
+			<mx:AdvancedDataGridColumn headerText="Lower Limit" dataField="event_tr_lower_bound" editable="true" itemRenderer="mx.controls.TextInput" rendererIsEditor="true" editorDataField="text"/>
+			<mx:AdvancedDataGridColumn headerText="Upper Limit" dataField="event_tr_upper_bound" editable="true" itemRenderer="mx.controls.TextInput" rendererIsEditor="true" editorDataField="text"/>
+			<mx:AdvancedDataGridColumn headerText="Option" dataField="deleteET">
+			<mx:itemRenderer>
+				<fx:Component><mx:Button label="delete"/></fx:Component>
+			</mx:itemRenderer>
+			</mx:AdvancedDataGridColumn>
+		</mx:columns>
+	</mx:AdvancedDataGrid>
+	</mx:ApplicationControlBar>
+	
+	<mx:Label x="10" y="232" text="Create new Event Threshold"/>
+	
+	<mx:ApplicationControlBar x="10" y="250" width="60%">	
+	<mx:Label x="111" y="250" text="Overall"/>
+	
+	<mx:Label x="413" y="250" text="Severity"/>
+	<mx:ComboBox x="413" y="272" width="50" dataProvider="{severity}" name="severityCombo" id="severcbo"  change="validateAddThresholdOption(event)" />
+		
+	<mx:Label x="211" y="250" text="Lower Limit"/>
+	<mx:TextInput x="211" y="272" width="50" name="lowerLimitText" id="lowertext" change="validateAddThresholdOption(event)"/>
+	
+	<mx:Label x="310" y="250" text="Upper Limit"/>
+	<mx:TextInput x="310" y="272" width="50" name="upperLimitText" id="uppertext" change="validateAddThresholdOption(event)"/>
+	
+	<mx:Button x="513" y="271" label="Add" width="100" enabled="{allowAddEventThreshold}"
+		 click="addEventThreshold(selectedNode.channelid.toString(), lowertext.text, uppertext.text, severcbo.text)"/>
+	</mx:ApplicationControlBar>
+
+	<mx:ApplicationControlBar x="10" y="319" width="60%">
+	<mx:AdvancedDataGrid x="10" y="350" 
+		designViewDataType="flat" 
+		id="deliveryGridId" 
+		name="deliveryGrid" 
+		width="100%"
+		editable="true"
+		selectable="true"
+		itemEditEnd="modifyDeliveryPath(event,deliveryGridId);"
+		itemClick="whatToDo(event, deliveryGridId)"
+		dataProvider="{delOpt}">
+		<mx:columns>
+			<mx:AdvancedDataGridColumn headerText="Delivery Name" dataField="deliveryName" editable="false"/>
+			<mx:AdvancedDataGridColumn headerText="Email Address" dataField="deliveryAddress" itemRenderer="mx.controls.TextInput" editable="true" rendererIsEditor="true" editorDataField="text"/>
+			<mx:AdvancedDataGridColumn headerText="Notes" dataField="deliveryNotes" itemRenderer="mx.controls.TextInput" editable="true" rendererIsEditor="true" editorDataField="text"/>
+			<mx:AdvancedDataGridColumn headerText="Option" dataField="deleteDP" editable="false">
+			<mx:itemRenderer>
+				<fx:Component><mx:Button label="delete"></mx:Button></fx:Component>
+			</mx:itemRenderer>
+			</mx:AdvancedDataGridColumn>
+		</mx:columns>
+	</mx:AdvancedDataGrid>
+
+</mx:ApplicationControlBar>
+
+<mx:Label x="10" y="524" text="Create new Delivery Option"/>
+<mx:ApplicationControlBar x="10" y="544" width="60%">
+	<mx:Label x="10" y="544" text="Delivery Name"/>
+	<mx:TextInput x="10" y="564" width="100" id="delnametext" change="validateAddDeliveryOption(event)"/>
+		
+	<mx:Label x="460" y="544" text="Email"/>
+	<mx:TextInput x="460" y="564" width="100" id="emailtext" change="validateAddDeliveryOption(event)"/>
+	
+	<mx:Label x="610" y="544" text="Notes"/>
+	<mx:TextInput x="610" y="564" width="100" id="notestext"/>
+	
+	<mx:Button x="760" y="564" width="100" label="Add" enabled="{allowAddDeliveryPath}" click="addDeliveryPath(currentEventTrId, delnametext.text, emailtext.text, notestext.text)"/>
+		
+	</mx:ApplicationControlBar>
+</s:Group>

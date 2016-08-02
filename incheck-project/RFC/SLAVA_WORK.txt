@@ -1,0 +1,82 @@
+           addRecentOverallsTrend( channelState, overallsRecentTrendRMSVel, dynData14.getOveralls(),
+                                        OverallLevels.KEY_VEL_RMS, ProcessedData.KEY_OVRL_TREND_VEL_RMS,
+                                        overallsRecentTrendLblRMSVel, startTime );
+
+                addRecentOverallsTrend( channelState, overallsRecentTrendPeakVel, dynData14.getOveralls(),
+                                        OverallLevels.KEY_VEL_PEAK, ProcessedData.KEY_OVRL_TREND_VEL_PEAK,
+                                        overallsRecentTrendLblPeakVel, startTime );
+                                        
+             addRecentOverallsTrend( channelState, overallsRecentTrendRMSAccel, dynData14.getOveralls(),
+                                        OverallLevels.KEY_ACCEL_RMS, ProcessedData.KEY_OVRL_TREND_ACC_RMS,
+                                        overallsRecentTrendLblRMSAccel, startTime );
+
+                addRecentOverallsTrend( channelState, overallsRecentTrendPeakAccel, dynData14.getOveralls(),
+                                        OverallLevels.KEY_ACCEL_PEAK, ProcessedData.KEY_OVRL_TREND_ACC_PEAK,
+                                        overallsRecentTrendLblPeakAccel, startTime );
+
+
+com.inchecktech.dpm.dsp.AdjustmentFactorFreq
+
+Frequency Adjustment Factor
+Frequency Adjustment Factor
+1.0
+----------------------------
+com.inchecktech.dpm.dam.AdjustmentFactorGain
+Gain Adjustment Factor
+Gain Adjustment Factor
+1.0
+----------------------------
+com.inchecktech.dpm.dsp.ChannelPrimaryEngineeringUnits
+Primary channel engineering units
+Primary channel engineering units
+T
+------------------------------
+select	property_id
+	,	channel_id
+	,	default_value
+	,	config_value
+	,	run_value
+from	insite_existing.config_properties_channels
+where property_id=105
+
+select	property_id
+	,	group_id
+	,	property_name
+	,	config_type_id
+	,	description
+	,	unit_id
+	,	default_value
+	,	config_value
+	,	run_value
+	,	usr_control_level
+	,	data_type
+from	insite_existing.config_properties
+where property_name='com.inchecktech.dpm.dsp.overallsSubType'
+
+SELECT cp.PROPERTY_NAME as CHANNEL_KEY,
+			 cc.CONFIG_VALUE as CHANNEL_VALUE,
+			 cp.DATA_TYPE, cp.DESCRIPTION,
+			 cc.DEFAULT_VALUE,
+			 cp.PROPERTY_ID,
+			 cg.*,
+			 u.UNIT_ID,
+			 ct.CONFIG_TYPE_ID,
+			 ct.TYPE_NAME as CONFIG_TYPE_NAME,
+			 ct.DESCRIPTION as CONFIG_TYPE_DESCRIPTION
+			 FROM insite_existing.CONFIG_PROPERTIES cp,
+			 insite_existing.CONFIG_PROPERTIES_CHANNELS cc,
+			 insite_existing.CHANNEL c, insite_existing.CONFIG_GROUPS cg,
+			 insite_existing.CONFIG_TYPES ct, insite_existing.UNITS u
+			 WHERE cp.PROPERTY_ID=cc.PROPERTY_ID
+			 AND c.CHANNEL_ID=CC.CHANNEL_ID
+			 AND cp.group_id=cg.group_id
+			 AND ct.config_type_id=cp.config_type_id
+			 AND u.UNIT_ID=cp.UNIT_ID AND c.CHANNEL_ID=1
+			 
+        double max = Double.MIN_VALUE;
+        for(int j=0;j<actual.length;j++){
+            
+            double diff = Math.abs(actual[j]-expected[j]);
+            max = Math.max(diff, max);
+        }
+        System.out.println(max);

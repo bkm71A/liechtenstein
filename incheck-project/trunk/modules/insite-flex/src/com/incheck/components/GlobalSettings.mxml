@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 width="400"
+		 height="300"
+		 creationComplete="onInit(event)">
+	
+	<fx:Script>
+		<![CDATA[
+
+			import com.incheck.common.GlobalSettingsValues;
+
+			import mx.events.FlexEvent;
+
+
+			protected function onInit(event:FlexEvent):void
+			{
+				rotationSpreed.text = GlobalSettingsValues.rotationSpeed + "";
+			}
+
+		]]>
+	</fx:Script>
+
+	<mx:HBox>
+		<mx:Label text="Rotation speed, RPM" />
+
+		<mx:TextInput id="rotationSpreed"
+					  text="1750" />
+	</mx:HBox>
+</mx:VBox>

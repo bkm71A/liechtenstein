@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<location:LocationsBase xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:location="com.incheck.admin.view.location.*">
+    <mx:Label text="Create/edit Location"/>
+    <mx:HBox>
+        <mx:Label fontWeight="bold" text="Location:" width="100"/>
+        <mx:Text text="{location.description}" color="0x325b5c" fontWeight="bold"/>
+    </mx:HBox>
+    <mx:HBox>
+        <mx:Label text="Description" width="100"/>
+        <mx:TextInput id="description" text="{location.description}"/>
+    </mx:HBox>
+    <mx:HBox>
+        <mx:Label width="100"/>
+        <mx:Button label="Save"
+                   click="onSaveLocation(description.text)"/>
+    </mx:HBox>
+</location:LocationsBase>

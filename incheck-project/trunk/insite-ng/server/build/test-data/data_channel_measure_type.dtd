@@ -1,0 +1,8 @@
+<!ELEMENT dataset (channel_measure_type*)>
+
+<!ELEMENT channel_measure_type EMPTY>
+<!ATTLIST channel_measure_type
+    ID CDATA #REQUIRED
+    CODE CDATA #REQUIRED
+    DESCRIPTION CDATA #REQUIRED
+>

@@ -1,0 +1,15 @@
+root/begemot
+
+su - afridland
+cd /home/afridland/INCHECK_HOME/modules
+svn update -r425 
+./maven-build.sh
+===========================================
+
+Building war: /home/afridland/INCHECK_HOME/modules/insite-server/target/insite-server.war
+/home/afridland/.m2/repository/com/incheck/insite-server/1.0.0-SNAPSHOT/insite-server-1.0.0-SNAPSHOT.war
+
+/opt/apps/lcds/tomcat/bin/restart
+
+cd /opt/apps/lcds/tomcat/webapps
+

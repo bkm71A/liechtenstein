@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3c.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html> 
+<head> 
+  <title>Incheck-NG Frequently Asked Questions</title> 
+  <meta name="Title" content="Incheck-NG Frequently Asked Questions"> 
+</head> 
+<body> 
+  <div> 
+    <h2>A. Getting Started:</h2> 
+    <p> 
+      <a href="#A1">A1. How to install Incheck-NG in DEV Environment?</a><br/> 
+      <a href="#A2">A2. How to install Incheck-NG in PROD Environment?</a><br/> 
+      <a href="#A3">A3. How to setup Eclipse?</a><br/> 
+      <a href="#A4">A4. How to debug Unit tests in Eclipse?</a><br/> 
+    </p> 
+  </div> 
+  <p><strong><a id="A1" name="A1"></a>A1. How to install Incheck-NG DEV ?</strong></p> 
+  <ol> 
+    <li><p>Install following software: 
+      <ul> 
+        <li>Java (JDK 6) and JAVA_HOME environment variable</li> 
+        <li>Maven and M2_HOME environment variable</li> 
+        <li>Apache Tomcat and CATALINA_HOME environment variable</li> 
+        <li>Subversion</li> 
+        <li>MySql (could be installed locally or on remote machine)</li> 
+      </ul> 
+    </p> 
+    </li> 
+    <li><p>checkout svn code <code>svn checkout xxxxxxxxxxxxx trunk</code></p></li> 
+    <li><p>create MySQL catalog insite and user "northbrook" with privilegdes to this catalog</p></li>
+    <li><p>Ensure MySQL credentials match .../server/src/main/resources/jdbc.properties and .../server/src/test/resources/jdbc.properties</p></li>
+    <li><p>run create_schema.sql and insert_samples.sql to create and populate DB</p></li> 
+    <li><p>To Start application with Jetty "mvn jetty:run-war"<br/>To Start application with Tomcat "mvn cargo:start"</p></li>
+  </ol>
+  
+  <p><strong><a id="A2" name="A2"></a>A2. How to install Incheck-NG in PROD Environment?</strong></p>
+  
+  <p><strong><a id="A3" name="A3"></a>A3. How to setup Eclipse?</strong></p>
+  <ol>
+    <li><p>Install Eclipse</p></li>
+    <li><p>Run 'mvn jetty:run-war' and 'mvn surefire:test' to have all runtime maven libs downloaded</p></li>
+    <li><p>Set M2_REPO classpath variable to point to maven repository - Eclipse->Menu->Window->Preferences->Java->Build Path->Classpath Variables</p></li> 
+    <li><p>Eclipse->Menu->File->Existing Project Into Workspace->Select Root directory .../server/</p></li>
+  </ol>
+
+  <p><strong><a id="A4" name="A4"></a>A4. How to debug Unit tests in Eclipse?</strong></p>
+  <ol>
+    <li><p><img src="images/debug-unit-tests-1.png" border="0"/></p></li>
+    <li><p>You need to add test resources to classpath<br/><img src="images/debug-unit-tests-2.png" border="0"/></p></li>
+  </ol>
+
+</body></html>

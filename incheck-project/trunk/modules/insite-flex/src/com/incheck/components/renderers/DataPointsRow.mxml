@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 height="26"
+		 horizontalScrollPolicy="off"
+		 horizontalGap="0"
+		 borderStyle="solid"
+		 verticalAlign="middle">
+
+	<fx:Script>
+		<![CDATA[
+
+			[Bindable]
+			private var _rowValue:Object;
+
+
+			public function set rowValue(value:Object):void
+			{
+				_rowValue = value;
+			}
+
+		]]>
+	</fx:Script>
+
+	<mx:Label id="num"
+			  width="20"
+			  text="{_rowValue.num}"
+			  textAlign="left" />
+
+	<mx:VRule height="100%" />
+
+	<mx:Label id="xAxis"
+			  width="65"
+			  text="{_rowValue.x}"
+			  textAlign="left" />
+
+	<mx:VRule height="100%" />
+
+	<mx:Label id="yAxis"
+			  width="65"
+			  text="{_rowValue.y}"
+			  textAlign="left" />
+</mx:HBox>

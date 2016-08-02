@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009"
+				   xmlns:mx="library://ns.adobe.com/flex/mx"
+				   xmlns:s="library://ns.adobe.com/flex/spark"
+				   width="100%" height="58"
+				   cornerRadius="2" backgroundColor="#ebf1f1" borderStyle="solid" borderColor="#dddddd" initialize="init()">
+
+
+	<fx:Script>
+		<![CDATA[
+
+			import com.incheck.Constants;
+			import com.incheck.IncheckModel;
+			import com.incheck.common.ICNode;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.remoting.RemoteObject;
+			
+			import spark.events.IndexChangeEvent;
+
+			[Embed("/resources/redcloseImage.png")]
+			private const _widgClose:Class;
+
+			[Bindable]
+			public var myColorSet:uint = uint.MAX_VALUE;
+
+			[Bindable]
+			public var node:ICNode = null;
+
+			[Bindable]
+			public var histData:ArrayCollection;
+
+			[Bindable]
+			public var overallType:String;
+			
+			[Bindable]
+			private var bandsArray:ArrayCollection;
+
+			public var myId:Number = Math.random();
+
+			public var bandId:String = "1";
+			
+			protected function init():void
+			{
+				if(node.channelType != Constants.STATIC_CHANNEL){
+					getBand();
+				}else{
+					refreshData();
+				}
+			}
+
+
+			public function setNode(n:ICNode):void
+			{
+				this.node = n;
+				this.initialize();
+				/* bandId = bandsArray.getItemAt(0).bandId;
+				refreshData(); */
+			}
+
+
+			public function refreshData():void
+			{
+				var ro:RemoteObject = new RemoteObject("icNodes");
+				ro.addEventListener(ResultEvent.RESULT, this.getHistDataCallBack);
+				ro.addEventListener(FaultEvent.FAULT, this.histError);
+
+				ro.getHistoryData(node.channelid, getOverall(), bandId, IncheckModel.instance().right.historyViewMenuBar.fromDate, IncheckModel.instance().right.historyViewMenuBar.toDate, IncheckModel.instance().historyChartUnits == Constants.SECONDS ? "minutes" : IncheckModel.instance().historyChartUnits);
+
+
+//			trace("ro.getHistoryData(" + node.channelid 
+//				+ ", " + (node.channelType == Constants.STATIC_CHANNEL) ? null : (IncheckModel.instance().historyParameter == Constants.OVERALL_PEAK ? "True Peak" : IncheckModel.instance().historyParameter),
+//			//	+ ", " + IncheckModel.instance().historyBand.bandId.toString() 
+//				+ ", " + IncheckModel.instance().right.historyViewMenuBar.fromDate.toString() 
+//				+ ", " + IncheckModel.instance().right.historyViewMenuBar.toDate.toString() 
+//				+ ", " + IncheckModel.instance().historyChartUnits + ")");
+			}
+
+
+			private function getOverall():String
+			{
+				var res:String;
+				if (node.channelType == Constants.STATIC_CHANNEL)
+				{
+					return null;
+				} else {
+					if(bandId == "1"){
+						if (IncheckModel.instance().historyParameter == Constants.OVERALL_RMS)
+						{
+							res = "_Rms";
+						}
+						else
+						{
+							res = " " + IncheckModel.instance().historyParameter;
+						}
+						res = IncheckModel.instance().historyGraphMenuSelection + res;
+					}else{
+						res = IncheckModel.instance().historyGraphMenuSelection.toLowerCase() + "Band";
+						if(IncheckModel.instance().historyGraphMenuSelection == "Accel"){
+							res = "accBand";
+						}
+					}
+				}
+				return res;
+			}
+
+
+			public function histError(f:FaultEvent):void
+			{
+				Alert.show("Error in HistWidg " + f.toString());
+			}
+
+
+			public function handlerCheckBox():void
+			{
+				IncheckModel.instance().right.historyChart.regenLineSeriesWithZoomReset();
+			}
+
+
+			public function getHistDataCallBack(event:ResultEvent):void
+			{
+				this.histData = event.result as ArrayCollection;
+				
+//				IncheckModel.instance().right.historyChart.regenStockSeries();
+				IncheckModel.instance().right.historyChart.regenLineSeriesWithZoomReset();
+			}
+
+
+			private function handleClose():void
+			{
+				IncheckModel.instance().removeHistoryWidget(this);
+				IncheckModel.instance().right.historyChart.regenLineSeriesWithZoomReset();
+			}
+
+
+			public function updateColor():void
+			{
+				this.myColorSet = colorPick.selectedColor;
+				IncheckModel.instance().right.historyChart.regenStockSeries();
+			}
+
+
+			protected function bandsChangeHandler(event:IndexChangeEvent):void
+			{
+				bandId = bandsArray.getItemAt(event.newIndex).bandId;
+				refreshData();
+			}
+			
+			
+			private function getBand():void{
+				var ro:RemoteObject = new RemoteObject("icNodes");
+				ro.addEventListener(ResultEvent.RESULT, this.getBandMenuCallBack);
+				ro.addEventListener(FaultEvent.FAULT, this.histError);
+				ro.getBandForHistoryMenu(node.channelid);
+			}
+			
+			
+			private function getBandMenuCallBack(event:ResultEvent):void
+			{
+				bandsArray = event.result as ArrayCollection;
+				
+				var overall:Object = {
+					"active": false,
+					"bandCoefficient": 0,
+					"bandId": 1,
+					"bandName": "Overall",
+					"endFreq": 0,
+					"startFreq":0	
+				}
+				bandsArray.addItemAt(overall,0);
+				
+				bands.selectedIndex = 0;
+				bandId = bandsArray.getItemAt(0).bandId;
+				refreshData();
+			}
+
+		]]>
+	</fx:Script>
+
+
+	<s:Label id="channelId"
+			 x="35" y="9"
+			 width="114"
+			 text="{node.name}" />
+
+	<s:CheckBox id="chBox"
+				x="8" y="4"
+				change="handlerCheckBox()" />
+
+	<s:Group top="5" right="5"
+			 click="handleClose()">
+
+		<s:BitmapImage id="closeButton"
+					   source="{_widgClose}" />
+	</s:Group>
+
+	<s:HGroup x="6" y="26"
+			  width="100%">
+
+		<mx:ColorPicker id="colorPick"
+						selectedColor="{myColorSet}"
+						change="updateColor()" />
+
+		<s:DropDownList id="bands"
+						width="100"
+						enabled="{bandsArray !=  null}"
+						visible="{node.channelType != Constants.STATIC_CHANNEL}"
+						dataProvider="{bandsArray}"
+						labelField="bandName"
+						change="bandsChangeHandler(event)" />
+
+	</s:HGroup>
+
+</s:BorderContainer>

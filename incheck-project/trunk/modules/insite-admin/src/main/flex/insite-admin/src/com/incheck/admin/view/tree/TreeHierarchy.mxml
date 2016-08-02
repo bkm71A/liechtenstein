@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<treehierarchy:TreeHierarchyBase xmlns:mx="http://www.adobe.com/2006/mxml"
+                                 xmlns:treehierarchy="com.incheck.admin.view.tree.*"
+                                 backgroundColor="0xd2dbde"
+                                 paddingTop="10" paddingLeft="10" paddingRight="10">
+    <treehierarchy:NodesTree id="tree"
+            width="100%" height="100%"
+            dataProvider="{nodes}"
+            itemClick="onItemSelected(tree.selectedItem as TreeItem)"
+            iconFunction="NodesTree.icIconFunction"
+            labelFunction="{labelFunction}"
+            backgroundColor="0xd2dbde"/>
+    <mx:HRule width="100%"/>
+    <mx:List dataProvider="{availableChannels}"
+             width="100%" height="100%"
+            itemRenderer="com.incheck.admin.view.tree.renderer.ChannelItemRenderer"
+            backgroundColor="0xd2dbde"
+            borderThickness="0"/>
+    <mx:Script><![CDATA[
+        import com.incheck.admin.model.TreeItem;
+        ]]></mx:Script>
+</treehierarchy:TreeHierarchyBase>

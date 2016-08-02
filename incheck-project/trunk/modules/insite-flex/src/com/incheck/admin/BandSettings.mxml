@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<admin:BandSettingsBase xmlns:admin="com.incheck.admin.*"
+						xmlns:components="com.incheck.components.*"
+						xmlns:fx="http://ns.adobe.com/mxml/2009"
+						xmlns:mx="library://ns.adobe.com/flex/mx"
+						xmlns:s="library://ns.adobe.com/flex/spark"
+						label="Band Settings"
+						creationComplete="create()">
+
+	<components:SelectMessage visible="{!selectedNode}" />
+
+	<mx:VBox width="100%"
+			 height="100%"
+			 paddingLeft="10"
+			 paddingTop="10" visible="{selectedNode != null}">
+		<mx:Label text="{selectedNode.name}"
+				  fontSize="20"
+				  fontWeight="bold" />
+
+		<mx:Label text="Select Pre-set Frequency Bands" />
+
+		<mx:ApplicationControlBar>
+			<mx:VBox>
+				<mx:HBox verticalAlign="middle">
+					<mx:Label text="Rotation Speed Source" />
+
+					<mx:ComboBox id="sourceCB"
+								 selectedIndex="0"
+								 change="onSpeedCBChange()">
+						<mx:dataProvider>
+							<fx:Array>
+								<fx:String>Global</fx:String>
+
+								<fx:String>Local</fx:String>
+							</fx:Array>
+						</mx:dataProvider>
+					</mx:ComboBox>
+
+					<mx:TextInput id="rotationSpeed"
+								  width="50"
+								  enabled="{sourceCB.selectedIndex >= 0}"
+								  text="{GlobalSettingsValues.rotationSpeed.toString()}" restrict="0-9."
+								  change="tryCalculateFrequencies(bandCB.selectedIndex+1, rotationSpeed.text, bandConstant.text)" />
+
+					<mx:ComboBox id="speedUnitCB">
+						<mx:dataProvider>
+							<fx:Array>
+								<fx:String>RPM</fx:String>
+							</fx:Array>
+						</mx:dataProvider>
+					</mx:ComboBox>
+
+					<mx:Label text="Band Margin" />
+
+					<mx:TextInput id="bandConstant"
+								  width="50"
+								  text="{defaultBandConstant}" restrict="0-9."
+								  change="tryCalculateFrequencies(bandCB.selectedIndex+1, rotationSpeed.text, bandConstant.text)" />
+				</mx:HBox>
+
+				<mx:Canvas width="100%">
+					<mx:HBox verticalAlign="middle">
+						<mx:Label text="Band" />
+
+						<mx:ComboBox id="bandCB"
+									 dataProvider="{presetBandsForShow}"
+									 labelField="name"
+									 change="changeBandNameHandler()" />
+
+						<mx:Label text="Start Frequency {startFr} {startFr ? 'Hz' : ''}" />
+
+						<mx:Label text="End Frequency {endFr} {endFr ? 'Hz' : ''}" />
+
+					</mx:HBox>
+
+					<mx:Button right="0"
+							   width="70"
+							   enabled="{enableSave}"
+							   label="Select"
+							   click="addBand(presetBands[bandCB.selectedIndex+1].name, presetBands[bandCB.selectedIndex+1].cooef, rotationSpeed.text, bandConstant.text)" />
+				</mx:Canvas>
+
+			</mx:VBox>
+		</mx:ApplicationControlBar>
+
+		<mx:ApplicationControlBar width="100%">
+
+			<mx:AdvancedDataGrid id="configuredBandsGrid"
+								 width="100%"
+								 dataProvider="{bands}" designViewDataType="flat">
+				<mx:columns>
+
+					<mx:AdvancedDataGridColumn textAlign="center" dataField="id" headerText="ID" />
+
+					<mx:AdvancedDataGridColumn textAlign="center" dataField="name" headerText="Band" />
+
+					<mx:AdvancedDataGridColumn labelFunction="hzLabel"
+											   textAlign="center" dataField="startFrequency" headerText="Start Frequency" />
+
+					<mx:AdvancedDataGridColumn labelFunction="hzLabel"
+											   textAlign="center" dataField="endFrequency" headerText="End Frequency" />
+
+					<mx:AdvancedDataGridColumn headerText="Options">
+						<mx:itemRenderer>
+							<fx:Component>
+								<mx:HBox width="100%"
+										 horizontalAlign="center">
+									<fx:Script>
+										<![CDATA[
+
+											import com.incheck.admin.events.BandSettingsEvent;
+											import com.incheck.common.Band;
+
+
+											private function onDelete(event:Event):void
+											{
+												dispatchEvent(new BandSettingsEvent(BandSettingsEvent.DELETE_BAND, data as Band));
+											}
+
+										]]>
+									</fx:Script>
+
+									<mx:Image source="@Embed(source='/resources/delete.png')"
+											  toolTip="Delete threshold" visible="{(data as Band).band.cooef != 1}"
+											  click="onDelete(event)" />
+								</mx:HBox>
+							</fx:Component>
+						</mx:itemRenderer>
+					</mx:AdvancedDataGridColumn>
+				</mx:columns>
+			</mx:AdvancedDataGrid>
+		</mx:ApplicationControlBar>
+
+	</mx:VBox>
+
+	<fx:Script>
+		<![CDATA[
+			import com.incheck.admin.events.CustomBandCreatedEvent;
+			import mx.events.CloseEvent;
+			import mx.core.IFlexDisplayObject;
+			import mx.core.FlexGlobals;
+			import mx.managers.PopUpManager;
+			import com.incheck.components.CustomBandPopup;
+			import mx.controls.Alert;
+
+			import com.incheck.common.GlobalSettingsValues;
+			import com.incheck.admin.events.BandSettingsEvent;
+			import com.incheck.admin.events.ThresholdSettingsEvent;
+			
+			private var bandPopup:CustomBandPopup;
+
+
+			private function onSpeedCBChange():void
+			{
+				if (sourceCB.selectedIndex == 0)
+				{
+					rotationSpeed.text = GlobalSettingsValues.rotationSpeed + "";
+				}
+				tryCalculateFrequencies(bandCB.selectedIndex+1, rotationSpeed.text, bandConstant.text);
+			}
+			
+			private function changeBandNameHandler():void{
+				if(bandCB.selectedItem.cooef == 9){
+					bandPopup = new CustomBandPopup();
+					PopUpManager.addPopUp(bandPopup as IFlexDisplayObject, FlexGlobals.topLevelApplication as DisplayObject, true);
+					PopUpManager.centerPopUp(bandPopup);
+					bandPopup.addEventListener(CloseEvent.CLOSE,bandPopupCloseHandler);
+					bandPopup.addEventListener(CustomBandCreatedEvent.CUSTOM_BAND_CREATED, createCustomBand);
+				}else{
+					tryCalculateFrequencies(bandCB.selectedIndex+1, rotationSpeed.text, bandConstant.text)
+				}	
+			}
+			
+			private function bandPopupCloseHandler(event:CloseEvent):void{
+				PopUpManager.removePopUp(bandPopup as IFlexDisplayObject);
+				bandCB.selectedIndex = 0;
+			}
+			
+			private function createCustomBand(event:CustomBandCreatedEvent):void{
+				startFr = event.startFreq;
+				endFr = event.endFreq;
+				addBand(event.name, presetBands[bandCB.selectedIndex+1].cooef, rotationSpeed.text, bandConstant.text);
+				
+				PopUpManager.removePopUp(bandPopup as IFlexDisplayObject);
+				bandCB.selectedIndex = 0;
+			}
+
+
+			override protected function recalculate():void
+			{
+				tryCalculateFrequencies(bandCB.selectedIndex+1, rotationSpeed.text, bandConstant.text);
+			}
+
+
+			override protected function create():void
+			{
+				super.create();
+				configuredBandsGrid.addEventListener(BandSettingsEvent.DELETE_BAND, onDeleteBand, true);
+			}
+
+
+			override protected function clearForm():void
+			{
+				super.clearForm();
+				bandConstant.text = defaultBandConstant;
+				bandCB.selectedIndex = 0;
+			}
+
+		]]>
+	</fx:Script>
+</admin:BandSettingsBase>

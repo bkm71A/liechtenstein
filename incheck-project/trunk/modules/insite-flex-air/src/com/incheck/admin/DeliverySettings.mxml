@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<admin:DeliverySettingsBase xmlns:admin="com.incheck.admin.*"
+							xmlns:components="com.incheck.components.*"
+							xmlns:fx="http://ns.adobe.com/mxml/2009"
+							xmlns:mx="library://ns.adobe.com/flex/mx"
+							xmlns:s="library://ns.adobe.com/flex/spark"
+							label="Delivery Settings"
+							creationComplete="create()">
+
+	<fx:Declarations>
+
+		<mx:EmailValidator id="emailValidator" property="text" required="true" />
+
+	</fx:Declarations>
+
+	<components:SelectMessage visible="{selectedNode == null}" />
+
+	<mx:VBox width="100%"
+			 height="100%"
+			 paddingLeft="10"
+			 paddingTop="10" visible="{selectedNode != null}">
+
+		<mx:Label text="{selectedNode.name}"
+				  fontSize="20"
+				  fontWeight="bold" />
+
+		<mx:ApplicationControlBar width="100%">
+
+			<mx:AdvancedDataGrid id="configuredEventsGrid"
+								 width="100%"
+								 dataProvider="{dsm}"
+								 selectable="true" designViewDataType="flat" selectionMode="singleRow"
+								 itemClick="configuredEventsGrid_itemClickHandler(event)">
+				<mx:columns>
+					<mx:AdvancedDataGridColumn textAlign="center" dataField="id" headerText="ID" />
+
+					<mx:AdvancedDataGridColumn textAlign="center" dataField="parameter" headerText="Parameter" />
+
+					<mx:AdvancedDataGridColumn labelFunction="dataLabel"
+											   textAlign="center" dataField="band" headerText="Band" />
+
+					<mx:AdvancedDataGridColumn textAlign="center" dataField="type" headerText="Type" />
+
+					<mx:AdvancedDataGridColumn labelFunction="dataLabel"
+											   textAlign="center" dataField="severity" headerText="Severity" />
+
+					<mx:AdvancedDataGridColumn labelFunction="valueLabel"
+											   textAlign="center" dataField="value" headerText="Value" />
+				</mx:columns>
+			</mx:AdvancedDataGrid>
+		</mx:ApplicationControlBar>
+
+
+		<mx:VBox width="100%"
+				 height="100%" visible="{selectedThreshold != null}">
+
+			<mx:Label text="{selectedDelivery ? ('Modify Delivery Path ID ' + selectedNode.id) : 'Create new Delivery Option'}" />
+
+			<mx:ApplicationControlBar x="10"
+									  y="544"
+									  width="60%">
+				<mx:HBox>
+					<mx:Label text="Delivery Name" />
+
+					<mx:TextInput id="delnametext"
+								  width="100"
+								  enabled="{!selectedDelivery}"
+								  text="{selectedDelivery.name}"
+								  change="validateAddDeliveryOption(event)" />
+
+					<mx:Label text="Email" />
+
+					<mx:TextInput id="emailtext"
+								  width="100"
+								  text="{selectedDelivery.email}"
+								  change="validateAddDeliveryOption(event)" />
+
+					<mx:Label text="Notes" />
+
+					<mx:TextInput id="notestext"
+								  width="100"
+								  text="{selectedDelivery.notes}"
+								  change="validateAddDeliveryOption(event)" />
+
+					<mx:Button width="100"
+							   enabled="{allowAddDeliveryPath}"
+							   label="{selectedDelivery ? 'Modify' : 'Add'}"
+							   click="addOrModifyDeliveryPath(delnametext.text, emailtext.text, notestext.text)" />
+				</mx:HBox>
+			</mx:ApplicationControlBar>
+
+			<mx:ApplicationControlBar width="60%">
+				<mx:AdvancedDataGrid id="deliveryGrid"
+									 width="100%"
+									 dataProvider="{selectedThreshold.deliveryList}"
+									 selectable="true" designViewDataType="flat">
+					<mx:columns>
+						<mx:AdvancedDataGridColumn dataField="name" editable="false" headerText="Delivery Name" />
+
+						<mx:AdvancedDataGridColumn dataField="email" editable="false" headerText="Email Address" />
+
+						<mx:AdvancedDataGridColumn dataField="notes" editable="false" headerText="Notes" />
+
+						<mx:AdvancedDataGridColumn headerText="Options">
+							<mx:itemRenderer>
+								<fx:Component>
+									<mx:HBox width="100%"
+											 horizontalAlign="center">
+										<fx:Script>
+											<![CDATA[
+
+												import com.incheck.admin.events.DeliverySettingsEvent;
+												import com.incheck.admin.events.ThresholdSettingsEvent;
+												import com.incheck.common.Delivery;
+												import com.incheck.common.EventThreshold;
+
+
+												private function onEdit(event:Event):void
+												{
+													dispatchEvent(new DeliverySettingsEvent(DeliverySettingsEvent.EDIT_DELIVERY, data as Delivery));
+												}
+
+
+												private function onDelete(event:Event):void
+												{
+													dispatchEvent(new DeliverySettingsEvent(DeliverySettingsEvent.DELETE_DELIVERY, data as Delivery));
+												}
+
+											]]>
+										</fx:Script>
+
+										<mx:Image source="@Embed(source='/assets/edit.png')"
+												  toolTip="Edit threshold"
+												  click="onEdit(event)" />
+
+										<mx:Image source="@Embed(source='/assets/delete.png')"
+												  toolTip="Delete threshold"
+												  click="onDelete(event)" />
+									</mx:HBox>
+								</fx:Component>
+							</mx:itemRenderer>
+						</mx:AdvancedDataGridColumn>
+					</mx:columns>
+				</mx:AdvancedDataGrid>
+
+			</mx:ApplicationControlBar>
+
+		</mx:VBox>
+
+	</mx:VBox>
+
+	<fx:Script>
+		<![CDATA[
+
+			import mx.events.ValidationResultEvent;
+			import mx.events.ListEvent;
+			import com.incheck.admin.events.DeliverySettingsEvent;
+
+
+			override protected function create():void
+			{
+				super.create();
+				deliveryGrid.addEventListener(DeliverySettingsEvent.EDIT_DELIVERY, onEditDelivery, true);
+				deliveryGrid.addEventListener(DeliverySettingsEvent.DELETE_DELIVERY, onDeleteDelivery, true);
+			}
+
+
+			override protected function clearForm():void
+			{
+				super.clearForm();
+				delnametext.text = "";
+				emailtext.text = "";
+				notestext.text = "";
+				allowAddDeliveryPath = false;
+			}
+
+
+			protected function validateAddDeliveryOption(event:Event):void
+			{
+				var e:ValidationResultEvent = emailValidator.validate(emailtext.text);
+				allowAddDeliveryPath = (e.type == ValidationResultEvent.VALID) && delnametext.text;
+			}
+
+		]]>
+	</fx:Script>
+
+</admin:DeliverySettingsBase>

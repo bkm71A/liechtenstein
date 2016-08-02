@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"
+       default-lazy-init="true">
+
+    <!-- Activates scanning of @Autowired -->
+    <context:annotation-config/>
+
+    <!-- Activates scanning of @Repository and @Service -->
+    <context:component-scan base-package="com.incheck.ng"/>
+
+    <bean id="applicationContextProvider" class="com.incheck.ng.webapp.ApplicationContextProvider" lazy-init="false"/>
+
+    <!-- Add new DAOs here -->
+
+    <!--OverallTypeManager-START-->
+    <bean id="overallTypeManager" class="com.incheck.ng.service.impl.GenericManagerImpl">
+        <constructor-arg>
+            <bean class="com.incheck.ng.dao.hibernate.GenericDaoHibernate">
+                <constructor-arg value="com.incheck.ng.model.OverallType"/>
+                <property name="sessionFactory" ref="sessionFactory"/>
+            </bean>
+        </constructor-arg>
+    </bean>
+    <!--OverallTypeManager-END-->
+
+    <!--SensorManager-START-->
+    <bean id="sensorManager" class="com.incheck.ng.service.impl.GenericManagerImpl">
+        <constructor-arg>
+            <bean class="com.incheck.ng.dao.hibernate.GenericDaoHibernate">
+                <constructor-arg value="com.incheck.ng.model.Sensor"/>
+                <property name="sessionFactory" ref="sessionFactory"/>
+            </bean>
+        </constructor-arg>
+    </bean>
+    <!--SensorManager-END-->
+
+    <!--ChannelManager-START-->
+    <bean id="channelManager" class="com.incheck.ng.service.impl.GenericManagerImpl">
+        <constructor-arg ref="channelDao"/>
+    </bean>
+    <!--ChannelManager-END-->
+
+    <!--DataAcquisitionModuleManager-START-->
+    <bean id="dataAcquisitionModuleManager" class="com.incheck.ng.service.impl.GenericManagerImpl">
+        <constructor-arg>
+            <bean class="com.incheck.ng.dao.hibernate.GenericDaoHibernate">
+                <constructor-arg value="com.incheck.ng.model.DataAcquisitionModule"/>
+                <property name="sessionFactory" ref="sessionFactory"/>
+            </bean>
+        </constructor-arg>
+    </bean>
+    <!--DataAcquisitionModuleManager-END-->
+    
+    <!--ChannelMeasureTypeManager-START-->
+    <bean id="channelMeasureTypeManager" class="com.incheck.ng.service.impl.GenericManagerImpl">
+        <constructor-arg>
+            <bean class="com.incheck.ng.dao.hibernate.GenericDaoHibernate">
+                <constructor-arg value="com.incheck.ng.model.ChannelMeasureType"/>
+                <property name="sessionFactory" ref="sessionFactory"/>
+            </bean>
+        </constructor-arg>
+    </bean>
+    <!--ChannelMeasureTypeManager-END-->
+
+    <!--BandManager-START-->
+    <bean id="bandManager" class="com.incheck.ng.service.impl.GenericManagerImpl">
+        <constructor-arg>
+            <bean class="com.incheck.ng.dao.hibernate.GenericDaoHibernate">
+                <constructor-arg value="com.incheck.ng.model.Band"/>
+                <property name="sessionFactory" ref="sessionFactory"/>
+            </bean>
+        </constructor-arg>
+    </bean>
+    <!--BandManager-END-->
+
+    <!-- Add new Managers here -->
+</beans>

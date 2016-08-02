@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:ns1="com.incheck.*"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 width="100%"
+		 height="100%">
+
+	<fx:Script>
+		<![CDATA[
+
+			import com.incheck.model.UserPreferencesModel;
+			import com.incheck.Constants;
+			import mx.collections.ArrayCollection;
+			import mx.controls.TextInput;
+
+			[Bindable]
+			public var userPreferencesModel:UserPreferencesModel;
+
+
+			private function setDefaults():void
+			{
+				updateProperty(userPreferencesModel.accelerationUnits, Constants.MEASUREMENT_LABEL_G, userPreferencesModel.accelerationUnitsSelectedIndex, userPreferencesModel.updateAccelerationUnitsSelectedIndex, accelerationUnitsComboBox);
+				//accelerationUnitsComboBox.selectedItem = Constants.MEASUREMENT_LABEL_G;
+				updateProperty(userPreferencesModel.velocityUnits, Constants.MEASUREMENT_LABEL_IN_S, userPreferencesModel.velocityUnitsSelectedIndex, userPreferencesModel.updateVelocityUnitsSelectedIndex, velocityUnitsComboBox);
+				updateProperty(userPreferencesModel.displacementUnits, "mil", userPreferencesModel.displacementUnitsSelectedIndex, userPreferencesModel.updateDisplacementUnitsSelectedIndex, displacementUnitsComboBox);
+				updateProperty(userPreferencesModel.frequencyUnits, "Hz", userPreferencesModel.frequencyUnitsSelectedIndex, userPreferencesModel.updateFrequencyUnitsSelectedIndex, frequencyUnitsComboBox);
+				updateProperty(userPreferencesModel.timeUnits, "s", userPreferencesModel.timeUnitsSelectedIndex, userPreferencesModel.updateTimeUnitsSelectedIndex, timeUnitsComboBox);
+				updateProperty(userPreferencesModel.temperatureUnits, Constants.MEASUREMENT_LABEL_C, userPreferencesModel.temperatureUnitsSelectedIndex, userPreferencesModel.updateTemperatureUnitsSelectedIndex, temperatureUnitsComboBox);
+				updateProperty(userPreferencesModel.pressureUnits, Constants.MEASUREMENT_LABEL_PSI, userPreferencesModel.pressureUnitsSelectedIndex, userPreferencesModel.updatePressureUnitsSelectedIndex, pressureUnitsComboBox);
+				updateProperty(userPreferencesModel.vibrationType, "Acceleration", userPreferencesModel.vibrationTypeSelectedIndex, userPreferencesModel.updateVibrationTypeSelectedIndex, vibrationTypeComboBox);
+				updateProperty(userPreferencesModel.measurementType, "RMS", userPreferencesModel.measurementTypeSelectedIndex, userPreferencesModel.updateMeasurementTypeSelectedIndex, measurementTypeComboBox);
+				updateProperty(userPreferencesModel.overallType, "RMS", userPreferencesModel.overallTypeSelectedIndex, userPreferencesModel.updateOverallTypeSelectedIndex, overallTypeComboBox);
+				updatePropertyValue(1, userPreferencesModel.updateDefaultAccelerationScale, accelerationDefScale);
+				updatePropertyValue(0.5, userPreferencesModel.updateDefaultVelocityScale, velocityDefScale);
+				updatePropertyValue(4, userPreferencesModel.updateDisplayedPrecision, displayedPrecisionInput);
+				updatePropertyValue(3, userPreferencesModel.updateScientificNotationThreshold, scientificNotationThreshold);
+				updatePropertyText("1", userPreferencesModel.updateAccelerationRefLevel, accelerationRefLevelField);
+			}
+
+
+			private function updateProperty(unitsArray:ArrayCollection, value:String, unitIndex:int, updateFunction:Function, combobox:ComboBox):void
+			{
+				var ind:int = unitsArray.getItemIndex(value);
+				if (unitIndex != ind)
+				{
+					combobox.selectedIndex = ind;
+					updateFunction(ind);
+				}
+			}
+
+
+			private function updatePropertyValue(value:Number, updateFunction:Function, stepper:NumericStepper):void
+			{
+				stepper.value = value;
+				updateFunction(value);
+			}
+
+
+			private function updatePropertyText(value:String, updateFunction:Function, field:TextInput):void
+			{
+				field.text = value;
+				updateFunction(value);
+			}
+
+		]]>
+	</fx:Script>
+
+
+	<fx:Declarations>
+
+		<mx:NumberValidator source="{accelerationRefLevelField}" allowNegative="false" domain="real" property="text" trigger="{saveUserPreferencesButton}" triggerEvent="click" />
+
+		<mx:NumberValidator source="{velocityRefLevelField}" allowNegative="false" domain="real" property="text" trigger="{saveUserPreferencesButton}" triggerEvent="click" />
+
+	</fx:Declarations>
+
+
+	<mx:Form id="userPreferencesForm"
+			 defaultButton="{saveUserPreferencesButton}"
+			 paddingTop="5">
+		<mx:FormItem label="Acceleration">
+			<mx:ComboBox id="accelerationUnitsComboBox"
+						 dataProvider="{userPreferencesModel.accelerationUnits}"
+						 enabled="{userPreferencesModel.canModifyUserPreferences}"
+						 selectedIndex="{userPreferencesModel.accelerationUnitsSelectedIndex}"
+						 change="userPreferencesModel.updateAccelerationUnitsSelectedIndex(accelerationUnitsComboBox.selectedIndex)" />
+		</mx:FormItem>
+
+		<mx:FormItem label="Reference level for dB scale (1e-6 g)">
+			<mx:TextInput id="accelerationRefLevelField"
+						  width="50"
+						  enabled="{userPreferencesModel.canModifyUserPreferences}"
+						  text="{userPreferencesModel.accelerationRefLevel}"
+						  change="userPreferencesModel.updateAccelerationRefLevel(accelerationRefLevelField.text)" />
+		</mx:FormItem>
+
+		<mx:FormItem label="Default acceleration scale (1 g)">
+			<mx:NumericStepper id="accelerationDefScale"
+							   enabled="{userPreferencesModel.canModifyUserPreferences}"
+							   minimum="0"
+							   stepSize="0.1"
+							   value="{userPreferencesModel.defaultAccelerationScale}"
+							   change="userPreferencesModel.updateDefaultAccelerationScale(accelerationDefScale.value)" />
+		</mx:FormItem>
+
+		<mx:FormItem label="Velocity">
+			<mx:ComboBox id="velocityUnitsComboBox"
+						 dataProvider="{userPreferencesModel.velocityUnits}"
+						 enabled="{userPreferencesModel.canModifyUserPreferences}"
+						 selectedIndex="{userPreferencesModel.velocityUnitsSelectedIndex}"
+						 change="userPreferencesModel.updateVelocityUnitsSelectedIndex(velocityUnitsComboBox.selectedIndex)" />
+		</mx:FormItem>
+
+		<mx:FormItem label="Reference level for dB scale (1e-9 m/s)">
+			<mx:TextInput id="velocityRefLevelField"
+						  width="50"
+						  enabled="{userPreferencesModel.canModifyUserPreferences}"
+						  text="{userPreferencesModel.velocityRefLevel}"
+						  change="userPreferencesModel.updateVelocityRefLevel(velocityRefLevelField.text)" />
+		</mx:FormItem>
+
+		<mx:FormItem label="Default velocity scale (0.5 in/s)">
+			<mx:NumericStepper id="velocityDefScale"
+							   enabled="{userPreferencesModel.canModifyUserPreferences}"
+							   minimum="0"
+							   stepSize="0.1"
+							   value="{userPreferencesModel.defaultVelocityScale}"
+							   change="userPreferencesModel.updateDefaultVelocityScale(velocityDefScale.value)" />
+		</mx:FormItem>
+
+		<mx:FormItem label="Displacement">
+			<mx:ComboBox id="displacementUnitsComboBox"
+						 dataProvider="{userPreferencesModel.displacementUnits}"
+						 enabled="{userPreferencesModel.canModifyUserPreferences}"
+						 selectedIndex="{userPreferencesModel.displacementUnitsSelectedIndex}"
+						 change="userPreferencesModel.updateDisplacementUnitsSelectedIndex(displacementUnitsComboBox.selectedIndex)" />
+		</mx:FormItem>
+
+		<mx:FormItem label="Frequency">
+			<mx:ComboBox id="frequencyUnitsComboBox"
+						 dataProvider="{userPreferencesModel.frequencyUnits}"
+						 enabled="{userPreferencesModel.canModifyUserPreferences}"
+						 selectedIndex="{userPreferencesModel.frequencyUnitsSelectedIndex}"
+						 change="userPreferencesModel.updateFrequencyUnitsSelectedIndex(frequencyUnitsComboBox.selectedIndex)" />
+		</mx:FormItem>
+
+		<mx:FormItem label="Time">
+			<mx:ComboBox id="timeUnitsComboBox"
+						 dataProvider="{userPreferencesModel.timeUnits}"
+						 enabled="{userPreferencesModel.canModifyUserPreferences}"
+						 selectedIndex="{userPreferencesModel.timeUnitsSelectedIndex}"
+						 change="userPreferencesModel.updateTimeUnitsSelectedIndex(timeUnitsComboBox.selectedIndex)" />
+		</mx:FormItem>
+
+		<mx:FormItem label="Temperature">
+			<mx:ComboBox id="temperatureUnitsComboBox"
+						 dataProvider="{userPreferencesModel.temperatureUnits}"
+						 enabled="{userPreferencesModel.canModifyUserPreferences}"
+						 selectedIndex="{userPreferencesModel.temperatureUnitsSelectedIndex}"
+						 change="userPreferencesModel.updateTemperatureUnitsSelectedIndex(temperatureUnitsComboBox.selectedIndex)" />
+		</mx:FormItem>
+
+		<mx:FormItem label="Pressure">
+			<mx:ComboBox id="pressureUnitsComboBox"
+						 dataProvider="{userPreferencesModel.pressureUnits}"
+						 enabled="{userPreferencesModel.canModifyUserPreferences}"
+						 selectedIndex="{userPreferencesModel.pressureUnitsSelectedIndex}"
+						 change="userPreferencesModel.updatePressureUnitsSelectedIndex(pressureUnitsComboBox.selectedIndex)" />
+		</mx:FormItem>
+
+		<mx:FormItem label="Vibration">
+			<mx:ComboBox id="vibrationTypeComboBox"
+						 dataProvider="{userPreferencesModel.vibrationType}"
+						 enabled="{userPreferencesModel.canModifyUserPreferences}"
+						 selectedIndex="{userPreferencesModel.vibrationTypeSelectedIndex}"
+						 change="userPreferencesModel.updateVibrationTypeSelectedIndex(vibrationTypeComboBox.selectedIndex)" />
+		</mx:FormItem>
+
+		<mx:FormItem label="Spectrum Scale">
+			<mx:ComboBox id="measurementTypeComboBox"
+						 dataProvider="{userPreferencesModel.measurementType}"
+						 enabled="{userPreferencesModel.canModifyUserPreferences}"
+						 selectedIndex="{userPreferencesModel.measurementTypeSelectedIndex}"
+						 change="userPreferencesModel.updateMeasurementTypeSelectedIndex(measurementTypeComboBox.selectedIndex)" />
+		</mx:FormItem>
+
+		<mx:FormItem label="Overall">
+			<mx:ComboBox id="overallTypeComboBox"
+						 dataProvider="{userPreferencesModel.overallType}"
+						 enabled="{userPreferencesModel.canModifyUserPreferences}"
+						 selectedIndex="{userPreferencesModel.overallTypeSelectedIndex}"
+						 change="userPreferencesModel.updateOverallTypeSelectedIndex(overallTypeComboBox.selectedIndex)" />
+		</mx:FormItem>
+
+		<mx:FormItem label="Displayed precision">
+			<mx:NumericStepper id="displayedPrecisionInput"
+							   enabled="{userPreferencesModel.canModifyUserPreferences}"
+							   value="{userPreferencesModel.displayedPrecision}"
+							   change="userPreferencesModel.updateDisplayedPrecision(displayedPrecisionInput.value)" />
+		</mx:FormItem>
+
+		<mx:FormItem label="Scientific Notation Theshold">
+			<mx:NumericStepper id="scientificNotationThreshold"
+							   enabled="{userPreferencesModel.canModifyUserPreferences}"
+							   value="{userPreferencesModel.scientificNotationThreshold}"
+							   change="userPreferencesModel.updateScientificNotationThreshold(scientificNotationThreshold.value)" />
+		</mx:FormItem>
+	</mx:Form>
+
+	<mx:ControlBar width="375"
+				   horizontalAlign="right">
+		<mx:Button id="saveUserPreferencesButton"
+				   enabled="{userPreferencesModel.canSaveUserPreferences}"
+				   label="Save"
+				   click="userPreferencesModel.saveUserPreferences()" />
+
+		<mx:Button enabled="{userPreferencesModel.canModifyUserPreferences}"
+				   label="System defaults"
+				   click="{setDefaults();}" />
+	</mx:ControlBar>
+</mx:VBox>
+

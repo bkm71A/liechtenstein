@@ -1,0 +1,265 @@
+{
+    "text": "District",
+    "items": [{
+        "text": "Milton St. P.S.",
+        "items": [{
+            "text": "Pump 1001",
+            "items": [{
+                "text": "Pump IB",
+                "leaf": true,
+				"content": [{
+						"sensID":"vibX",
+						"chID": "1"
+					},{
+						"sensID":"vibY",
+						"chID": "2"
+					},{
+						"sensID":"temp",
+						"chID": "31"
+				}]
+				
+            },{
+                "text": "Pump OB",
+                "leaf": true,
+				"content": [{
+						"sensID":"vibX",
+						"chID": "3"
+					},{
+						"sensID":"vibY",
+						"chID": "4"
+					},{
+						"sensID":"temp",
+						"chID": "32"
+				}]
+            },{
+                "text": "Motor IB",
+                "leaf": true,
+				"content": [{
+						"sensID":"vibX",
+						"chID": "5"
+					},{
+						"sensID":"vibY",
+						"chID": "6"
+					},{
+						"sensID":"temp",
+						"chID": "33"
+				}]
+            },{
+                "text": "Motor OB",
+                "leaf": true,
+				"content": [{
+						"sensID":"vibX",
+						"chID": "7"
+					},{
+						"sensID":"vibY",
+						"chID": "8"
+					},{
+						"sensID":"temp",
+						"chID": "34"
+				}]
+            }]
+        },{
+            "text": "Pump 1002",
+            "items": [{
+                "text": "Pump IB",
+                "leaf": true,
+				"content": [{
+						"sensID":"vibX",
+						"chID": "9"
+					},{
+						"sensID":"vibY",
+						"chID": "10"
+				}]
+            },{
+                "text": "Pump OB",
+                "leaf": true,
+				"content": [{
+						"sensID":"vibX",
+						"chID": "11"
+					},{
+						"sensID":"vibY",
+						"chID": "12"
+				}]
+            },{
+                "text": "Motor IB",
+                "leaf": true,
+				"content": [{
+						"sensID":"vibX",
+						"chID": "13"
+					},{
+						"sensID":"vibY",
+						"chID": "14"
+				}]
+            },{
+                "text": "Motor OB",
+                "leaf": true,
+				"content": [{
+						"sensID":"vibX",
+						"chID": "15"
+					},{
+						"sensID":"vibY",
+						"chID": "16"
+				}]
+            }]
+        }]
+    },{
+        "text": "Dewatering Pump",
+        "items": [{
+            "text": "Pump Sensor Group",
+            "leaf": true,
+			"content": [
+				{
+					"sensID":"vib",
+					"chID": "17"
+				},{
+					"sensID":"temp",
+					"chID": "35"
+				}
+			]
+        },{
+            "text": "Motor Sensor Group",
+            "leaf": true,
+			"content": [
+				{
+					"sensID":"vib",
+					"chID": "18"
+				},{
+					"sensID":"temp",
+					"chID": "36"
+				}
+			]
+        }]
+    },{
+        "text": "Chirch St. P.S.",
+        "items": [{
+            "text": "Storm Pump 101",
+            "items": [{
+                "text": "Motor DE BRG",
+                "leaf": true,
+				"content": [
+					{
+						"sensID":"vib",
+						"chID": "19"
+					}
+				]
+            },{
+                "text": "Motor OE BRG",
+                "leaf": true,
+				"content": [
+					{
+						"sensID":"vib",
+						"chID": "20"
+					}
+				]
+            },{
+                "text": "Pump DE BRG",
+                "leaf": true,
+				"content": [
+					{
+						"sensID":"vib",
+						"chID": "21"
+					}
+				]
+            },{
+                "text": "Pump HE BRG",
+                "leaf": true,
+				"content": [
+					{
+						"sensID":"vib",
+						"chID": "22"
+					}
+				]
+            }]
+        },{
+            "text": "Storm Pump 102",
+            "items": [{
+                "text": "Motor DE BRG",
+                "leaf": true,
+				"content": [
+					{
+						"sensID":"vib",
+						"chID": "23"
+					}
+				]
+            },{
+                "text": "Motor OE BRG",
+                "leaf": true,
+				"content": [
+					{
+						"sensID":"vib",
+						"chID": "24"
+					}
+				]
+            },{
+                "text": "Pump DE BRG",
+                "leaf": true,
+				"content": [
+					{
+						"sensID":"vib",
+						"chID": "25"
+					}
+				]
+            },{
+                "text": "Pump HE BRG",
+                "leaf": true,
+				"content": [
+					{
+						"sensID":"vib",
+						"chID": "26"
+					}
+				]
+            }]
+        }]
+    },{
+        "text": "Main Wastewater Pump",
+        "items": [{
+            "text": "Bearing 101",
+            "leaf": true,
+			"content": [
+				{
+					"sensID":"vib",
+					"chID": "27"
+				},{
+					"sensID":"temp",
+					"chID": "37"
+				}
+			]
+        },{
+            "text": "Bearing 102",
+            "leaf": true,
+			"content": [
+				{
+					"sensID":"vib",
+					"chID": "28"
+				},{
+					"sensID":"temp",
+					"chID": "38"
+				}
+			]
+        },{
+            "text": "Bearing 103",
+            "leaf": true,
+			"content": [
+				{
+					"sensID":"vib",
+					"chID": "29"
+				},{
+					"sensID":"temp",
+					"chID": "39"
+				}
+			]
+        },{
+            "text": "Bearing 104",
+            "leaf": true,
+			"content": [
+				{
+					"sensID":"vib",
+					"chID": "30"
+				},{
+					"sensID":"temp",
+					"chID": "40"
+				}
+			]
+        }]
+    }]
+}

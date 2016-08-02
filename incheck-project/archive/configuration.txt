@@ -1,0 +1,19 @@
+cvs -d :pserver:natasha@dev.inchecktech.net:/usr/local/cvsroot login
+cvs -d :pserver:natasha@dev.inchecktech.net:/usr/local/cvsroot checkout 
+
+cvs -d :ext:natasha@dev.inchecktech.net:/usr/local/cvsroot login
+
+
+Mysql: dev.inchecktech.net :3306  schema:insite  uid/pwd : INSITE/incheck_dev
+
+
+Server: dev.inchecktech.net
+CVS: /usr/local/cvsroot   cherez extssh
+
+application: /opt/apps/lcds/tomcat 
+
+
+http://dev.inchecktech.net/fx/jsp/displayChannelConfig.jsp?channel_id=22
+
+
+http://dev.inchecktech.net/fx/UI/InCheck.html

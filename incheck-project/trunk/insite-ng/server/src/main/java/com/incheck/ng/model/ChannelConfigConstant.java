@@ -1,0 +1,48 @@
+package com.incheck.ng.model;
+
+public interface ChannelConfigConstant {
+    String BANDWIDTH = "bandwidth";
+    String BLOCK_SIZE = "block-size";
+    String MAX_VOLTS = "max-volts";
+    String NUMBER_OF_LINES = "number-of-lines";
+    String SAMPLE_SIZE = "sample-size";
+    String SAMPLING_INTERVAL = "sampling-interval";
+    String SAMPLING_RATE = "sampling-rate";
+    String SENSOR_BIAS_VOLTAGE = "sensor-bias-voltage";
+    String SENSOR_OFFSET = "sensor-offset";
+    String SENSOR_SENSITIVITY = "sensor-sensitivity";
+    String FREQUENCY_ADJUSTMENT_FACTOR = "frequency-adjustment-factor";
+    String GAIN_ADJUSTMENT_FACTOR = "gain-adjustment-factor";
+    String PRIMARY_CHANNEL_ENGINEERING_UNITS = "primary-channel-engineering-units";
+    String OVERALL_TYPE_TO_CALCULATE = "overall-type-to-calculate";
+    String TICKS_PER_REVOLUTION = "ticks-per-revolution";
+    String DCFILTER_SMOOTHING_FACTOR = "dcfilter-smoothing-factor";
+    String CONVERTER_BIT_RESOLUTION = "converter-bit-resolution";
+    String CONVERTER_MAX_VOLTS = "converter-max-volts";
+    String CONVERTER_SENSOR_BIAS_VOLTAGE = "converter-sensor-bias-voltage";
+    String CONVERTER_SENSOR_GAIN = "converter-sensor-gain";
+    String CONVERTER_SENSOR_OFFSET = "converter-sensor-offset";
+    String CONVERTER_SENSOR_SENSITIVITY = "converter-sensor-sensitivity";
+    String NO_OF_DATA_BINS_TO_AVERAGE = "no-of-data-bins-to-average";
+    String SIM_ALPHA1 = "sim-alpha1";
+    String SIM_ALPHA2 = "sim-alpha2";
+    String SIM_ALPHA3 = "sim-alpha3";
+    String SIM_ALPHA4 = "sim-alpha4";
+    String SIM_ALPHA5 = "sim-alpha5";
+    String SIM_ALPHA6 = "sim-alpha6";
+    String SIM_ALPHA7 = "sim-alpha7";
+    String SIM_ALPHA8 = "sim-alpha8";
+    String SIM_BETA2 = "sim-beta2";
+    String SIM_BETA3 = "sim-beta3";
+    String SIM_BETA4 = "sim-beta4";
+    String SIM_BETA5 = "sim-beta5";
+    String SIM_BETA6 = "sim-beta6";
+    String SIM_GAMMA1 = "sim-gamma1";
+    String SIM_GAMMA2 = "sim-gamma2";
+    String SIM_RANDOM_LOWER_LIMIT = "sim-random-lower-limit";
+    String SIM_RANDOM_UPPER_LIMIT = "sim-random-upper-limit";
+    String SIM_SLEEPRATE = "sim-sleeprate";
+    String SIM_TICKMOD = "sim-tickmod";
+    String SIM_RANDOM = "sim-random";
+    String RECENT_TREND_BUFFER_SIZE = "recent-trend-buffer-size";
+}

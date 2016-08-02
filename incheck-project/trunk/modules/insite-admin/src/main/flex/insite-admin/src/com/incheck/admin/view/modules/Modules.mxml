@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modules:ModulesBase xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:view="com.incheck.admin.view.*"
+                     xmlns:modules="com.incheck.admin.view.modules.*">
+    <mx:Label text="Setup/edit a WDAM Device"/>
+    <mx:HBox>
+        <mx:Label fontWeight="bold" text="Device ID:" width="100"/>
+        <mx:Text text="{device.deviceID}" color="0x325b5c" fontWeight="bold"/>
+    </mx:HBox>
+    <mx:HBox>
+        <mx:Label text="Serial Number" width="100"/>
+        <mx:TextInput id="serialNumber" text="{device.serialNumber}"/>
+    </mx:HBox>
+    <mx:HBox>
+        <mx:Label text="Device ID" width="100"/>
+        <mx:TextInput id="deviceId" text="{device.deviceID}"/>
+    </mx:HBox>
+    <mx:HBox>
+        <mx:Label text="Max Channels" width="100"/>
+        <mx:ComboBox id="maxChannels" selectedItem="{device.maxChannels}" dataProvider="{channelsNumber}"/>
+    </mx:HBox>
+    <mx:HBox>
+        <mx:Label width="100"/>
+        <mx:Button label="Save"
+                   click="onSaveModule(serialNumber.text, deviceId.text, maxChannels.selectedItem as Number)"/>
+    </mx:HBox>
+</modules:ModulesBase>

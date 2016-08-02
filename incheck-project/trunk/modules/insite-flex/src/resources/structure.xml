@@ -1,0 +1,11 @@
+<stations label="City of Chicago" status="1">
+   <station label="Northern Branch" status="4">
+      <pump label="Pump 1" status="1">
+         <point label="Point 11" status="1"/>
+         <point label="Point 12" status="2"/>
+         <point label="Point 13" status="3"/>
+      </pump>
+   </station>
+   <station label="Station 2" status="2"/>
+   <station label="Station 3" status="3"/>
+</stations>

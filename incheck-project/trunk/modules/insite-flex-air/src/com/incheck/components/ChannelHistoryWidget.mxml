@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 width="200"
+		 height="52"
+		 backgroundColor="white"
+		 cornerRadius="2"
+		 borderStyle="solid">
+	
+	<fx:Script>
+		<![CDATA[
+			import com.incheck.Constants;
+			import com.incheck.IncheckModel;
+			import com.incheck.common.ICNode;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.messaging.Channel;
+			import mx.messaging.ChannelSet;
+			import mx.messaging.channels.AMFChannel;
+			import mx.messaging.channels.RTMPChannel;
+			import mx.messaging.config.ServerConfig;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.remoting.RemoteObject;
+
+			[Embed("/assets/redcloseImage.png")]
+			private const _widgClose:Class;
+
+			[Bindable]
+			public var myColorSet:uint = uint.MAX_VALUE;
+
+			[Bindable]
+			public var node:ICNode = null;
+
+			[Bindable]
+			public var histData:ArrayCollection;
+
+			[Bindable]
+			public var overallType:String;
+
+			public var myId:Number = Math.random();
+
+
+			public function setNode(n:ICNode):void
+			{
+				this.node = n;
+				this.initialize();
+				refreshData();
+			}
+
+
+			public function refreshData():void
+			{
+				var ro:RemoteObject = new RemoteObject("icNodes");
+
+				var cs:ChannelSet = new ChannelSet();
+				var customChannel:Channel = ServerConfig.getChannel(Constants.SERVICE_ID);
+				cs.addChannel(customChannel);
+				ro.channelSet = cs;
+
+				ro.addEventListener(ResultEvent.RESULT, getHistDataCallBack, false, 0, true);
+				ro.addEventListener(FaultEvent.FAULT, histError, false, 0, true);
+			/*
+						ro.getHistoryData(
+							node.channelid,
+							getOverall(),
+							IncheckModel.instance().historyBand.bandId,
+							IncheckModel.instance().right.historyViewMenuBar.fromDate,
+							IncheckModel.instance().right.historyViewMenuBar.toDate,
+							IncheckModel.instance().historyChartUnits == Constants.SECONDS ? "minutes" : IncheckModel.instance().historyChartUnits);
+			 */
+
+//			trace("ro.getHistoryData(" + node.channelid 
+//				+ ", " + (node.channelType == Constants.STATIC_CHANNEL) ? null : (IncheckModel.instance().historyParameter == Constants.OVERALL_PEAK ? "True Peak" : IncheckModel.instance().historyParameter),
+//			//	+ ", " + IncheckModel.instance().historyBand.bandId.toString() 
+//				+ ", " + IncheckModel.instance().right.historyViewMenuBar.fromDate.toString() 
+//				+ ", " + IncheckModel.instance().right.historyViewMenuBar.toDate.toString() 
+//				+ ", " + IncheckModel.instance().historyChartUnits + ")");
+			}
+
+
+			private function getOverall():String
+			{
+				var res:String;
+				if (node.channelType == Constants.STATIC_CHANNEL)
+				{
+					return null;
+				}
+				else
+				{
+					if (IncheckModel.instance().historyParameter == Constants.OVERALL_RMS)
+					{
+						res = "_Rms";
+					}
+					else
+					{
+						res = " " + IncheckModel.instance().historyParameter;
+					}
+					if (IncheckModel.instance().getUserVibrationType().indexOf("Accel") > -1)
+					{
+						res = "Accel" + res;
+					}
+					else
+					{
+						res = "Vel" + res;
+					}
+				}
+				return res;
+			}
+
+
+			public function histError(f:FaultEvent):void
+			{
+				Alert.show("Error in HistWidg " + f.toString());
+			}
+
+
+			public function handlerCheckBox():void
+			{
+//			IncheckModel.instance().right.historyChart.regenStockSeriesWithZoomReset();
+			}
+
+
+			public function getHistDataCallBack(event:ResultEvent):void
+			{
+				this.histData = event.result as ArrayCollection;
+//			IncheckModel.instance().right.historyChart.regenStockSeriesWithZoomReset();
+			}
+
+
+			private function handleClose():void
+			{
+				IncheckModel.instance().removeHistoryWidget(this);
+//			IncheckModel.instance().right.historyChart.regenStockSeriesWithZoomReset();
+			}
+
+
+			public function updateColor():void
+			{
+				this.myColorSet = colorPick.selectedColor;
+//			IncheckModel.instance().right.historyChart.regenStockSeries();
+			}
+
+		]]>
+	</fx:Script>
+
+	<mx:Label x="35"
+			  y="12"
+			  width="114"
+			  text="{node.name}"
+			  id="channelId"/>
+
+	<mx:CheckBox change="handlerCheckBox()"
+				 id="chBox"
+				 x="8"
+				 y="4"
+				 width="15"/>
+
+	<mx:Image source="{_widgClose}"
+			  x="182"
+			  y="5"
+			  click="handleClose()"
+			  id="closeButton"/>
+
+	<mx:ColorPicker id="colorPick"
+					change="updateColor()"
+					selectedColor="{myColorSet}"
+					x="6"
+					y="26"
+					width="19"
+					height="18"/>
+</s:BorderContainer>

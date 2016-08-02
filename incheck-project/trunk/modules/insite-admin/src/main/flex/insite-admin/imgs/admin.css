@@ -1,0 +1,192 @@
+@font-face
+{
+    src: url("/../imgs/fonts/MyriadWebPro.ttf");
+    font-family: main;
+    font-style: normal;
+    font-weight: normal;
+}
+
+@font-face
+{
+    src: url("/../imgs/fonts/MyriadWebPro-Bold.ttf");
+    font-family: main;
+    font-style: normal;
+    font-weight: bold;
+}
+
+
+Application {
+   backgroundColor: #336666;
+   backgroundGradientColors: #ffccff, #ccffff;
+   backgroundGradientAlphas: 0.3, 0.3;
+   themeColor: #669999;
+   font-family: Verdana;
+   font-size: 12;
+}
+
+Accordion {
+   themeColor: #336666;
+}
+
+Button {
+   highlightAlphas: 0.3, 0;
+   themeColor: #336666;
+}
+
+ButtonBar {
+   buttonStyleName: "mybuttonBarButtonStyle";
+   firstButtonStyleName: "mybuttonBarFirstButtonStyle";
+   lastButtonStyleName: "mybuttonBarLastButtonStyle";
+}
+
+.mybuttonBarButtonStyle {
+   themeColor: #336666;
+}
+
+.mybuttonBarFirstButtonStyle {
+}
+
+.mybuttonBarLastButtonStyle {
+}
+
+CheckBox {
+   themeColor: #336666;
+}
+
+ComboBox {
+   selectionColor: #95c7c7;
+   themeColor: #336666;
+}
+
+DataGrid {
+   alternatingItemColors: #ffffff, #d2e9e9;
+   headerColors: #cbe6e6, #9fc7c7;
+   horizontalGridLines: false;
+   selectionColor: #a1c5c5;
+}
+
+HDividedBox {
+   dividerColor: #336666;
+   dividerThickness: 3;
+}
+
+HScrollBar {
+   themeColor: #669999;
+}
+
+HSlider {
+   themeColor: #669999;
+}
+
+List {
+   selectionColor: #a0c8c8;
+}
+
+MenuBar {
+   fillColors: #dbecec, #98c0c0;
+   selectionColor: #9fcaca;
+   backgroundAlpha: 0.7;
+   borderColor: #336666;
+   textRollOverColor: #669999;
+   textSelectedColor: #336666;
+   themeColor: #669999;
+   fontWeight: bold;
+}
+
+
+Panel {
+   borderColor: #669999;
+   backgroundAlpha: 0.7;
+}
+
+PopUpButton {
+   themeColor: #336666;
+}
+
+ProgressBar {
+   barColor: #669999;
+}
+
+TabNavigator {
+   backgroundAlpha: 0.7;
+   borderStyle: solid;
+   borderColor: #336666;
+   borderThickness: 2;
+   tabStyleName: "myTabs";
+   firstTabStyleName: "myTabs";
+   lastTabStyleName: "myTabs";
+   selectedTabTextStyleName: "mySelectedTabs";
+}
+
+.myTabs {
+   backgroundAlpha: 0.7;
+   borderColor: #336666;
+   themeColor: #669999;
+
+}
+
+.mySelectedTabs {
+   color: #336666;
+   textRollOverColor: #669999;
+   fontWeight: bold;
+}
+
+ToggleButtonBar {
+   buttonStyleName: "mytoggleButtonBarButtonStyle";
+   firstButtonStyleName: "mytoggleButtonBarFirstButtonStyle";
+   lastButtonStyleName: "mytoggleButtonBarLastButtonStyle";
+   selectedButtonTextStyleName: "mytoggleButtonBarSelectedButtonStyle";
+}
+
+.mytoggleButtonBarButtonStyle {
+   themeColor: #336666;
+}
+
+.mytoggleButtonBarFirstButtonStyle {
+}
+
+.mytoggleButtonBarLastButtonStyle {
+}
+
+.mytoggleButtonBarSelectedButtonStyle {
+}
+
+Tree {
+   backgroundAlpha: 0.7;
+   backgroundColor: #ffffff;
+   rollOverColor: #96d4d4;
+   borderStyle: none;
+   borderColor: #669999;
+   selectionColor: #9ec2c2;
+   indentation: 10;
+}
+
+VScrollBar {
+   themeColor: #669999;
+}
+
+VSlider {
+   themeColor: #669999;
+}
+
+.loginPanel {
+	background-position: "bottom center";
+	background-blend: normal;
+	background-alpha: 0.7;
+	background-color: #eaeaea;
+	headerColors: #a3a3a3, #c8c8c8;
+	headerHeight: 30;
+	dropShadowEnabled: true;
+	borderSkin: ClassReference("com.degrafa.skins.CSSSkin");
+	border-alpha: 1;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	background-repeat: no-repeat;
+}
+
+.loginPanelTitle {
+	color: #191919;
+	fontSize: 18;
+}

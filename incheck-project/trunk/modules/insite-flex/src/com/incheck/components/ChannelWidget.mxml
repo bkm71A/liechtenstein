@@ -1,0 +1,777 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009"
+				   xmlns:mx="library://ns.adobe.com/flex/mx"
+				   xmlns:s="library://ns.adobe.com/flex/spark"
+				   implements="com.incheck.components.IChannelWidget"
+				   width="100%" height="64"
+				   cornerRadius="2" backgroundColor="{fromHistory ? 0xffffcc : (selected ? 0xebf1f1 : 0xffffff)}" borderStyle="solid" borderColor="#dddddd"
+				   creationComplete="init()">
+
+	<fx:Script>
+		<![CDATA[
+			
+			import com.incheck.Constants;
+			import com.incheck.IncheckModel;
+			import com.incheck.common.ICNode;
+			import com.incheck.common.Logger;
+			import com.incheck.model.ChartDataPointVO;
+			import com.incheck.model.FunctionDataVO;
+			import com.incheck.model.GraphDataVO;
+			import com.incheck.model.ProcessDataVO;
+			import com.incheck.model.UserPreferencesModel;
+			
+			import mx.binding.utils.BindingUtils;
+			import mx.binding.utils.ChangeWatcher;
+			import mx.events.ToolTipEvent;
+			import mx.formatters.DateFormatter;
+			import mx.formatters.NumberFormatter;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.remoting.RemoteObject;
+			
+			import spark.components.Panel;
+
+			public static const LATEST_DATA:int = 1;
+
+			public static const HIST_DATA:int = 2;
+
+			public static const millisecondsPerHour:int = 1000 * 60 * 60;
+
+			[Embed("/resources/redcloseImage.png")]
+			private const _widgClose:Class;
+
+			[Embed("/resources/dataviewRefreshOn.png")]
+			private const _refreshOn:Class;
+
+			//[Embed("/resources/dataviewRefreshOff.png")]
+			//public static var refreshOff:Class;
+
+
+			[Embed("/resources/ledgreen.png")]
+			public static var ok:Class;
+
+			[Embed("/resources/ledyellow.png")]
+			public static var warn:Class;
+
+			[Embed("/resources/ledred.png")]
+			public static var error:Class;
+
+			[Embed("/resources/ledblue.png")]
+			public static var disabled:Class;
+
+			private var _myColorSet:uint = uint.MAX_VALUE;
+
+			private var dateFormat:DateFormatter = new DateFormatter();
+
+			private var myType:int = 1;
+
+			private var _node:ICNode = null;
+
+			private var pData:ProcessDataVO;
+
+			public var functionData:FunctionDataVO;
+
+			private var _graphData:GraphDataVO;
+
+			private var _selected:Boolean = false;
+
+			[Bindable]
+			public var fromHistory:Boolean = false;
+			
+			public var myId:Number = Math.random();
+
+			public var lastUpdate:Number = 0;
+
+			private var requestedDate:Date = null;
+
+			private var countGraphTypeChangedBindings:int = 0;
+
+			private var numGraphTypeChangedBindings:int = 3;
+
+			private var bindings:Array;
+
+			private var needRefresh:Boolean = true;
+
+
+			[Bindable]
+			public function get node():ICNode
+			{
+				return _node;
+			}
+			
+			public function set node(value:ICNode):void
+			{
+				_node = value;
+			}
+			
+			[Bindable]
+			public function get selected():Boolean
+			{
+				return _selected;
+			}
+			
+			public function set selected(value:Boolean):void
+			{
+				_selected = value;
+			}
+			
+			[Bindable]
+			public function get graphData():GraphDataVO
+			{
+				return _graphData;
+			}
+			
+			public function set graphData(value:GraphDataVO):void
+			{
+				_graphData = value;
+				measurementTypeChanged(IncheckModel.instance().MesType);
+			}
+			
+			[Bindable]
+			public function get processData():ProcessDataVO
+			{
+				return pData;
+			}
+			
+			public function set processData(value:ProcessDataVO):void
+			{
+				pData = value;
+			}
+			
+			[Bindable]
+			public function get myColorSet():uint
+			{
+				return _myColorSet;
+			}
+			
+			public function set myColorSet(value:uint):void
+			{
+				_myColorSet = value;
+			}
+			
+			public function setNode(n:ICNode, type:int, rd:Date):void
+			{
+				myType = type;
+				requestedDate = rd;
+				this._node = n;
+				IncheckModel.instance().lastMesType[_node.id] = IncheckModel.instance().MesType;
+				this.initialize();
+				processInUseChannelFlag(true);
+				dateFormat.formatString = "MM/DD/YYYY LL:NN:SS A";
+				// bindings for getting new data from the server
+				bindings = [];
+				bindings[0] = BindingUtils.bindSetter(graphTypeChanged, IncheckModel.instance(), "graphMenuSelection", true, true);
+				bindings[1] = BindingUtils.bindSetter(graphTypeChanged, IncheckModel.instance(), "functionMenuSelection", true, true);
+				bindings[2] = BindingUtils.bindSetter(measurementTypeChanged, IncheckModel.instance(), "MesType", true, true);
+				bindings[3] = BindingUtils.bindSetter(procDataChanged, this, "processData", true, true);
+				bindings[4] = BindingUtils.bindSetter(procDataChanged, this, "graphData", true, true);
+				// bindings for changing converting the RMS value and units
+				bindings[5] = BindingUtils.bindSetter(RMSUnitChanged, IncheckModel.instance(), "AccEUnit", true, true);
+				bindings[6] = BindingUtils.bindSetter(RMSUnitChanged, IncheckModel.instance(), "VelEUnit", true, true);
+				setTimeout(checkEmptyOrDupe, 40000);
+			}
+
+
+			private function init():void
+			{
+				addEventListener(MouseEvent.CLICK, onClick, false, 0, true);
+				IncheckModel.instance().userPreferencesModel.addEventListener(UserPreferencesModel.GET_USER_PREFERENCES_COMPLETE, getUserPreferencesCompleteHandler, false, 0, true);
+			}
+
+
+			private function getUserPreferencesCompleteHandler(event:Event):void
+			{
+				setOverallValueText();
+			}
+
+
+			public function releaseBindings():void
+			{
+				for each (var changeWatcher:ChangeWatcher in bindings)
+				{
+					changeWatcher.unwatch();
+				}
+				IncheckModel.instance().userPreferencesModel.removeEventListener(UserPreferencesModel.GET_USER_PREFERENCES_COMPLETE, getUserPreferencesCompleteHandler);
+				removeEventListener(MouseEvent.CLICK, onClick);
+			}
+
+
+			private function onClick(event:MouseEvent):void
+			{
+				IncheckModel.instance().left.updateSelection(this);
+				IncheckModel.instance().right.dataViewChart.regenLineSeries();
+			}
+
+
+			private function RMSUnitChanged(sel:String):void
+			{
+				setOverallValueText();
+			}
+
+
+			private function procDataChanged(proc:Object = null):void
+			{
+				if (this.pData != null && this.timeStampLabel != null)
+				{
+					//this.timeStampLabel.text=dateFormat.format(new Date((processedData.dateTimeStamp as Date).getTime() -(1 * millisecondsPerHour)));
+					if (!requestedDate)
+					{
+						requestedDate = pData.dateTimeStamp;
+					}
+					this.timeStampLabel.text = dateFormat.format(new Date(requestedDate.getTime()));
+					setOverallValueText();
+					this.handlerCheckBox(null);
+				}
+				var allWidg:Array = IncheckModel.instance().left.selectedChannelsBox.getChildren();
+				for each (var oneWZ:ChannelWidget in allWidg)
+				{
+					if (oneWZ.myId != this.myId && oneWZ.timeStampLabel == this.timeStampLabel && oneWZ.channelId == this.channelId)
+					{
+						handleClose(null);
+					}
+				}
+				lastUpdate = new Date().time;
+			}
+
+
+			private function setOverallValueText():void
+			{
+				if (graphData == null)
+				{
+					return;
+				}
+				var RMS_STRING:String;
+				var RMSConversionFunction:Function;
+				var RMSConversionSymbol:String;
+				if (IncheckModel.instance().graphMenuSelection == "accel")
+				{
+					switch (IncheckModel.instance().AccEUnit)
+					{
+						case "AccInSec2":
+						{
+							RMSConversionSymbol = "in/s²";
+							break;
+						}
+						case "AccMtrPerSec2":
+						{
+							RMSConversionSymbol = "m/s²";
+							break;
+						}
+						case "AccDb":
+						{
+							RMSConversionSymbol = "dB";
+							break;
+						}
+						case "AccMmSec2":
+						{
+							RMSConversionSymbol = "mm/s²";
+							break;
+						}
+						default:
+						{
+							RMSConversionSymbol = "g";
+							break;
+						}
+					}
+					RMSConversionFunction = IncheckModel.instance().getAccelerationUnitsConversionFunction(RMSConversionSymbol);
+				}
+				else if (IncheckModel.instance().graphMenuSelection == "velo")
+				{
+					switch (IncheckModel.instance().VelEUnit)
+					{
+						case "VelMtrSec":
+						{
+							RMSConversionSymbol = "m/s";
+							break;
+						}
+						case "VelMmSec":
+						{
+							RMSConversionSymbol = "mm/s";
+							break;
+						}
+						case "VelDb":
+						{
+							RMSConversionSymbol = "dB";
+							break;
+						}
+						default:
+						{
+							RMSConversionSymbol = "in/s";
+							break;
+						}
+					}
+					RMSConversionFunction = IncheckModel.instance().getVelocityUnitsConversionFunction(RMSConversionSymbol);
+				}
+
+				var numberFormatter:NumberFormatter = new NumberFormatter();
+				numberFormatter.precision = 3;
+				numberFormatter.thousandsSeparatorTo = "";
+				var propName:String = "";
+				var rmsStrValue:String = "0";
+				if (IncheckModel.instance().getUserOverallType() == "RMS")
+				{
+					if (IncheckModel.instance().graphMenuSelection == "accel")
+					{
+						propName = Constants.KEY_ACCEL_RMS;
+					}
+					else
+					{
+						propName = Constants.KEY_VEL_RMS;
+					}
+					if (graphData.overalls)
+					{
+						if (graphData.overalls.overalls)
+						{
+							rmsStrValue = numberFormatter.format(RMSConversionFunction(graphData.overalls.overalls[propName]));
+						}
+					}
+					RMS_STRING = "RMS: " + rmsStrValue + " " + RMSConversionSymbol;
+				}
+				else if (IncheckModel.instance().getUserOverallType() == "Peak")
+				{
+					if (IncheckModel.instance().graphMenuSelection == "accel")
+					{
+						propName = Constants.KEY_ACCEL_PEAK;
+					}
+					else
+					{
+						propName = Constants.KEY_VEL_PEAK;
+					}
+					if (graphData.overalls)
+					{
+						if (graphData.overalls.overalls)
+						{
+							rmsStrValue = numberFormatter.format(RMSConversionFunction(graphData.overalls.overalls[propName]));
+						}
+					}
+					RMS_STRING = "Peak: " + rmsStrValue + " " + RMSConversionSymbol;
+				}
+				this.overallValue.text = RMS_STRING;
+			}
+
+
+			private function checkEmptyOrDupe():void
+			{
+				if ((this.timeStampLabel == null || this.timeStampLabel.text == "0") && (this.pData == null))
+				{
+					handleClose(null);
+				}
+				else
+				{
+					var allWidg:Array = IncheckModel.instance().left.selectedChannelsBox.getChildren();
+					for each (var oneWZ:ChannelWidget in allWidg)
+					{
+						if (oneWZ.myId != this.myId && oneWZ._node.channelid == this._node.channelid && oneWZ.timeStampLabel.text == this.timeStampLabel.text)
+						{
+							//dupe.. lets remove
+							handleClose(null);
+							break;
+						}
+					}
+				}
+			}
+			
+			private function convertPeakToRMS():void {
+				if(graphData != null && IncheckModel.instance().functionMenuSelection == Constants.SPECTRUM){
+					for each(var dataPoint:Object in graphData.chartData.source){
+						dataPoint.y = dataPoint.y / Math.SQRT2;
+					}
+				}	
+			}
+
+
+			private function measurementTypeChanged(value:String):void
+			{
+				if (graphData != null && IncheckModel.instance().functionMenuSelection == Constants.SPECTRUM)
+				{
+					var i:int = 0;
+					var a:Array = graphData.chartData.source as Array;
+					var l:int = a.length;
+					if (l > 0)
+					{
+						var dataPoint:ChartDataPointVO;
+						var n:Number;
+						for (i = 0; i < l; i++)
+						{
+							dataPoint = new ChartDataPointVO(a[i]);
+							 if (value == Constants.PEAK && IncheckModel.instance().lastMesType[_node.id] == Constants.RMS)
+							{
+								dataPoint.y = dataPoint.y * Math.SQRT2;
+							}
+							else if (value == Constants.RMS && IncheckModel.instance().lastMesType[_node.id] == Constants.PEAK)
+							{
+								dataPoint.y = dataPoint.y / Math.SQRT2;
+							} 
+							a[i] = dataPoint;
+						}
+						IncheckModel.instance().lastMesType[_node.id] = value;
+					}
+				}
+				graphTypeChanged(value);
+			}
+
+
+			// this function is for changes that require a call to the server to get chart data
+			private function graphTypeChanged(sel:String):void
+			{
+				/*
+				This is a hack to fix a problem.  The Bindings (found in the setNode function) are causing this graphTypeChanged function to execute several times (one for each bindSetter) when a ChannelWidget is
+				added to the DataSets. The result is that the same service call is being made several times and the chart data fluctuates several times as the data is returned from the server.  However the way the
+				application is currently programmed, it is not easy to eliminate the bindings for a different solution.  So the hack is to have the graphTypeChanged funtion ignore the first calls.
+				-Jamie McDaniel 6/26/09
+				*/
+				countGraphTypeChangedBindings++;
+				if (countGraphTypeChangedBindings < numGraphTypeChangedBindings)
+				{
+					return;
+				}
+//			setTimeout(IncheckModel.instance().pollForChangesInAnalysisChart, 500, new Date().time);
+//			IncheckModel.instance().right.dataViewChart.visible = false;
+//			IncheckModel.instance().right.AnalysisChartProgBar.visible = true;
+//			setTimeout(IncheckModel.instance().makeAnalysisChartVisible, 10000);
+				// IncheckModel.instance().right.dataViewChart.removeProcessedData(this.processedData);
+				var type:String = "Spectrum - Acceleration (" + IncheckModel.instance().MesType + ")";
+				var xeu:String = Constants.DEFAULT_FREQ_UNITS;
+				var yeu:String = Constants.DEFAULT_ACCELERATION_UNITS;
+
+				if (IncheckModel.instance().graphMenuSelection == "brndem")
+				{
+					type = "Spectrum - Brn Dem Acceleration (" + IncheckModel.instance().MesType + ")";
+				}
+				if (IncheckModel.instance().graphMenuSelection == "accel")
+				{
+					if (IncheckModel.instance().functionMenuSelection == "spec")
+					{
+						type = "Spectrum - Acceleration (" + IncheckModel.instance().MesType + ")";
+					}
+					else if (IncheckModel.instance().functionMenuSelection == "wave")
+					{
+						type = "Time Waveform - Acceleration";
+						xeu = Constants.DEFAULT_TIME_UNITS;
+					}
+					else if (IncheckModel.instance().functionMenuSelection == "hist")
+					{
+						type = "Overalls Trend - Acceleration, P2P";
+					}
+				}
+				else if (IncheckModel.instance().graphMenuSelection == "velo")
+				{
+					yeu = Constants.DEFAULT_VELOCITY_UNITS;
+					if (IncheckModel.instance().functionMenuSelection == "spec")
+					{
+						type = "Spectrum - Velocity (" + IncheckModel.instance().MesType + ")";
+					}
+					else if (IncheckModel.instance().functionMenuSelection == "wave")
+					{
+						type = "Time Waveform - Velocity";
+						xeu = Constants.DEFAULT_TIME_UNITS;
+					}
+					else if (IncheckModel.instance().functionMenuSelection == "hist")
+					{
+						type = "Overalls Trend - Velocity, P2P";
+					}
+				}
+				else if (IncheckModel.instance().graphMenuSelection == "disp")
+				{
+					if (IncheckModel.instance().functionMenuSelection == "spec")
+					{
+						type = "Spectrum - Displacement (" + IncheckModel.instance().MesType + ")";
+						yeu = Constants.DEFAULT_DISPLACEMENT_UNITS;
+					}
+					else if (IncheckModel.instance().functionMenuSelection == "wave")
+					{
+						type = "Time Waveform - Displacement";
+						xeu = Constants.DEFAULT_TIME_UNITS;
+						yeu = Constants.DEFAULT_DISPLACEMENT_UNITS;
+					}
+					else if (IncheckModel.instance().functionMenuSelection == "hist")
+					{
+						type = "Overalls Trend - Displacement, P2P";
+					}
+				}
+				IncheckModel.instance().xeu = xeu;
+				IncheckModel.instance().yeu = yeu;
+
+				// IncheckModel.instance().right.dataViewChart.axisType="NUM";
+				var sampId:String = "0";
+				if (this.pData != null && autorefbut.source != _refreshOn)
+				{
+					sampId = pData.sampleId;
+				}
+
+				autorefbut.visible = myType != HIST_DATA;
+
+				if (myType == LATEST_DATA || myType == HIST_DATA)
+				{
+					if (!needRefresh && (pData.channelId == this._node.channelid))
+					{
+						switch (yeu)
+						{
+							case "AccG":
+							{
+								functionData = pData.accelerationData;
+								break;
+							}
+							case "VelInSec":
+							{
+								functionData = pData.velocityData;
+								break;
+							}
+						}
+						switch (xeu)
+						{
+							case "TimeSec":
+							{
+								graphData = functionData.waveformData;
+								break;
+							}
+							case "FreqHz":
+							{
+								graphData = functionData.spectrumData;
+								break;
+							}
+						}
+						procDataChanged();
+					}
+					else
+					{
+						if (myType == HIST_DATA && requestedDate != null)
+						{
+							// Alert.show("getProcessedDynamicDataByDate for "+requestedDate);
+							IncheckModel.instance().getProcessedDynamicDataByDate(this._node, requestedDate, this.handlerForProcessedDynamicData, type, xeu, yeu);
+							this.setStyle("backgroundColor", "0xffffcc");
+						}
+						else
+						{
+							IncheckModel.instance().getLatestProcessedDynamicDataByType(this._node, type, this.handlerForProcessedDynamicData, getLatestProcessedDynamicDataByTypeFault, sampId, xeu, yeu);
+						}
+					}
+					var r:RightNavigator = IncheckModel.instance().right;
+					var p:Panel = r.DataviewPanel;
+					if (IncheckModel.instance().right.DataviewPanel)
+					{
+						IncheckModel.instance().right.DataviewPanel.title = type;
+					}
+					if (needRefresh)
+					{
+						needRefresh = false;
+						requestedDate = null;
+					}
+				}
+			}
+
+
+			private function getLatestProcessedDynamicDataByTypeFault(event:FaultEvent):void
+			{
+				trace("getLatestProcessedDynamicDataByTypeFault(): " + event.fault.toString());
+				//			Alert.show(event.fault.toString(), "Error");
+				
+				var type:String = "Spectrum - Acceleration (" + IncheckModel.instance().MesType + ")";
+				var xeu:String = Constants.DEFAULT_FREQ_UNITS;
+				var yeu:String = Constants.DEFAULT_ACCELERATION_UNITS;
+				
+				if (IncheckModel.instance().graphMenuSelection == "brndem")
+				{
+					type = "Spectrum - Brn Dem Acceleration (" + IncheckModel.instance().MesType + ")";
+				}
+				if (IncheckModel.instance().graphMenuSelection == "accel")
+				{
+					if (IncheckModel.instance().functionMenuSelection == "spec")
+					{
+						type = "Spectrum - Acceleration (" + IncheckModel.instance().MesType + ")";
+					}
+					else if (IncheckModel.instance().functionMenuSelection == "wave")
+					{
+						type = "Time Waveform - Acceleration";
+						xeu = Constants.DEFAULT_TIME_UNITS;
+					}
+					else if (IncheckModel.instance().functionMenuSelection == "hist")
+					{
+						type = "Overalls Trend - Acceleration, P2P";
+					}
+				}
+				else if (IncheckModel.instance().graphMenuSelection == "velo")
+				{
+					yeu = Constants.DEFAULT_VELOCITY_UNITS;
+					if (IncheckModel.instance().functionMenuSelection == "spec")
+					{
+						type = "Spectrum - Velocity (" + IncheckModel.instance().MesType + ")";
+					}
+					else if (IncheckModel.instance().functionMenuSelection == "wave")
+					{
+						type = "Time Waveform - Velocity";
+						xeu = Constants.DEFAULT_TIME_UNITS;
+					}
+					else if (IncheckModel.instance().functionMenuSelection == "hist")
+					{
+						type = "Overalls Trend - Velocity, P2P";
+					}
+				}
+				else if (IncheckModel.instance().graphMenuSelection == "disp")
+				{
+					if (IncheckModel.instance().functionMenuSelection == "spec")
+					{
+						type = "Spectrum - Displacement (" + IncheckModel.instance().MesType + ")";
+						yeu = Constants.DEFAULT_DISPLACEMENT_UNITS;
+					}
+					else if (IncheckModel.instance().functionMenuSelection == "wave")
+					{
+						type = "Time Waveform - Displacement";
+						xeu = Constants.DEFAULT_TIME_UNITS;
+						yeu = Constants.DEFAULT_DISPLACEMENT_UNITS;
+					}
+					else if (IncheckModel.instance().functionMenuSelection == "hist")
+					{
+						type = "Overalls Trend - Displacement, P2P";
+					}
+				}
+				
+				IncheckModel.instance().getLatestProcessedDynamicDataByType(_node, type, handlerForProcessedDynamicData, getLatestProcessedDynamicDataByTypeFault, null, xeu, yeu);
+			}
+			
+			
+			public function handlerCheckBox(event:Event):void
+			{
+				if (event)
+				{
+					event.stopImmediatePropagation();
+				}
+				IncheckModel.instance().right.dataViewChart.regenLineSeriesWithZoomReset();
+			}
+
+
+			private function doOneRefresh(event:Event):void
+			{
+				event.stopImmediatePropagation();
+				needRefresh = true;
+				graphTypeChanged("SA");
+			}
+
+
+			public function handlerForProcessedDynamicData(event:ResultEvent):void
+			{
+				Logger.log(this, "Processed Data received");
+				pData = event.result as ProcessDataVO;
+				switch (IncheckModel.instance().yeu)
+				{
+					case "AccG":
+					{
+						functionData = pData.accelerationData;
+						break;
+					}
+					case "VelInSec":
+					{
+						functionData = pData.velocityData;
+						break;
+					}
+				}
+				switch (IncheckModel.instance().xeu)
+				{
+					case "TimeSec":
+					{
+						graphData = functionData.waveformData;
+						break;
+					}
+					case "FreqHz":
+					{
+						graphData = functionData.spectrumData;
+						break;
+					}
+				}
+				
+				if(IncheckModel.instance().MesType == Constants.RMS){
+					convertPeakToRMS(); // data always comes as Peak
+				}
+				
+				procDataChanged();	
+			}
+
+
+			private function processInUseChannelFlag(flag:Boolean):void
+			{
+				trace("processInUseChannelFlag " + _node.channelid + " " + flag);
+				var ro:RemoteObject = new RemoteObject("icNodes");
+				ro.processInUseChannelFlag(_node.channelid, flag);
+			}
+
+
+			private function handleClose(event:Event):void
+			{
+				if (event)
+				{
+					event.stopImmediatePropagation();
+				}
+				processInUseChannelFlag(false);
+				IncheckModel.instance().removeWidget(this);
+				IncheckModel.instance().right.dataViewChart.regenLineSeriesWithZoomReset();
+			}
+
+
+			public function updateColor(event:Event):void
+			{
+				event.stopImmediatePropagation();
+				_myColorSet = colorPick.selectedColor;
+				IncheckModel.instance().right.dataViewChart.regenLineSeries();
+			}
+
+
+			private function onTooltipCreate(event:ToolTipEvent):void
+			{
+				var tt:String = "";
+				var par:ICNode = _node.parent;
+				while (par)
+				{
+					tt = par.name + "/" + tt;
+					par = par.parent;
+				}
+				event.toolTip.text = tt;
+			}
+
+		]]>
+	</fx:Script>
+
+	<s:Group id="toPrint">
+
+		<s:CheckBox id="chBox"
+					x="8" y="8"
+					change="handlerCheckBox(event)" />
+
+		<mx:ColorPicker id="colorPick"
+						x="6" y="34"
+						selectedColor="{myColorSet}"
+						change="updateColor(event)" />
+
+		<s:Label id="channelId"
+				 x="35" y="6"
+				 width="114"
+				 text="{node.name}"
+				 fontWeight="bold" />
+
+		<s:Label id="timeStampLabel"
+				 x="35" y="20"
+				 width="163"
+				 text="0"
+				 fontSize="11" />
+
+		<s:Label id="overallValue"
+				 x="35" y="40"
+				 width="139"
+				 text="0" />
+
+		<!-- mx:Label x="182" y="38" width="3" text="" id="rpm" /-->
+
+	</s:Group>
+
+	<s:Image id="closeButton"
+			 top="5" right="5"
+			 source="{_widgClose}"
+			 buttonMode="true" useHandCursor="true"
+			 click="handleClose(event)" />
+
+	<s:Image id="autorefbut"
+			 right="5" bottom="5"
+			 source="{_refreshOn}"
+			 buttonMode="true" useHandCursor="true" visible="false"
+			 click="doOneRefresh(event)" />
+
+</s:BorderContainer>

@@ -1,0 +1,33 @@
+MAIN UNIX : natasha/G7A ( unix,cvs,svn etc.)
+also skovalenko/slava123
+
+INSITE/incheck_dev
+
+application: /opt/apps/lcds/tomcat 
+
+----------------------------  WEB  --------------------------------------------
+http://dev.inchecktech.net/insite-server/InCheck.html
+UID/PWD : guest/password
+http://dev.inchecktech.net/fx/jsp/displayChannelConfig.jsp?channel_id=22
+----------------------------  UNIX  --------------------------------------------
+root/begemot
+/opt/apps/lcds/tomcat/bin/restart
+/opt/apps/lcds/tomcat
+----------------------------  CVS  --------------------------------------------
+Server: dev.inchecktech.net
+
+----------------------------  MySql  --------------------------------------------
+Local MySql : uid/pwd : insite/incheck_dev
+Remote Mysql: dev.inchecktech.net :3306  schema:insite
+---------------------------------------------------------------------------------
+http://www.inchecktech.com/insite.htm
+
+---------------------------------------------------------------------------------
+Login: svallenko
+Password: b8MWitJELz
+
+You can now log in at the following URL to find out which projects you are a part of and how to access them:
+https://InCheck.home.cvsdude.com/ajax#login
+
+If you have any trouble with your new login, please contact your Incheck Technologies INc administrator, Alex Fridland at afridland@inchecktech.com.
+

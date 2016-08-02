@@ -1,0 +1,121 @@
+<html>
+<head>
+<title>Issue list:</title>
+<link rel="important stylesheet" href="chrome://messagebody/skin/messageBody.css">
+</head>
+<body>
+<table border=0 cellspacing=0 cellpadding=0 width="100%" class="header-part1"><tr><td><b>Subject: </b>Issue list:</td></tr><tr><td><b>From: </b>Alex Fridland &lt;afridland@inchecktech.com&gt;</td></tr><tr><td><b>Date: </b>Sun, 4 Jul 2010 11:26:26 -0500</td></tr></table><table border=0 cellspacing=0 cellpadding=0 width="100%" class="header-part2"><tr><td><b>To: </b>Sergey Bondarev &lt;sbondarev@exadel.com&gt;, Sergey Bondarev &lt;sergey.bondarew@gmail.com&gt;</td></tr></table><br>
+<br><div class="gmail_quote"><br><br><br>
+
+<p class="MsoNormal">GUI\Server side issues left:</p>
+
+<p class="MsoNormal"> </p>
+
+<p class="MsoNormal"> </p>
+
+<p><span><span>1.<span style="font: 7pt &quot;Times New Roman&quot;;">      
+</span></span></span>GUI minor fixes:</p>
+
+<p style="margin-left: 1in;"><span><span>a.<span style="font: 7pt &quot;Times New Roman&quot;;">      
+</span></span></span>History H zoom actually does pan. Need rename
+this bottom to Pan, add actuall zoom.</p>
+
+<p style="margin-left: 1in;"><span><span>b.<span style="font: 7pt &quot;Times New Roman&quot;;">     
+</span></span></span>Make history lines thicker.</p>
+
+<p style="margin-left: 1in;"><span><span>c.<span style="font: 7pt &quot;Times New Roman&quot;;">      
+</span></span></span>Restore functionality analysis tab data gadget</p>
+
+<p style="margin-left: 1.5in;"><span><span><span style="font: 7pt &quot;Times New Roman&quot;;">                                                              
+</span>i.<span style="font: 7pt &quot;Times New Roman&quot;;">     
+</span></span></span>In that came from history should be light yellow<span>   </span><span> </span>(
+unless it active)</p>
+
+<p style="margin-left: 1.5in;"><span><span><span style="font: 7pt &quot;Times New Roman&quot;;">                                                            
+</span>ii.<span style="font: 7pt &quot;Times New Roman&quot;;">     
+</span></span></span>When you try add static channel to the<span>  </span>tab, user should get error message.</p>
+
+<p><span><span>2.<span style="font: 7pt &quot;Times New Roman&quot;;">      
+</span></span></span><a href="https://incheck.trac.cvsdude.com/insite/ticket/16" title="View ticket" target="_blank"><span style="color: windowtext; text-decoration: none;">Make
+autoscaling of Y-axis as option</span></a></p>
+
+<p> </p>
+
+<p><span><span>3.<span style="font: 7pt &quot;Times New Roman&quot;;">      
+</span></span></span>Add <span> </span><span>logarithmic scale graph:</span></p>
+
+<p class="MsoNormal" style="margin-left: 0.5in;"><span>  
+</span><i><span>To
+make the logarithmic or dB scale on Y axis we need to recalculate the data to
+dB (<span>decibel</span>) units. The formula is as follows:<br>
+<br>
+A[dB] = 20log(A/A[ref]),<br>
+<br>
+where A is our acceleration data, and A[ref] is a reference level that must be
+settable in the user preferences - &quot;Reference level for dB scale&quot;
+(separate for accel. and velocity). The default is 1 micro g. In other words,
+use A[ref] = 10^-6 g for the default.<br>
+<br>
+For velocity <br>
+<br>
+V[dB] = 20log(V/V[ref]),<br>
+<br>
+and the default for V[ref] is 10^-9 m/s or 3.937*10^-8 in/s.<br>
+<br>
+On the graph the scale will remain linear, only the units will switch to dB and
+the data values to be plotted will be either A[dB] or V[dB].</span></i></p>
+
+<p class="MsoNormal"> </p>
+
+<p><span><span>4.<span style="font: 7pt &quot;Times New Roman&quot;;">      
+</span></span></span>Clean up\redesign alarm handling</p>
+
+<p><span><span>5.<span style="font: 7pt &quot;Times New Roman&quot;;">      
+</span></span></span>Add bearing fault processing</p>
+
+<p><span><span>6.<span style="font: 7pt &quot;Times New Roman&quot;;">      
+</span></span></span>Add 3-D waterfall graph</p>
+
+<p><span><span>7.<span style="font: 7pt &quot;Times New Roman&quot;;">      
+</span></span></span>Streamline calculations.</p>
+
+<p style="margin-left: 1in;"><span><span>a.<span style="font: 7pt &quot;Times New Roman&quot;;">      
+</span></span></span>Keep TimeWave<span> 
+</span>and<span>  </span>Spectrum calculated data separately
+for each domain ( Acceleration\Velocity\Displacement\etc…)</p>
+
+<p style="margin-left: 1in;"><span><span>b.<span style="font: 7pt &quot;Times New Roman&quot;;">     
+</span></span></span>Get list of all available overalls from database</p>
+
+<p style="margin-left: 1in;"><span><span>c.<span style="font: 7pt &quot;Times New Roman&quot;;">      
+</span></span></span>Add calculated overalls to the same object as
+time wave\spectrum data in </p>
+
+<p><span><span>8.<span style="font: 7pt &quot;Times New Roman&quot;;">      
+</span></span></span>Us e standard libs like <a href="http://commons.apache.org/math/apidocs/index.html" target="_blank">http://commons.apache.org/math/apidocs/index.html</a></p>
+
+<p><span><span>9.<span style="font: 7pt &quot;Times New Roman&quot;;">      
+</span></span></span>Create standard API for all function in DPM\DSP
+so new GUI can use it<span>  </span>and we’ll be able
+to unit test all elements.</p>
+
+<p><span><span>10.<span style="font: 7pt &quot;Times New Roman&quot;;">  
+</span></span></span>Calculate Power Spectrum (Square of regular
+spectrum)<span>  </span>for acceleration and Velocity</p>
+
+<p style="line-height: normal;"><span style="font-size: 12pt; font-family: &quot;Times New Roman&quot;,&quot;serif&quot;;"><span>11.<span style="font: 7pt &quot;Times New Roman&quot;;">  </span></span></span><span style="font-size: 12pt; font-family: &quot;Times New Roman&quot;,&quot;serif&quot;;">Create vibration measurement
+baseline</span></p>
+
+<p><span><span>12.<span style="font: 7pt &quot;Times New Roman&quot;;">  
+</span></span></span> </p>
+
+<p class="MsoNormal"> </p><font color="#888888">
+
+<p class="MsoNormal"> </p>
+
+<br clear="all"><br>-- <br></font><div><div></div><div class="h5">Best Regards,<br><br>Alex Fridland<br><a href="http://www.inchecktech.com" target="_blank">www.inchecktech.com</a><br><a href="http://blog.inchecktech.com" target="_blank">blog.inchecktech.com</a><br>
+
+</div></div></div><br><br clear="all"><br>-- <br>Best Regards,<br><br>Alex Fridland<br><a href="http://www.inchecktech.com">www.inchecktech.com</a><br><a href="http://blog.inchecktech.com">blog.inchecktech.com</a><br>
+
+</body>
+</html>

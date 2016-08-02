@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:BorderContainer xmlns:components="com.incheck.components.*"
+				   xmlns:fx="http://ns.adobe.com/mxml/2009"
+				   xmlns:mx="library://ns.adobe.com/flex/mx"
+				   xmlns:ns2="com.incheck.*"
+				   xmlns:s="library://ns.adobe.com/flex/spark"
+				   width="100%" height="100%"
+				   backgroundColor="#cccccc"
+				   currentState="splashState"
+				   creationComplete="onCreationComplete()">
+
+	<fx:Declarations>
+
+		<mx:DataService id="channelsDataService"
+						destination="channels" requestTimeout="60" autoConnect="true"
+						conflict="onConflict(event)" fault="onDataServiceFault(event)" />
+
+		<s:ArrayCollection id="channelsList" />
+
+	</fx:Declarations>
+
+
+	<fx:Script>
+		<![CDATA[
+
+			import com.incheck.Constants;
+			import com.incheck.IncheckModel;
+			import com.incheck.components.events.InCheckEvent;
+			import com.incheck.components.model.LoginModel;
+
+			import mx.data.Conflict;
+			import mx.data.Conflicts;
+			import mx.data.events.DataConflictEvent;
+			import mx.data.events.DataServiceFaultEvent;
+			import mx.events.FlexEvent;
+			import mx.messaging.Channel;
+			import mx.messaging.ChannelSet;
+			import mx.messaging.config.ServerConfig;
+			import mx.rpc.events.ResultEvent;
+
+			import org.alivepdf.layout.*;
+
+
+			[Bindable]
+			private var _loginModel:LoginModel = new LoginModel();
+
+
+			private function onCreationComplete():void
+			{
+				// Get channels
+				var customChannelSet:ChannelSet = new ChannelSet();
+				var customChannel:Channel = ServerConfig.getChannel(Constants.SERVICE_ID);
+				customChannelSet.addChannel(customChannel);
+				channelsDataService.channelSet = customChannelSet;
+				channelsDataService.autoConnect = true;
+				channelsDataService.connect();
+				channelsDataService.fill(channelsList);
+				channelsDataService.addEventListener(ResultEvent.RESULT, onDataServiceResult, false, 0, true);
+			}
+
+
+			private function onDataServiceResult(event:ResultEvent):void
+			{
+				if (event.result is Array)
+				{
+					channelsList = new ArrayCollection(event.result as Array);
+				}
+			}
+
+
+			private function onDataServiceFault(event:DataServiceFaultEvent):void
+			{
+//				Alert.show(event.fault.faultString, "Error");
+			}
+
+
+			private function onConflict(event:DataConflictEvent):void
+			{
+				//Alert.show("This data has been changed by someone else. The current state of the data has been reloaded.", "Conflict");
+				var conflicts:Conflicts = channelsDataService.conflicts;
+				var conflict:Conflict;
+				for (var i:int = 0; i < conflicts.length; i++)
+				{
+					conflict = conflicts.getItemAt(i) as Conflict;
+					if (!conflict.resolved)
+					{
+						conflict.acceptServer();
+					}
+				}
+			}
+
+
+			private function onLoginComplete(event:Event):void
+			{
+				currentState = "acquireState";
+			}
+
+
+			private function logOut():void
+			{
+				currentState = "splashState";
+				IncheckModel.instance().autoRefresh = false;
+			}
+
+
+			private function onSaveGraph(event:InCheckEvent):void
+			{
+				IncheckModel.instance().savePdf();
+			}
+
+
+			protected function mainViewStack_creationCompleteHandler(event:FlexEvent):void
+			{
+				mainViewStack.addEventListener(InCheckEvent.SAVE_GRAPH, onSaveGraph, true, 0, true);
+			}
+
+		]]>
+	</fx:Script>
+
+
+	<s:states>
+
+		<s:State name="splashState" />
+
+		<s:State name="acquireState" />
+
+		<s:State name="analyseState" />
+
+		<s:State name="setupState" />
+
+	</s:states>
+
+
+	<s:Group id="splashScreen"
+			 width="100%" height="100%"
+			 includeIn="splashState">
+
+		<s:HGroup horizontalCenter="0" verticalCenter="0"
+				  gap="20">
+
+			<s:Button width="150" height="110"
+					  styleName="btnAcquire"
+					  click="currentState = 'acquireState'" />
+
+			<s:Button width="150" height="110"
+					  styleName="btnAnalyse"
+					  click="currentState = 'analyseState'" />
+
+			<s:Button width="150" height="110"
+					  styleName="btnSetup"
+					  click="currentState = 'setupState'" />
+
+		</s:HGroup>
+
+	</s:Group>
+
+	<s:VGroup width="100%" height="100%"
+			  horizontalAlign="center" verticalAlign="middle">
+
+		<s:Group width="100%">
+
+			<s:HGroup y="-27" right="0"
+					  paddingRight="5">
+
+				<s:Label id="welcomeTag"
+						 paddingTop="6"
+						 fontSize="14" color="white" />
+
+				<s:Label paddingTop="6"
+						 includeInLayout="false" text="Sign out"
+						 textDecoration="underline" fontSize="14" color="white"
+						 buttonMode="true" mouseChildren="false" useHandCursor="true" visible="false"
+						 click="logOut();" />
+
+			</s:HGroup>
+
+		</s:Group>
+
+		<s:VGroup id="mainViewStack"
+				  paddingLeft="5" paddingRight="5" paddingBottom="5"
+				  width="100%" height="100%"
+				  excludeFrom="splashState" 
+				  creationComplete="mainViewStack_creationCompleteHandler(event)">
+
+			<mx:HDividedBox x="0"
+							width="100%" height="100%">
+
+				<components:LeftNavigator id="leftNavigator" 
+										  width="217" height="100%" minWidth="217" maxWidth="350"
+										  currentState="{currentState}" />
+
+				<components:RightNavigator id="rightNavigator" 
+										   currentState="{currentState}" />
+
+			</mx:HDividedBox>
+
+		</s:VGroup>
+
+	</s:VGroup>
+
+</s:BorderContainer>

@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"
+        width="100%"
+        >
+    <mx:Script><![CDATA[
+        import com.incheck.admin.model.Channel;
+        import com.incheck.admin.model.Module;
+
+        import mx.events.ListEvent;
+
+        [Bindable("dataChange")]
+        public function get model():Module {
+            return data as Module
+        }
+
+        private function onModuleClick():void {
+            var event:ModuleRendererEvent = new ModuleRendererEvent(ModuleRendererEvent.MODULE_CLICKED);
+            event.module = model;
+            dispatchEvent(event);
+        }
+
+        private function onChannelClick(event1:ListEvent):void {
+            var event:ModuleRendererEvent = new ModuleRendererEvent(ModuleRendererEvent.CHANNEL_CLICKED);
+            event.module = model;
+            event.channel = event1.itemRenderer.data as Channel;
+            dispatchEvent(event);
+        }
+        ]]></mx:Script>
+    <mx:HBox width="100%" click="onModuleClick()">
+        <mx:Image source="@Embed(source='/../imgs/module.png')"/>
+        <mx:Canvas>
+            <mx:Label text="{model.deviceID}"/>
+            <mx:Label text="{model.serialNumber}" color="0x51a882" y="15"/>
+        </mx:Canvas>
+    </mx:HBox>
+    <mx:List id="channels"
+             paddingLeft="20"
+            width="100%"
+            dataProvider="{model.children}"
+            itemRenderer="com.incheck.admin.view.directory.renderer.ChannelRenderer"
+            itemClick="onChannelClick(event)"
+            height="{model.children.length * 55}"
+            borderThickness="0"
+            selectable="false"
+            backgroundColor="0xd2dbde"
+            />
+</mx:VBox>

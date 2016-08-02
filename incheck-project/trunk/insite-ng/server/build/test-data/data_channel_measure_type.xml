@@ -1,0 +1,5 @@
+<!DOCTYPE dataset SYSTEM "data_channel_measure_type.dtd">
+<dataset>
+    <channel_measure_type ID="-1" CODE="TestCode1" DESCRIPTION="Test Measure Type Description 1"/>
+    <channel_measure_type ID="-2" CODE="TestCode2" DESCRIPTION="Test Measure Type Description 2"/>
+</dataset>

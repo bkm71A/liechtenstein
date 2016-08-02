@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view:MainBase
+		xmlns:mx="http://www.adobe.com/2006/mxml"
+		xmlns:view="com.incheck.admin.view.*" xmlns:directory="com.incheck.admin.view.directory.*"
+		xmlns:treehierarchy="com.incheck.admin.view.tree.*" xmlns:login="com.incheck.admin.view.login.*"
+		xmlns:location="com.incheck.admin.view.location.*" xmlns:locationlist="com.incheck.admin.view.locationlist.*"
+		xmlns:constructor="com.incheck.admin.view.constructor.*"
+		layout="absolute"
+		xmlns:modules="com.incheck.admin.view.modules.*"
+		xmlns:channels="com.incheck.admin.view.channels.*"
+		xmlns:sensors="com.incheck.admin.view.sensors.*"
+		xmlns:hierarchy="com.incheck.admin.view.hierarchy.*"
+		creationComplete="createControllers()">
+	<mx:Style source="/../imgs/admin.css"/>
+	<mx:Script><![CDATA[
+		import com.incheck.admin.controller.ChannelsController;
+		import com.incheck.admin.controller.DirectoryController;
+		import com.incheck.admin.controller.HierarchyController;
+		import com.incheck.admin.controller.LocationController;
+		import com.incheck.admin.controller.LocationListController;
+		import com.incheck.admin.controller.ModulesController;
+		import com.incheck.admin.controller.SensorsController;
+		import com.incheck.admin.controller.TreeConstructorController;
+		import com.incheck.admin.controller.TreeController;
+		import com.incheck.admin.model.LoginModel;
+		import com.incheck.admin.service.AdminService;
+
+		[Bindable]
+		private var _loginModel : LoginModel = new LoginModel();
+
+		protected function createControllers() : void {
+			_loginModel.addEventListener(LoginModel.LOGIN_COMPLETE, onLoginComplete);
+		}
+
+		private function onLoginComplete(event : Event) : void {
+			mainViewStack.selectedIndex = 1;
+
+			var service : AdminService = new AdminService();
+			locationsController = new LocationController(locationsView, service);
+			modulesController = new ModulesController(modulesView, service);
+			channelsController = new ChannelsController(channelsView, service);
+			sensorsController = new SensorsController(sensorsView, service);
+			hierarchyController = new HierarchyController(hierarchyView, service);
+			directoryController = new DirectoryController(directoryView, modules, service, availableChannels);
+			treeController = new TreeController(treeView, nodes, service);
+			locationListController = new LocationListController(locationList, locations, service);
+			treeConstructorController = new TreeConstructorController(treeConstructor, service);
+			setListeners();
+		}
+
+		override protected function updateSelectedTab(ind : int) : void {
+			tabs.selectedIndex = ind;
+		}
+
+		private function onTabIndexChange() : void {
+			if (tabs.selectedIndex == 4 || tabs.selectedIndex == 5) {
+				leftPanel.selectedIndex = VIEWS.indexOf(HIERARCHY_TREE_VIEW);
+			} else if (tabs.selectedIndex == 0) {
+				leftPanel.selectedIndex = VIEWS.indexOf(LOCATIONS_LIST_VIEW);
+			} else {
+				leftPanel.selectedIndex = VIEWS.indexOf(DIRECTORY_VIEW);
+			}
+		}
+		]]></mx:Script>
+	<mx:VBox width="100%" height="100%" paddingLeft="10" paddingRight="10" paddingBottom="10" paddingTop="10">
+		<mx:Image source="@Embed(source='/../imgs/title_GUI.png')"/>
+		<mx:ViewStack id="mainViewStack" width="100%" height="100%" creationPolicy="all">
+			<login:LoginView id="loginScreen" loginModel="{_loginModel}"/>
+			<mx:HDividedBox width="100%" height="100%">
+				<mx:ViewStack id="leftPanel" width="300" height="100%" paddingTop="30">
+					<locationlist:LocationList id="locationList"/>
+					<directory:DirectoryView id="directoryView"/>
+					<treehierarchy:TreeHierarchy id="treeView" nodes="{nodes}" availableChannels="{availableChannels}"/>
+				</mx:ViewStack>
+				<mx:TabNavigator id="tabs" width="300" height="100%" paddingLeft="10"
+								 change="onTabIndexChange()">
+					<location:Locations id="locationsView" label="Locations"/>
+					<modules:Modules id="modulesView" label="Modules"/>
+					<channels:Channels id="channelsView" label="Channels"/>
+					<sensors:Sensors id="sensorsView" label="Sensors" availableChannels="{availableChannels}"/>
+					<hierarchy:Hierarchy id="hierarchyView" label="Hierarchy" availableChannels="{availableChannels}"/>
+					<constructor:TreeConstructor id="treeConstructor" label="Tree constructor" modules="{modules}"
+												 nodes="{nodes}" locations="{locations}"/>
+				</mx:TabNavigator>
+			</mx:HDividedBox>
+		</mx:ViewStack>
+	</mx:VBox>
+</view:MainBase>

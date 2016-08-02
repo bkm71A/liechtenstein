@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+  <appender name="STDOUT" class="org.apache.log4j.ConsoleAppender">
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%n[DPM] %d{yyyyMMdd-HH:mm:ss.SSS} (%F:%L) %p - %m"/>
+    </layout>
+  </appender>
+
+  <appender name="DPMLogFile" class="org.apache.log4j.DailyRollingFileAppender">
+    <param name="File" value="../logs/dpm.log"/>
+    <param name="Append" value="false"/>
+    <param name="DatePattern" value="'.'yyyy-MM-dd" />
+	<param name="Threshold" value="debug" />
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%n[DPM] %d{yyyyMMdd-HH:mm:ss.SSS} (%F:%L) %p - %m"/>
+    </layout>
+  </appender>
+  
+  <appender name="DPMLErrors" class="org.apache.log4j.DailyRollingFileAppender">
+    <param name="File" value="../logs/dpm-errors.log"/>
+    <param name="Append" value="false"/>
+    <param name="DatePattern" value="'.'yyyy-MM-dd" />
+    <param name="Threshold" value="error" />
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%n[DPM] %d{yyyyMMdd-HH:mm:ss.SSS} (%F:%L) %p - %m"/>
+    </layout>
+  </appender>
+ 
+   <appender name="DPMNetwork" class="org.apache.log4j.DailyRollingFileAppender">
+    <param name="File" value="../logs/dpm-network.log"/>
+    <param name="Append" value="false"/>
+    <param name="DatePattern" value="'.'yyyy-MM-dd" />
+    <param name="Threshold" value="error" />
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%n[DPM] %d{yyyyMMdd-HH:mm:ss.SSS} (%F:%L) %p - %m"/>
+    </layout>
+  </appender>
+    
+  <category name="com.inchecktech.dpm.network" additivity="false">
+    <priority value="info"/>
+    <appender-ref ref="DPMNetwork"/>
+    
+  </category>
+    
+  <category name="com.inchecktech.dpm" additivity="true">
+    <priority value="info"/>
+    <appender-ref ref="DPMLogFile"/>
+    <appender-ref ref="DPMLErrors"/>
+  </category>
+  
+  <root>
+    <priority value="error"/>
+    <appender-ref ref="STDOUT"/>
+  </root>
+
+</log4j:configuration>

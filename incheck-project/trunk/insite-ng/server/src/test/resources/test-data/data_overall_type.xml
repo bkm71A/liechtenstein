@@ -1,0 +1,6 @@
+<!DOCTYPE dataset SYSTEM "data_overall_type.dtd">
+<dataset>
+    <overall_type ID="-1" NAME="Test Overall 1" DESCRIPTION="Test Overall Type 1" IS_ENABLED="1"/>
+    <overall_type ID="-2" NAME="Test Overall 2" DESCRIPTION="Test Overall Type 2" IS_ENABLED="1"/>
+    <overall_type ID="-3" NAME="Test Overall 3" DESCRIPTION="Test Overall Type 3" IS_ENABLED="1"/>
+</dataset>

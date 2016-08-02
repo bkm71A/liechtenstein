@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:ns1="com.incheck.*"
+		 xmlns:login="com.incheck.admin.view.login.*" width="100%" height="100%" horizontalAlign="center"
+		 verticalAlign="middle" creationComplete="onCreationComplete()" currentState="{loginModel.currentState}">
+	<mx:Script>
+		<![CDATA[
+		import com.incheck.admin.model.LoginModel;
+
+		[Bindable]
+		public var loginModel : LoginModel;
+
+		private function onCreationComplete() : void {
+			this.focusManager.setFocus(usernameTextInput);
+		}
+		]]>
+	</mx:Script>
+	<mx:states>
+		<mx:State name="emailPassword">
+			<mx:AddChild relativeTo="{loginForm}" position="before">
+				<mx:Text id="emailPasswordText" width="100%" condenseWhite="true" paddingRight="10" paddingLeft="10">
+					<mx:htmlText>
+						<![CDATA[
+							Provide your username and we will send a new password to the email address on record.
+						]]>
+					</mx:htmlText>
+				</mx:Text>
+			</mx:AddChild>
+			<mx:RemoveChild target="{passwordFormItem}"/>
+			<mx:RemoveChild target="{loginButton}"/>
+			<mx:AddChild relativeTo="{loginControlBar}" position="lastChild">
+				<mx:Button id="emailPasswordButton" label="Email Password" enabled="{loginModel.canEmailPassword}"
+						   click="loginModel.emailPassword()"/>
+			</mx:AddChild>
+			<mx:AddChild relativeTo="{loginControlBar}" position="lastChild">
+				<mx:Button id="cancelEmailPasswordButton" label="Cancel" click="loginModel.switchToLogin()"/>
+			</mx:AddChild>
+			<mx:RemoveChild target="{emailPasswordLinkButton}"/>
+			<mx:SetProperty target="{loginPanel}" name="title" value="Forgot Password"/>
+		</mx:State>
+		<mx:State name="message">
+			<mx:RemoveChild target="{loginForm}"/>
+			<mx:RemoveChild target="{loginButton}"/>
+			<mx:RemoveChild target="{emailPasswordLinkButton}"/>
+			<mx:AddChild relativeTo="{loginPanel}" position="firstChild">
+				<mx:Text id="messageText" width="100%" condenseWhite="true" paddingRight="10" paddingLeft="10"
+						 htmlText="{loginModel.messageHTMLText}"/>
+			</mx:AddChild>
+			<mx:AddChild relativeTo="{loginControlBar}" position="lastChild">
+				<mx:Button id="okMessageButton" label="OK" click="loginModel.switchToLogin()"/>
+			</mx:AddChild>
+			<mx:SetProperty target="{loginPanel}" name="title" value="{loginModel.messageTitle}"/>
+		</mx:State>
+	</mx:states>
+	<mx:transitions>
+		<mx:Transition fromState="*" toState="message">
+			<mx:Fade duration="0" alphaFrom="1.0" alphaTo="1.0"/>
+		</mx:Transition>
+		<mx:Transition fromState="*" toState="*">
+			<mx:Sequence
+					targets="{[loginForm, usernameFormItem, passwordFormItem, loginButton, emailPasswordText, emailPasswordButton, cancelEmailPasswordButton, emailPasswordLinkButton, messageText, okMessageButton]}">
+				<mx:Fade duration="250" alphaFrom="1.0" alphaTo="0.0"/>
+				<mx:RemoveChildAction/>
+				<mx:SetPropertyAction target="{loginPanel}" name="title"/>
+				<mx:AddChildAction/>
+				<mx:Fade duration="250" alphaFrom="0.0" alphaTo="1.0"/>
+			</mx:Sequence>
+		</mx:Transition>
+	</mx:transitions>
+
+	<mx:Panel id="loginPanel" styleName="loginPanel" titleStyleName="loginPanelTitle" title="Login" paddingTop="40"
+			  height="165" width="325" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+		<mx:Form id="loginForm" defaultButton="{loginButton}" paddingTop="5">
+			<mx:FormItem id="usernameFormItem" label="Login">
+				<mx:TextInput id="usernameTextInput" width="175" tabIndex="1"
+							  change="loginModel.updateUsername(usernameTextInput.text)"/>
+			</mx:FormItem>
+			<mx:FormItem id="passwordFormItem" label="Password">
+				<mx:TextInput id="passwordTextInput" width="175" displayAsPassword="true" tabIndex="2"
+							  change="loginModel.updatePassword(passwordTextInput.text)"/>
+			</mx:FormItem>
+		</mx:Form>
+		<mx:ControlBar id="loginControlBar" width="100%" horizontalAlign="right">
+			<mx:Button id="loginButton" label="Login" enabled="true" click="loginModel.login()" tabIndex="4"/>
+		</mx:ControlBar>
+	</mx:Panel>
+
+	<mx:HBox id="linkButtonHBox" width="100%" height="20" horizontalAlign="center">
+		<login:UnderlinedLinkButton id="emailPasswordLinkButton" label="Forgot Password" color="#191919"
+									textRollOverColor="#191919" textSelectedColor="#191919"
+									click="loginModel.switchToEmailPassword()"/>
+	</mx:HBox>
+
+	<mx:Spacer height="100"/>
+
+</mx:VBox>
+

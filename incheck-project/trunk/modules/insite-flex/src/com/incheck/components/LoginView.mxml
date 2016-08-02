@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009"
+		  xmlns:s="library://ns.adobe.com/flex/spark"
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  xmlns:ns1="com.incheck.*"
+		  width="100%"
+		  height="100%"
+		  horizontalAlign="center"
+		  verticalAlign="middle"
+		  creationComplete="onCreationComplete()"
+		  currentState="{loginModel.currentState}">
+	
+	<fx:Script>
+		<![CDATA[
+			import com.incheck.model.LoginModel;
+
+			[Bindable]
+			public var loginModel:LoginModel;
+			
+			
+			private function onCreationComplete():void
+			{
+				if (ExternalInterface.available){
+					ExternalInterface.call('setFocus');
+				}
+				this.focusManager.setFocus(usernameTextInput);
+			}
+			
+			
+			[Bindable]
+			private function get titleHeight():Number
+			{
+				return 22//loginPanel.titleDisplay.height;
+			}
+			
+			
+			private function set titleHeight(value:Number):void
+			{
+				//				loginPanel.titleDisplay.height = value;
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:states>
+		
+		<s:State name="loginState"/>
+		
+		<s:State name="forgotPasswordState"/>
+		
+		<s:State name="messageState"/>
+		
+	</s:states>
+	
+	
+	<s:Panel id="loginPanel"
+			 height="165"
+			 width="325"
+			 styleName="loginPanel"
+			 title.loginState="Sign In"
+			 title.forgotPasswordState="Forgot Password"
+			 title.messageState="Error"
+			 skinClass="com.incheck.components.skins.DefaultPanelSkin">
+		
+		<s:Label id="forgotPasswordStateText"
+				 includeIn="forgotPasswordState"
+				 width="100%"
+				 top="10"
+				 paddingLeft="10" paddingRight="10"
+				 color="#333333">
+			
+			<s:text>Please, provide your username and we will send a new password to the email address on record.</s:text>
+			
+		</s:Label>
+		
+		<s:Label id="messageText"
+				 includeIn="messageState"
+				 top="{Math.floor((loginPanel.height - messageText.height - titleHeight - buttonsContainer.height) / 2)}"
+				 width="100%"
+				 paddingRight="10"
+				 paddingLeft="10"
+				 text="{loginModel.messageHTMLText}"/>
+		
+		<mx:Form id="loginForm"
+				 excludeFrom="messageState"
+				 paddingTop.loginState="20"
+				 paddingTop.forgotPasswordState="50"
+				 defaultButton="{loginButton}"
+				 paddingTop="5">
+			
+			<mx:FormItem id="usernameFormItem"
+						 label="Username">
+				
+				<s:TextInput id="usernameTextInput"
+							 width="175"
+							 tabIndex="1"
+							 text="{loginModel.username}"
+							 change="loginModel.updateUsername(usernameTextInput.text)"/>
+				
+			</mx:FormItem>
+			
+			<mx:FormItem id="passwordFormItem"
+						 excludeFrom="messageState, forgotPasswordState"
+						 label="Password">
+				
+				<s:TextInput id="passwordTextInput"
+							 width="175"
+							 displayAsPassword="true"
+							 tabIndex="2"
+							 text="{loginModel.password}"
+							 change="loginModel.updatePassword(passwordTextInput.text)"/>
+			</mx:FormItem>
+			
+		</mx:Form>
+		
+		
+		<s:VGroup width="100%"
+				  height="100%">
+			
+			<s:Group height="100%"/>
+			
+			<s:HGroup id="buttonsContainer"
+					  width="100%"
+					  horizontalAlign="right"
+					  paddingRight="5"
+					  paddingBottom="5">
+				
+				<s:Button id="okMessageButton"
+						  includeIn="messageState"
+						  label="OK"
+						  click="loginModel.switchToLogin()"/>
+				
+				<s:Button id="loginButton"
+						  includeIn="loginState"
+						  label="Sign In"
+						  enabled="{loginModel.canLogin}"
+						  click="loginModel.login()"
+						  tabIndex="4"/>
+				
+				<s:Button id="sendPasswordButton"
+						  includeIn="forgotPasswordState"
+						  label="Email Password"
+						  enabled="{loginModel.canSendPassword}"
+						  click="loginModel.forgotPassword()"/>
+				
+				<s:Button id="cancelSendPasswordButton"
+						  includeIn="forgotPasswordState"
+						  label="Cancel"
+						  click="loginModel.switchToLogin()"/>
+				
+			</s:HGroup>
+			
+		</s:VGroup>
+		
+	</s:Panel>
+	
+	<s:HGroup id="linkButtonHBox"
+			  width="100%"
+			  height="20"
+			  horizontalAlign="center">
+		
+		<ns1:UnderlinedLinkButton id="forgotPasswordButton"
+								  label="Forgot Password"
+								  textRollOverColor="#444444" textSelectedColor="#444444"
+								  click="loginModel.switchToForgotPasswordState()"/>
+	</s:HGroup>
+	
+	<s:Group height="100"/>
+	
+</s:VGroup>

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Text xmlns:mx="http://www.adobe.com/2006/mxml" fontSize="26" x="20" y="10" alpha="0.5">
+	<mx:text>Select Data Channel from Navigation Tab</mx:text>
+</mx:Text>

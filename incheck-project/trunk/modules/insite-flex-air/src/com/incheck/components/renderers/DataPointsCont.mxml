@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009"
+		  xmlns:s="library://ns.adobe.com/flex/spark"
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  gap="-1"
+		  visible="false"
+		  creationComplete="init()">
+
+	<fx:Script>
+		<![CDATA[
+
+			import com.incheck.IncheckModel;
+			import com.incheck.components.events.AnalysisTabEvent;
+
+			import mx.collections.ArrayCollection;
+
+			[Embed("/assets/closeGrid.png")]
+			public const close:Class;
+
+
+			public function updateData(event:AnalysisTabEvent):void
+			{
+				var values:ArrayCollection = event.cursorValues;
+				var xTitle:String = event.xTitle;
+				var yTitle:String = event.yTitle;
+				if (values && values.length)
+				{
+					this.visible = true;
+					xAxis.text = xTitle;
+					yAxis.text = yTitle;
+					if (pointsValues.numChildren > values.length)
+					{
+						while (pointsValues.numChildren > values.length)
+						{
+							pointsValues.removeChildAt(values.length);
+						}
+					}
+					for (var i:int = 0; i < values.length; i++)
+					{
+						createListRow(values.getItemAt(i), i);
+					}
+				}
+				else
+				{
+					this.visible = false;
+				}
+			}
+
+
+			private function init():void
+			{
+				if (IncheckModel.instance().right)
+				{
+					IncheckModel.instance().right.scopeChart.addEventListener(AnalysisTabEvent.CURSOR_VALUES_UPDATED, updateData, true, 0, true);
+					IncheckModel.instance().right.analysisChart.addEventListener(AnalysisTabEvent.CURSOR_VALUES_UPDATED, updateData, true, 0, true);
+				}
+			}
+
+
+			private function createListRow(obj:Object, ind:int):void
+			{
+				var row:DataPointsRow;
+				if (pointsValues.numChildren > ind)
+				{
+					row = pointsValues.getChildAt(ind) as DataPointsRow;
+					row.rowValue = obj;
+				}
+				else
+				{
+					row = new DataPointsRow();
+					row.rowValue = obj;
+					pointsValues.addChild(row);
+				}
+			}
+
+			private var showGrid:Boolean = true;
+
+
+			private function updateVisibility(vis:Boolean):void
+			{
+				if (showGrid)
+				{
+					pointsValues.visible = vis;
+				}
+				if (!vis)
+				{
+					showGrid = false;
+					var t:Timer = new Timer(1000);
+					t.addEventListener(TimerEvent.TIMER, function(e:TimerEvent):void
+					{
+						showGrid = true;
+					}, false, 0, true);
+					t.start();
+				}
+			}
+
+		]]>
+	</fx:Script>
+
+	<s:Group>
+		<mx:HBox mouseOver="{updateVisibility(true)}"
+				 height="26"
+				 horizontalGap="0"
+				 backgroundColor="0xdbe9e9"
+				 borderStyle="solid"
+				 verticalAlign="middle">
+			<mx:Label text="N"
+					  width="20"
+					  textAlign="left"/>
+
+			<mx:VRule height="100%"/>
+
+			<mx:Label id="xAxis"
+					  text="x"
+					  width="60"
+					  textAlign="left"/>
+
+			<mx:VRule height="100%"/>
+
+			<mx:Label id="yAxis"
+					  text="y"
+					  width="60"
+					  textAlign="left"/>
+		</mx:HBox>
+
+		<mx:Image source="{close}"
+				  click="{updateVisibility(false)}"
+				  verticalCenter="0"
+				  right="3"/>
+	</s:Group>
+
+	<s:VGroup id="pointsValues"
+			  height="100%"
+			  visible="false"
+			  paddingLeft="0"
+			  paddingRight="0"
+			  gap="-1" />
+</s:VGroup>

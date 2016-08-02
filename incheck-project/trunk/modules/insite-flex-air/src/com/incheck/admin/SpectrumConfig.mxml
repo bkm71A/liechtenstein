@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:mx="http://www.adobe.com/2006/mxml" width="904" height="658">
+
+
+	<mx:Label x="10" y="20" text="Channel:"/>
+	<mx:Label x="85" y="20" text="Simulator Channel #24"/>
+	<mx:Label x="10" y="46" text="Channel ID:"/>
+	<mx:Label x="91" y="46" text="1001"/>
+	<mx:Label x="10" y="72" text="Location"/>
+	<mx:Label x="85" y="72" text="Illinois / Chicago / Northbrook / Yura Basement / Air Blower"/>
+	<mx:Grid x="10" y="113">
+		<mx:GridRow width="100%" height="100%">
+			<mx:GridItem width="100%" height="100%">
+				<mx:Label text="Select"/>
+			</mx:GridItem>
+			<mx:GridItem width="100%" height="100%">
+				<mx:Label text="Analysis Bandwidth, Hz"/>
+			</mx:GridItem>
+			<mx:GridItem width="100%" height="100%">
+				<mx:Label text="Spectrum Lines"/>
+			</mx:GridItem>
+		</mx:GridRow>
+		<mx:GridRow width="100%" height="100%">
+			<mx:GridItem width="100%" height="100%">
+				<mx:RadioButton selected="true"/>
+			</mx:GridItem>
+			<mx:GridItem width="100%" height="100%">
+			</mx:GridItem>
+			<mx:GridItem width="100%" height="100%">
+			</mx:GridItem>
+		</mx:GridRow>
+		</mx:Grid>
+	
+</s:Group>

@@ -1,0 +1,8 @@
+<!ELEMENT dataset (role*)>
+
+<!ELEMENT role EMPTY>
+<!ATTLIST role
+    ID CDATA #REQUIRED
+    NAME CDATA #REQUIRED
+    DESCRIPTION CDATA #IMPLIED
+>

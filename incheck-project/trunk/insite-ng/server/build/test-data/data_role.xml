@@ -1,0 +1,5 @@
+<!DOCTYPE dataset SYSTEM "data_role.dtd">
+<dataset>
+    <role ID="-1" NAME="ROLE_TEST_USER" DESCRIPTION="integration test role description"/>
+
+</dataset>

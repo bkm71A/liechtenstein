@@ -1,0 +1,130 @@
+@namespace mx "library://ns.adobe.com/flex/mx";
+@namespace s "library://ns.adobe.com/flex/spark";
+
+
+/**
+*	Application
+*/
+s|Application 
+{
+	backgroundColor: #708392;
+}
+
+
+/**
+*	All namespaces
+*/
+s|List mx|List
+{
+	selectionColor: #a0c8c8;
+}
+
+
+/**
+*	mx
+*/
+mx|Accordion
+{
+	backgroundColor: #f0f6f6;
+	content-background-color: #f0f6f6;
+}
+
+mx|List
+{
+	content-background-color: #f0f6f6;
+}
+
+mx|TabNavigator
+{
+	paddingBottom: 4;
+	paddingLeft: 4; 
+	paddingRight: 4; 
+	paddingTop: 4;
+	borderColor: #555555;
+	backgroundColor: #e3e6e7;
+}	
+
+mx|ComboBox 
+{
+	selectionColor: #95c7c7;
+}
+
+mx|HDividedBox 
+{
+	dividerColor: #336666;
+	dividerThickness: 3;
+}
+
+mx|MenuBar 
+{
+	selectionColor: #9fcaca;
+	textSelectedColor: #336666;
+	fontWeight: bold;
+}
+
+mx|TabNavigator 
+{
+	borderStyle: solid;
+	borderColor: #336666;
+	backgroundColor: #f0f6f6;
+	tabStyleName: "myTabs";
+	firstTabStyleName: "myTabs";
+	lastTabStyleName: "myTabs";
+	selectedTabTextStyleName: "mySelectedTabs";
+}
+
+mx|Tree
+{
+	rollOverColor: #96d4d4;
+	borderStyle: none;
+	borderColor: #669999;
+	selectionColor: #9ec2c2;
+	indentation: 10;
+}
+
+
+/**
+*	Spark
+*/
+s|Panel
+{
+	borderColor: #669999;
+	backgroundColor1: #d3dbde;
+	backgroundColor2: #cfdede;
+}	
+
+
+/**
+*	Classes
+*/
+.loginPanel 
+{
+	backgroundColor: #eaeaea;
+	dropShadowEnabled: true;
+}	
+
+.contentBackground
+{
+	backgroundColor1: #708392;
+	backgroundColor2: #336666;
+}
+
+.myTabs {
+	borderColor: #336666;
+	themeColor: #669999;
+	
+}
+
+.mySelectedTabs {
+	color: #336666;
+	textRollOverColor: #669999;
+	fontWeight: bold;
+}
+
+.chartContainer {
+	backgroundColor: #ffffff;	
+}
+
+.widgetsContainer {
+	backgroundColor: #f0f6f6;	
+}

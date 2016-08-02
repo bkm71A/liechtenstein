@@ -1,0 +1,5 @@
+<!DOCTYPE dataset SYSTEM "data_band.dtd">
+<dataset>
+    <band ID="-1" BAND_COEFFICIENT="1" LOW_FREQUENCY="0" HIGH_FREQUENCY="1000" name="Overall Band Test 1"/>
+    <band ID="-2" BAND_COEFFICIENT="1" LOW_FREQUENCY="0" HIGH_FREQUENCY="25000" name="Overall Band Test 2"/>
+</dataset>

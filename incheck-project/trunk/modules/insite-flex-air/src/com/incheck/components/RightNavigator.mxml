@@ -1,0 +1,562 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:admin="com.incheck.admin.*"
+		 xmlns:commn="com.incheck.common.*"
+		 xmlns:components="com.incheck.components.*"
+		 xmlns:flexlib="http://code.google.com/p/flexlib/"
+		 xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:ns1="com.incheck.*"
+		 xmlns:renderers="com.incheck.components.renderers.*"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 width="100%" height="100%"
+		 creationComplete="onCreationComplete()">
+
+
+	<fx:Script>
+		<![CDATA[
+
+			import com.incheck.IncheckModel;
+			import com.incheck.common.DeviceEventsGroup;
+			import com.incheck.components.events.InCheckEvent;
+			import com.incheck.components.model.UserPreferencesModel;
+			import com.incheck.components.model.UserProfileModel;
+
+			import mx.collections.ArrayCollection;
+			import mx.controls.Menu;
+			import mx.core.IToolTip;
+			import mx.events.FlexEvent;
+			import mx.events.MenuEvent;
+			import mx.events.ToolTipEvent;
+			import mx.managers.ToolTipManager;
+
+
+			[Bindable]
+			private var _userProfileModel:UserProfileModel = new UserProfileModel();
+
+			public var events:ArrayCollection;
+
+			private var saveMenu:Menu;
+
+			private var saveToFileButtonTip:IToolTip;
+
+
+			private function onEventsShowChanged():void
+			{
+				var dp:ArrayCollection = events;
+			/*
+							if (eventsType.selectedIndex == 0)
+							{
+								alertsGrid.dataProvider = events;
+							}
+							else if (eventsType.selectedIndex == 1)
+							{
+								alertsGrid.dataProvider = filterEvent(events, true);
+							}
+							else if (eventsType.selectedIndex == 2)
+							{
+								alertsGrid.dataProvider = filterEvent(events, false);
+							}
+			 */
+			}
+
+
+			private function filterEvent(col:ArrayCollection, acknowledged:Boolean):ArrayCollection
+			{
+				var result:ArrayCollection = new ArrayCollection();
+				for each (var obj:Object in col)
+				{
+					if (obj.acked == acknowledged)
+					{
+						result.addItem(obj);
+					}
+				}
+				return result;
+			}
+
+
+			public function updateCursorValues(vals:ArrayCollection, xTitle:String, yTitle:String):void
+			{
+				//	dataPointsGrid.updateData(vals, xTitle, yTitle);
+			}
+
+
+			private function onCreationComplete():void
+			{
+				IncheckModel.instance().registerRight(this);
+//				IncheckModel.instance().left.showScopeTabs();
+			}
+
+
+			private function getUserPreferencesCompleteHandler(event:Event):void
+			{
+				if (scopeMenuBar)
+				{
+					scopeMenuBar.setMenuItemsToUserPreferences();
+				}
+				if (analysisMenuBar)
+				{
+					analysisMenuBar.setMenuItemsToUserPreferences();
+				}
+			}
+
+
+			private function onTabClick(event:FlexEvent):void
+			{
+				if (event.currentTarget.label == "Scope")
+				{
+				}
+				else if (event.currentTarget.label == "Analysis")
+				{
+
+					/* 					else
+										{
+											IncheckModel.instance().changeLeftTabSelectedIndex(0);
+										}
+					 */
+				}
+				/* 				else if (event.currentTarget.label == "History")
+								{
+									if ((IncheckModel.instance().left as LeftNavigator).selectedHistoryBox.numChildren > 0)
+									{
+										IncheckModel.instance().changeLeftTabSelectedIndex(1);
+										IncheckModel.instance().changeLeftAccordionSelectedIndex(1);
+									}
+									else
+									{
+										IncheckModel.instance().changeLeftTabSelectedIndex(0);
+									}
+								}
+								else if (event.currentTarget.label == "Event Viewer")
+								{
+									IncheckModel.instance().changeLeftTabSelectedIndex(0);
+								}
+				 */
+				else if (event.currentTarget.label == "Settings")
+				{
+//					IncheckModel.instance().changeLeftTabSelectedIndex(0);
+					graphMessage.visible = false;
+				}
+//				IncheckModel.instance().changeLeftTabLabel("s");
+			}
+
+
+			private function saveToPdfClick():void
+			{
+				dispatchEvent(new InCheckEvent(InCheckEvent.SAVE_GRAPH));
+			}
+
+
+			public function getGraphImage(bitmap:BitmapData, offset:Number):void
+			{
+				var matrix:Matrix = new Matrix();
+				matrix.translate(offset, 0);
+				if (tabs.selectedIndex == 1)
+				{
+					bitmap.draw(chartPanel);
+				}
+			/*
+							else if (selectedIndex == 2)
+							{
+								bitmap.draw(historyPanel);
+							}
+			 */
+			}
+
+
+			protected function autoscaleScopeClick(event:MouseEvent):void
+			{
+				scopeChart.onAutoScaleChanged();
+			}
+
+
+			protected function autoscaleAnalysisClick(event:MouseEvent):void
+			{
+				analysisChart.onAutoScaleChanged();
+			}
+
+
+			private function getStatus(eventGroup:DeviceEventsGroup, targer:*):String
+			{
+				return ((!eventGroup || !eventGroup.active) ? "Disconnected" : "Connected");
+			}
+
+
+			protected function saveToFileButtonClick(event:MouseEvent):void
+			{
+				trace(saveToFileButton.selectedField);
+				if (saveToFileButton.selectedField != null)
+				{
+					switch (saveToFileButton.selectedField)
+					{
+						case "csv":
+						{
+							IncheckModel.instance().saveCsv();
+							break;
+						}
+						case "pdf":
+						{
+							IncheckModel.instance().savePdf();
+							break;
+						}
+					}
+				}
+			}
+
+
+			private function saveButtonCreationComplete():void
+			{
+				saveMenu = new Menu();
+				var dp:Object = [{label:"Save to PDF", id:"pdf"}, {label:"Save to CSV", id:"csv"}];
+				saveMenu.dataProvider = dp;
+				saveMenu.selectedIndex = -1;
+				saveMenu.addEventListener(MenuEvent.ITEM_CLICK, itemClickHandler);
+				saveToFileButton.popUp = saveMenu;
+				saveToFileButton.toolTip = "Please select the target for saving";
+				ToolTipManager.showDelay = 0;
+			}
+
+
+			private function itemClickHandler(event:MenuEvent):void
+			{
+				saveToFileButton.label = event.item.label;
+				saveToFileButton.close();
+				saveToFileButton.selectedField = event.item.id;
+				saveToFileButton.toolTip = "Click to save the Analyzer data into file";
+				ToolTipManager.showDelay = 2000;
+			}
+
+		]]>
+	</fx:Script>
+
+
+	<s:states>
+
+		<s:State name="splashState" />
+
+		<s:State name="acquireState" />
+
+		<s:State name="analyseState" />
+
+		<s:State name="setupState" />
+
+	</s:states>
+
+
+	<mx:TabNavigator id="tabs"
+					 paddingLeft="2" paddingTop="2" paddingRight="2" paddingBottom="2"
+					 width="100%" height="100%"
+					 creationPolicy="all">
+
+		<!-- Dashboard -->
+		<s:NavigatorContent id="dashboardTab"
+							label="Scope"
+							includeIn="acquireState, analyseState">
+
+			<components:SelectMessage id="graphMessage"
+									  text="Waiting while data loading..."
+									  verticalCenter="0" horizontalCenter="0"
+									  visible="false" />
+
+			<s:Panel id="dashboard"
+					 width="100%" height="100%"
+					 borderVisible="false" dropShadowVisible="false" title="Scope">
+
+				<s:Group id="dashboardGraphContainer"
+						 width="100%" height="100%"
+						 visible="true">
+
+					<s:Group top="26"
+							 width="100%" height="100%">
+
+						<ns1:IncheckChartScope id="scopeChart"
+											   width="100%" height="100%"
+											   showDataTips="true">
+
+							<ns1:annotationElements>
+
+								<RangeSelectorScope xmlns="com.incheck.charts.*" />
+
+							</ns1:annotationElements>
+
+						</ns1:IncheckChartScope>
+
+					</s:Group>
+
+					<s:HGroup paddingTop="2">
+
+						<components:DataViewMenuBarScope id="scopeMenuBar"
+														 height="26"
+														 chart="{scopeChart}" />
+
+						<s:Group width="100%" />
+
+						<s:CheckBox id="autoscaleScope"
+									label="Autoscale" selected="false"
+									click="autoscaleScopeClick(event)" />
+
+					</s:HGroup>
+
+					<renderers:DataPointsCont right="0"
+											  height="100%" />
+				</s:Group>
+
+			</s:Panel>
+
+			<!--/s:Group-->
+		</s:NavigatorContent>
+
+
+		<s:NavigatorContent id="routePointTab"
+							label="Route/Point"
+							includeIn="acquireState">
+		</s:NavigatorContent>
+
+		<!-- Data View -->
+		<s:NavigatorContent id="dataViewTab"
+							label="Analysis"
+							includeIn="analyseState">
+
+			<mx:HBox id="dataViewBox"
+					 width="100%" height="100%"
+					 backgroundColor="white">
+
+				<s:Panel id="chartPanel"
+						 width="100%" height="100%"
+						 backgroundColor="white"
+						 borderVisible="false" dropShadowVisible="false" title="Chart View">
+
+					<s:Group width="100%" height="100%">
+
+						<s:Group top="26"
+								 width="100%" height="100%">
+
+							<ns1:IncheckChart3 id="analysisChart"
+											   width="100%" height="100%"
+											   showDataTips="true">
+
+								<ns1:annotationElements>
+
+									<RangeSelectorAnalysis xmlns="com.incheck.charts.*" />
+
+								</ns1:annotationElements>
+
+							</ns1:IncheckChart3>
+
+						</s:Group>
+
+						<s:HGroup paddingTop="2">
+
+							<components:DataViewMenuBar id="analysisMenuBar"
+														height="26"
+														chart="{analysisChart}" />
+
+							<s:Group width="100%" />
+
+							<s:CheckBox id="autoscaleAnalysis"
+										label="Autoscale" selected="false"
+										click="autoscaleAnalysisClick(event)" />
+						</s:HGroup>
+
+						<renderers:DataPointsCont right="0"
+												  height="100%" />
+					</s:Group>
+
+				</s:Panel>
+
+			</mx:HBox>
+
+			<mx:PopUpButton id="saveToFileButton"
+							top="5" right="10"
+							width="120"
+							label="Save Chart Data" toolTip="Click to save the Analyzer data into file"
+							click="saveToFileButtonClick(event)" creationComplete="saveButtonCreationComplete()" />
+
+		</s:NavigatorContent>
+
+
+		<!-- Setting View -->
+		<s:NavigatorContent label="routeSetup"
+							includeIn="setupState">
+
+		</s:NavigatorContent>
+
+		<s:NavigatorContent id="daqSetup"
+							label="DAQ Setup"
+							includeIn="setupState, acquireState">
+
+			<s:VGroup paddingLeft="10" paddingRight="10" paddingTop="10" paddingBottom="10"
+					  width="100%" height="100%">
+
+				<s:Label text="DAQ Setup"
+						 fontSize="18" fontWeight="bold" />
+
+				<s:Label styleName="textDefault" text="Spectrum Fmax, Hz" />
+
+				<s:DropDownList prompt="1000" />
+
+				<s:Label styleName="textDefault" text="Spectrum Lines" />
+
+				<s:DropDownList prompt="1600" />
+
+				<s:Label styleName="textDefault" text="Spectrum Averaging" />
+
+				<s:DropDownList prompt="Linear" />
+
+				<s:HGroup>
+
+					<s:Label styleName="textDefault" text="Averages" />
+
+					<s:DropDownList width="50"
+									prompt="4" />
+
+				</s:HGroup>
+
+				<s:HGroup>
+
+					<s:Label styleName="textDefault" text="Sampling rate" />
+
+					<s:Label styleName="textDefault" text="2560" />
+
+				</s:HGroup>
+
+				<s:HGroup>
+
+					<s:Label styleName="textDefault" text="Block size" />
+
+					<s:Label styleName="textDefault" text="4096" />
+
+				</s:HGroup>
+
+				<s:HGroup>
+
+					<s:Label styleName="textDefault" text="Aquisition Time" />
+
+					<s:Label styleName="textDefault" text="6.4s" />
+
+				</s:HGroup>
+
+				<s:Button label="Update" />
+
+			</s:VGroup>
+
+		</s:NavigatorContent>
+
+
+		<s:NavigatorContent id="userSetup"
+							label="User Setup"
+							includeIn="setupState">
+
+			<components:UserProfileView userProfileModel="{_userProfileModel}" />
+
+		</s:NavigatorContent>
+
+		<s:NavigatorContent id="serverSetup"
+							label="Server Setup"
+							includeIn="setupState">
+
+		</s:NavigatorContent>
+
+		<!-- System Status View -->
+		<!--s:Group label="System Status"
+				   id="systemStatusView"
+				   width="100%" height="100%">
+			<mx:DataGrid name="systemStatusName"
+						 id="systemStatusGrid"
+						 dataProvider="{IncheckModel.instance().systemStatusEvents}"
+						 variableRowHeight="true"
+						 wordWrap="true"
+						 sortableColumns="false">
+				<mx:columns>
+					<mx:DataGridColumn headerText="Device"
+									   dataField="deviceName"
+									   editable="false"/>
+
+					<mx:DataGridColumn headerText="Connected"
+									   width="300">
+						<mx:itemRenderer>
+							<fx:Component>
+								<mx:Text htmlText="{connectedLabelFunction(data as DeviceEventsGroup, null)}">
+									<fx:Script>
+										<![CDATA[
+
+											import com.incheck.common.DeviceEventsGroup;
+
+											import mx.collections.IList;
+											import mx.formatters.DateFormatter;
+
+
+											private function connectedLabelFunction(eventGroup:DeviceEventsGroup, targer:*):String
+											{
+												var dates:IList = eventGroup.getEventDatesByEventType(DeviceEventsGroup.CONNECT_EVENT_TYPE);
+												var result:String = "";
+												if (dates)
+												{
+													var dateFormatter:DateFormatter = new DateFormatter();
+													dateFormatter.formatString = "MM/DD/YYYY HH:NN:SS";
+													for each (var date:Date in dates)
+													{
+														result += (dateFormatter.format(date) + "<br/>");
+													}
+												}
+												return result;
+											}
+
+										]]>
+									</fx:Script>
+								</mx:Text>
+
+							</fx:Component>
+						</mx:itemRenderer>
+					</mx:DataGridColumn>
+
+					<mx:DataGridColumn headerText="Disconnected"
+									   width="300">
+						<mx:itemRenderer>
+							<fx:Component>
+								<mx:Text htmlText="{disconnectedLabelFunction(data as DeviceEventsGroup, null)}">
+									<fx:Script>
+										<![CDATA[
+
+											import com.incheck.common.DeviceEventsGroup;
+
+											import mx.collections.IList;
+											import mx.formatters.DateFormatter;
+
+
+											private function disconnectedLabelFunction(eventGroup:DeviceEventsGroup, targer:*):String
+											{
+												var dates:IList = eventGroup.getEventDatesByEventType(DeviceEventsGroup.DISCONNECT_EVENT_TYPE);
+												var result:String = "";
+												if (dates)
+												{
+													var dateFormatter:DateFormatter = new DateFormatter();
+													dateFormatter.formatString = "MM/DD/YYYY HH:NN:SS";
+													for each (var date:Date in dates)
+													{
+														result += (dateFormatter.format(date) + "<br/>");
+													}
+												}
+												return result;
+											}
+
+										]]>
+									</fx:Script>
+								</mx:Text>
+
+							</fx:Component>
+						</mx:itemRenderer>
+					</mx:DataGridColumn>
+
+					<mx:DataGridColumn headerText="Currently"
+									   labelFunction="{getStatus}"/>
+				</mx:columns>
+			</mx:DataGrid>
+		</s:Group-->
+
+		<!-- Admin View
+		<s:Group  label="User Admin" width="100%" height="100%">
+			<admin:adminuserSite />
+		</s:Group>
+		-->
+	</mx:TabNavigator>
+</s:Group>

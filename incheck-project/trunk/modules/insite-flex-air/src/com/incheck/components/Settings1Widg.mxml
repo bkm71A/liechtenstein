@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 width="182" height="304">
+
+	
+	<fx:Script>
+		<![CDATA[
+			import com.incheck.Constants;
+			import com.incheck.IncheckModel;
+			import com.incheck.common.ICNode;
+			import com.incheck.common.SpectrumAnalysisConfig;
+			
+			import mx.collections.ArrayCollection;
+			import mx.messaging.Channel;
+			import mx.messaging.ChannelSet;
+			import mx.messaging.channels.RTMPChannel;
+			import mx.messaging.config.ServerConfig;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.remoting.RemoteObject;
+			
+			
+			private var _myNode:ICNode;
+			
+			public var unitListArr:ArrayCollection;
+			
+			public var serverData:ArrayCollection;
+			
+			
+			public function get myNode():ICNode
+			{
+				return _myNode;
+			}
+
+			
+			public function set myNode(value:ICNode):void
+			{
+				_myNode = value;
+			}
+
+			
+			public function setNode(node:ICNode):void
+			{
+				_myNode = node;
+				getConfigItems();
+			}
+			
+			
+			public function somethingChanged(event:Event):void
+			{
+				if (ApplyAllCheckBox.selected)
+				{
+					IncheckModel.instance().applySameSettingsToTheRestOfSpectrumConfigWIdgets();
+				}
+			}
+			
+			
+			public function applyAllChecked(event:Event):void
+			{
+				if (ApplyAllCheckBox.selected)
+				{
+					IncheckModel.instance().turnOnApplyAllModeSpectrumConfig(this);
+					IncheckModel.instance().applySameSettingsToTheRestOfSpectrumConfigWIdgets();
+				}
+				else
+				{
+					IncheckModel.instance().turnOffApplyAllModeSpectrumConfig(this);
+				}
+			}
+			
+			
+			public function disableMe():void
+			{
+				SepctrumBandList.enabled = false;
+				SpectrumLinesList.enabled = false;
+				ApplyAllCheckBox.selected = false;
+				ApplyAllCheckBox.enabled = false;
+				submit.enabled = false;
+			}
+			
+			
+			public function enableMe():void
+			{
+				SepctrumBandList.enabled = true;
+				SpectrumLinesList.enabled = true;
+				ApplyAllCheckBox.selected = false;
+				ApplyAllCheckBox.enabled = true;
+				submit.enabled = true;
+			}
+			
+			
+			public function getConfigItems():void
+			{
+				var ro:RemoteObject = new RemoteObject("icNodes");
+				
+				var cs:ChannelSet = new ChannelSet();
+				var customChannel:Channel = ServerConfig.getChannel(Constants.SERVICE_ID);
+				cs.addChannel(customChannel);
+				ro.channelSet = cs;
+				
+				ro.addEventListener(ResultEvent.RESULT, populateDropBox, false, 0, true);
+				ro.getSpectrumAnalysisConfig(_myNode.channelid, false, 0, true);
+			}
+			
+			
+			public function removeMySelf():void
+			{
+				parent.removeChild(this);
+			}
+			
+			
+			public function dummyOK(results:ResultEvent):void
+			{
+				getConfigItems();
+			}
+			
+			
+			public function dummyBad(results:FaultEvent):void
+			{
+				getConfigItems();
+				// Alert.show(results.toString());
+			}
+			
+			
+			public function updateClicked():void
+			{
+				for each (var eachOne:Object in serverData)
+				{
+					if (eachOne.analysisBandwidth == SepctrumBandList.selectedItem && eachOne.spectrumLines == SpectrumLinesList.selectedItem)
+					{
+						// Alert.show("GONNA SET TO " +eachOne.damSamplingRate+" "+eachOne.damBlockSize +" "+eachOne.dspSamplingRate);
+						
+						var ro:RemoteObject = new RemoteObject("icNodes");
+						
+						var cs:ChannelSet = new ChannelSet();
+						var customChannel:Channel = ServerConfig.getChannel(Constants.SERVICE_ID);
+						cs.addChannel(customChannel);
+						ro.channelSet = cs;
+						
+						ro.addEventListener(ResultEvent.RESULT, dummyOK, false, 0, true);
+						ro.addEventListener(FaultEvent.FAULT, dummyBad, false, 0, true);
+						eachOne.current = true;
+						ro.modifySamplingRate(eachOne as SpectrumAnalysisConfig);
+					}
+				}
+				if (ApplyAllCheckBox.selected)
+				{
+					IncheckModel.instance().submitUpdateForAllSpectrumConfigBoxes(this);
+				}
+			}
+			
+			
+			public function populateDropBox(results:ResultEvent):void
+			{
+				serverData = results.result as ArrayCollection;
+				
+				var selectedAnalysisBandwidth:Number;
+				var selectedSpectrumLines:Number;
+				
+				var sampleRateNow:Number;
+				var sampleSizeNow:Number;
+				var sampleRate:ArrayCollection = new ArrayCollection();
+				var numOfSamples:ArrayCollection = new ArrayCollection();
+				for each (var eachOne:Object in serverData)
+				{
+					//Alert.show(eachOne.damSamplingRate);
+					var srNow:Number = eachOne.analysisBandwidth as Number;
+					var numOfSamplesIN:Number = eachOne.spectrumLines as Number;
+					if (eachOne.current)
+					{
+						selectedAnalysisBandwidth = srNow;
+						selectedSpectrumLines = numOfSamplesIN;
+						sampleRateNow = eachOne.damSamplingRate;
+						sampleSizeNow = eachOne.damBlockSize;
+					}
+					if (!sampleRate.contains(srNow))
+					{
+						sampleRate.addItem(srNow);
+					}
+					
+					
+					if (!numOfSamples.contains(numOfSamplesIN))
+					{
+						numOfSamples.addItem(numOfSamplesIN);
+					}
+				}
+				
+				SepctrumBandList.dataProvider = sampleRate.source;
+				SpectrumLinesList.dataProvider = numOfSamples.source;
+				//IncheckModel.instance().right.specConfScreenProgBar.visible=false
+				SepctrumBandList.selectedItem = selectedAnalysisBandwidth;
+				SpectrumLinesList.selectedItem = selectedSpectrumLines;
+				this.sampleSizeCurr.text = sampleSizeNow + "";
+				this.sampleRateCurr.text = sampleRateNow + "";
+				this.sampleLengthCurr.text = (sampleSizeNow / sampleRateNow).toString();
+				this.visible = true;
+				if (IncheckModel.instance().SpectrumConfigApplyToAllmodeOn)
+				{
+					IncheckModel.instance().applySameSettingsToTheRestOfSpectrumConfigWIdgets();
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	
+	
+	<mx:Label x="10"
+			  y="20"
+			  text="Spectrum Bandwidth, Hz"
+			  width="150"/>
+
+	<mx:Label x="10"
+			  y="98"
+			  text="Spectrum Lines"
+			  width="150"/>
+
+	<mx:ComboBox x="10"
+				 y="42"
+				 width="158"
+				 change="somethingChanged(event)"
+				 id="SepctrumBandList"/>
+
+	<mx:ComboBox x="10"
+				 y="124"
+				 width="158"
+				 change="somethingChanged(event)"
+				 id="SpectrumLinesList"/>
+
+	<mx:CheckBox x="10"
+				 y="154"
+				 id="ApplyAllCheckBox"
+				 click="applyAllChecked(event)"
+				 label="Apply to All"/>
+
+	<mx:Button x="10"
+			   y="184"
+			   label="Update"
+			   click="updateClicked()"
+			   width="87"
+			   id="submit"/>
+
+	<mx:Button x="103"
+			   y="184"
+			   label="Undo"
+			   visible="false"
+			   width="65"
+			   id="undo"/>
+
+	<mx:Label x="10"
+			  y="214"
+			  text="Sampling Rate, Hz"/>
+
+	<mx:Label x="10"
+			  y="240"
+			  text="Sample Size"/>
+
+	<mx:Label x="10"
+			  y="266"
+			  text="Sample Length, s"/>
+
+	<mx:Label x="127"
+			  y="214"
+			  id="sampleRateCurr"
+			  width="41"
+			  textAlign="right"/>
+
+	<mx:Label x="127"
+			  y="240"
+			  id="sampleSizeCurr"
+			  width="41"
+			  textAlign="right"/>
+
+	<mx:Label x="127"
+			  y="264"
+			  id="sampleLengthCurr"
+			  width="41"
+			  textAlign="right"/>
+
+	<mx:Image click="removeMySelf()"
+			  x="155"
+			  y="1"
+			  source="@Embed(source='/assets/stop.png')"
+			  width="16"
+			  height="16"/>
+
+	<mx:Label x="10"
+			  y="0"
+			  id="channelName"
+			  width="133"
+			  fontWeight="bold"
+			  color="#305D67"/>
+
+</s:Group>

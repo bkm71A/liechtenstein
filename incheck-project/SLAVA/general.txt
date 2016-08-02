@@ -1,0 +1,67 @@
+TODO
+NICE TO HAVE
+1. Split to integration and Unit tests
+2. html reports -Ugly
+3. Switch to Tomcat
+
+TODO MINOR
+1. Services access rights
+2. DB docs, Java docs
+
+1) mvn archetype:generate -B -DarchetypeGroupId=org.appfuse.archetypes -DarchetypeArtifactId=appfuse-modular-struts-archetype -DarchetypeVersion=2.1.0 -DgroupId=com.incheck.ng -DartifactId=server -DarchetypeRepository=http://oss.sonatype.org/content/repositories/appfuse
+3) mvn appfuse:full-source
+4) mvn eclipse:eclipse
+
+mvn appfuse:gen -Dentity=Band
+
+Create entities:
+Alarm
+Config ??
+
+Command         Description 
+mvn -Dcargo.wait=true   Packages and deploys your application to active Cargo profile (Tomcat 5.5.x by default), reachable at http://localhost:8080/yourapp-version
+        Use -Dsurefire.useFile=false if you want to see test failures in your console (like Ant) and -Dmaven.surefire.debug if you want to open a debugger on port 5005 w/ suspend=y.
+
+
+-----------------------------------------
+Why don't I have to install Tomcat with 2.x?
+If you run mvn integration-test, the Maven Cargo plugin will download and install Tomcat and run the integration tests against it. If you want to see your project running in a server, you have two options:
+-----------------------------------------
+plugin>
+    <groupId>org.codehaus.mojo</groupId>
+    <artifactId>tomcat-maven-plugin</artifactId>
+    <configuration>
+        <path>/</path>
+    </configuration>
+</plugin>
+What if I already have Tomcat installed and I'd like to use it?
+If you want to change Cargo to point to an existing instance of Tomcat, you should be
+ able to change the bottom of pom.xml from:
+
+<container>
+    <containerId>${cargo.container}</containerId>
+    <!--home>${cargo.container.home}</home-->
+    <zipUrlInstaller>
+        <url>${cargo.container.url}</url>
+        <installDir>${installDir}</installDir>
+    </zipUrlInstaller>
+</container>
+To:
+
+<container>
+    <containerId>${cargo.container}</containerId>
+    <home>${cargo.container.home}</home>
+</container>
+You can also deploy to a running instance of Tomcat with Cargo.
+
+TODO ::
+2. All Web UI works
+3. FAQ - install and setup
+4. Inspect code + TODO + Problems
+5. Check startup messages
+
+BUGS :
+1. UI select roles
+http://localhost:8080/editProfile - Error with duplicate roles
+
+overall type -add,dam add 

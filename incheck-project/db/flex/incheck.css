@@ -1,0 +1,160 @@
+Application {
+   backgroundColor: #6c9898;
+}
+
+Accordion {
+   highlightAlphas: 0.3, 0.1;
+   fillColors: #d1e7e7, #336666, #b3d5d5, #437777;
+   selectedFillColors: #336666, #003333;
+   themeColor: #336666;
+   backgroundColor: #d1e7e7;
+   borderColor: #339999;
+   textRollOverColor: #336666;
+}
+
+ApplicationControlBar {
+   shadowDirection: center;
+}
+
+Button {
+   fillAlphas: 0.4, 0.4, 0.75, 0.65;
+   fillColors: #d1e7e7, #336666, #b3d5d5, #437777;
+   textRollOverColor: #336666;
+   themeColor: #336666;
+}
+
+ButtonBar {
+   buttonStyleName: "mybuttonBarButtonStyle";
+   firstButtonStyleName: "mybuttonBarFirstButtonStyle";
+   lastButtonStyleName: "mybuttonBarLastButtonStyle";
+}
+
+.mybuttonBarButtonStyle {
+   highlightAlphas: 0.3, 0.1;
+   fillColors: #d1e7e7, #336666, #b3d5d5, #437777;
+   textRollOverColor: #336666;
+   borderColor: #339999;
+   themeColor: #336666;
+}
+
+.mybuttonBarFirstButtonStyle {
+}
+
+.mybuttonBarLastButtonStyle {
+}
+
+DataGrid {
+   backgroundColor: #d1e7e7;
+   alternatingItemColors: #d1e7e7, #bad9d9;
+   headerColors: #c5dede, #98bfbf;
+   rollOverColor: #8bc0c0;
+   selectionColor: #629898;
+}
+
+
+HDividedBox {
+   dividerAffordance: 10;
+   dividerAlpha: 0.6;
+   dividerColor: #336666;
+   dividerThickness: 2;
+}
+
+List {
+   backgroundColor: #d1e7e7;
+   rollOverColor: #99cccc;
+   borderStyle: solid;
+   borderColor: #339999;
+   selectionColor: #7ba4a4;
+}
+
+Panel {
+   borderColor: #336666;
+   borderAlpha: 0.2;
+   borderThicknessLeft: 3;
+   borderThicknessTop: 0;
+   borderThicknessBottom: 3;
+   borderThicknessRight: 3;
+   backgroundColor: #d1e7e7;
+}
+
+PopUpButton {
+   highlightAlphas: 0.3, 0.1;
+   fillColors: #d1e7e7, #336666, #b3d5d5, #437777;
+   textRollOverColor: #336666;
+   borderColor: #339999;
+   themeColor: #336666;
+}
+
+ToolTip {
+   backgroundColor: #d1e7e7;
+}
+
+TabNavigator {
+   backgroundColor: #d1e7e7;
+   borderStyle: outset;
+   dropShadowEnabled: true;
+   shadowDirection: right;
+   tabStyleName: "myTabs";
+   firstTabStyleName: "myTabs";
+   lastTabStyleName: "myTabs";
+   selectedTabTextStyleName: "mySelectedTabs";
+}
+
+.myTabs {
+   cornerRadius: 5;
+   highlightAlphas: 0.4, 0.1;
+   fillAlphas: 0.4, 0.4;
+   fillColors: #d1e7e7, #336666;
+   borderColor: #339999;
+   color: #003333;
+   textRollOverColor: #336666;
+   themeColor: #336666;
+
+}
+
+.mySelectedTabs {
+   letterSpacing: 1;
+   color: #003333;
+   textRollOverColor: #003333;
+}
+
+ToggleButtonBar {
+   horizontalGap: -1;
+   buttonStyleName: "mytoggleButtonBarButtonStyle";
+   firstButtonStyleName: "mytoggleButtonBarFirstButtonStyle";
+   lastButtonStyleName: "mytoggleButtonBarLastButtonStyle";
+   selectedButtonTextStyleName: "mytoggleButtonBarSelectedButtonStyle";
+}
+
+.mytoggleButtonBarButtonStyle {
+   fillColors: #d1e7e7, #336666, #b3d5d5, #437777;
+   textRollOverColor: #336666;
+   borderColor: #339999;
+   themeColor: #336666;
+}
+
+.mytoggleButtonBarFirstButtonStyle {
+}
+
+.mytoggleButtonBarLastButtonStyle {
+}
+
+.mytoggleButtonBarSelectedButtonStyle {
+   color: #003333;
+}
+
+Tree {
+   backgroundColor: #d1e7e7;
+   rollOverColor: #99cccc;
+   selectionColor: #7ba4a4;
+   indentation: 10;
+}
+
+VDividedBox {
+   dividerAffordance: 10;
+   dividerAlpha: 0.6;
+   dividerColor: #336666;
+   dividerThickness: 2;
+}
+
+

@@ -1,0 +1,134 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<artifactId>insite</artifactId>
+		<groupId>com.incheck</groupId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+
+	<groupId>com.incheck</groupId>
+	<artifactId>insite-flex-graphs</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>swc</packaging>
+	<name>Incheck Flex Graphs</name>
+	<description>Flex graph components library</description>
+
+	<repositories>
+		<repository>
+			<id>sonatype-repository</id>
+			<url>https://repository.sonatype.org/content/groups/forge</url>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>sonatype-plugin-repository</id>
+			<url>https://repository.sonatype.org/content/groups/forge</url>
+		</pluginRepository>
+	</pluginRepositories>
+
+    <dependencies>
+		<!-- Flash player -->
+        <dependency>
+            <groupId>com.adobe.flex.framework</groupId>
+            <artifactId>playerglobal</artifactId>
+            <version>${flex.sdk.version}</version>
+            <classifier>${flash.player.shortversion}</classifier>
+            <type>swc</type>
+        </dependency>
+        <!-- RSL -->
+        <dependency>
+            <groupId>com.adobe.flex.framework</groupId>
+            <artifactId>textLayout</artifactId>
+            <version>${flex.sdk.version}</version>
+            <type>swc</type>
+            <!--scope>caching</scope-->
+        </dependency>
+
+        <!-- The OSMF SWC must be here. -->
+
+        <dependency>
+            <groupId>com.adobe.flex.framework</groupId>
+            <artifactId>framework</artifactId>
+            <version>${flex.sdk.version}</version>
+            <type>swc</type>
+            <!--scope>caching</scope-->
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flex.framework</groupId>
+            <artifactId>spark</artifactId>
+            <version>${flex.sdk.version}</version>
+            <type>swc</type>
+            <!--scope>caching</scope-->
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flex.framework</groupId>
+            <artifactId>rpc</artifactId>
+            <version>${flex.sdk.version}</version>
+            <type>swc</type>
+            <!--scope>caching</scope-->
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.flex.framework</groupId>
+            <artifactId>mx</artifactId>
+            <version>${flex.sdk.version}</version>
+            <type>swc</type>
+            <!--scope>caching</scope-->
+        </dependency>
+
+        <!-- The datavizualization SWC must be here. -->
+
+        <!-- Flex theme -->
+        <dependency>
+            <groupId>com.adobe.flex.framework</groupId>
+            <artifactId>sparkskins</artifactId>
+            <version>${flex.sdk.version}</version>
+            <type>swc</type>
+            <!--scope>theme</scope-->
+        </dependency>
+        <!-- Flex framework -->
+        <dependency>
+            <groupId>com.adobe.flex.framework</groupId>
+            <artifactId>flex-framework</artifactId>
+            <version>${flex.sdk.version}</version>
+            <type>pom</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.adobe.flex.framework</groupId>
+                    <artifactId>playerglobal</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <sourceDirectory>src</sourceDirectory>
+        <plugins>
+            <!-- Build Flash -->
+            <plugin>
+                <groupId>org.sonatype.flexmojos</groupId>
+                <artifactId>flexmojos-maven-plugin</artifactId>
+                <version>${flexmojos.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <swfVersion>${flash.swf.version}</swfVersion>
+                    <targetPlayer>${flash.player.version}</targetPlayer>
+                    <debug>true</debug>
+                    <ignoreVersionIssues>true</ignoreVersionIssues>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.adobe.flex</groupId>
+                        <artifactId>compiler</artifactId>
+                        <version>${flex.sdk.version}</version>
+                        <type>pom</type>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<hierarchy:HierarchyBase xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:view="com.incheck.admin.view.*"
+                         xmlns:hierarchy="com.incheck.admin.view.hierarchy.*">
+    <mx:Label text="Create/edit Hierarchy Nodes"/>
+    <mx:HBox>
+        <mx:Label fontWeight="bold" text="Selected Node ID:"/>
+        <mx:Text text="{node.name}" color="0x325b5c" fontWeight="bold"/>
+    </mx:HBox>
+    <mx:HBox>
+        <mx:Label text="Node ID" width="100"/>
+        <mx:TextInput id="nodeName" text="{node.name}"/>
+    </mx:HBox>
+    <mx:HBox>
+        <mx:Label width="100"/>
+        <mx:Button label="Save" click="onSave(nodeName.text)"/>
+        <mx:Button label="Disconnect" click="onDisconnect()"  enabled="{node.name != 'New'}"/>
+        <mx:Button label="Disable" click="onDisable()" enabled="{node.name != 'New'}"/>
+    </mx:HBox>
+    <mx:HRule width="100%"/>
+    <mx:HBox>
+        <mx:Label text="Add/Change" width="100"/>
+        <mx:RadioButtonGroup id="childParent"/>
+        <mx:RadioButton label="Child" groupName="childParent"/>
+        <mx:RadioButton id="isParent" label="Parent" groupName="childParent" selected="true"/>
+    </mx:HBox>
+    <mx:HBox>
+        <mx:Label text="Select Node" width="100"/>
+        <mx:ComboBox id="allNodes" prompt="Select" dataProvider="{filteredNodes}" labelFunction="{labelFunction}"/>
+    </mx:HBox>
+    <mx:HBox>
+        <mx:Label width="100"/>
+        <mx:Button label="Save" click="onSaveParent(allNodes.selectedItem, isParent.selected)"/>
+    </mx:HBox>
+    <mx:Script><![CDATA[
+        import com.incheck.admin.model.TreeNode;
+        ]]></mx:Script>
+</hierarchy:HierarchyBase>

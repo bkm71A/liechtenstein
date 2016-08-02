@@ -1,0 +1,9 @@
+<!ELEMENT dataset (overall_type*)>
+
+<!ELEMENT overall_type EMPTY>
+<!ATTLIST overall_type
+    ID CDATA #REQUIRED
+    NAME CDATA #REQUIRED
+    DESCRIPTION CDATA #REQUIRED
+    IS_ENABLED CDATA #REQUIRED
+>

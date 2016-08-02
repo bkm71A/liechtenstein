@@ -1,0 +1,1 @@
+mysql -h localhost -u root -p < create_schema.sql

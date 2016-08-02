@@ -1,0 +1,25 @@
+!SESSION 2012-06-27 19:53:36.276 -----------------------------------------------
+eclipse.buildId=M20090211-1700
+java.version=1.6.0_17
+java.vendor=Sun Microsystems Inc.
+BootLoader constants: OS=win32, ARCH=x86, WS=win32, NL=en_US
+Command-line arguments:  -data C:\Work\incheck-project\new-incheck-ng\project\server -os win32 -ws win32 -arch x86
+
+!ENTRY org.eclipse.ui.workbench 2 0 2012-06-27 19:53:45.657
+!MESSAGE A handler conflict occurred.  This may disable some commands.
+!SUBENTRY 1 org.eclipse.ui.workbench 2 0 2012-06-27 19:53:45.657
+!MESSAGE Conflict for 'AUTOGEN:::org.maven.ide.eclipse.openPomDependencyNode/org.maven.ide.eclipse.ui.openPomDependency':
+HandlerActivation(commandId=AUTOGEN:::org.maven.ide.eclipse.openPomDependencyNode/org.maven.ide.eclipse.ui.openPomDependency,
+	handler=ActionDelegateHandlerProxy(null,org.maven.ide.eclipse.actions.OpenPomAction),
+	expression=WorkbenchWindowExpression(org.eclipse.ui.internal.WorkbenchWindow@1e3a0ec),sourcePriority=16384)
+HandlerActivation(commandId=AUTOGEN:::org.maven.ide.eclipse.openPomDependencyNode/org.maven.ide.eclipse.ui.openPomDependency,
+	handler=ActionDelegateHandlerProxy(null,org.maven.ide.eclipse.actions.OpenPomAction),
+	expression=WorkbenchWindowExpression(org.eclipse.ui.internal.WorkbenchWindow@1e3a0ec),sourcePriority=16384)
+!SUBENTRY 1 org.eclipse.ui.workbench 2 0 2012-06-27 19:53:45.657
+!MESSAGE Conflict for 'AUTOGEN:::org.maven.ide.eclipse.openProjectPageDependencyNode/org.maven.ide.eclipse.ui.openPomDependencyUrl':
+HandlerActivation(commandId=AUTOGEN:::org.maven.ide.eclipse.openProjectPageDependencyNode/org.maven.ide.eclipse.ui.openPomDependencyUrl,
+	handler=ActionDelegateHandlerProxy(null,org.maven.ide.eclipse.actions.OpenUrlAction:org.maven.ide.eclipse.openProjectPage),
+	expression=WorkbenchWindowExpression(org.eclipse.ui.internal.WorkbenchWindow@1e3a0ec),sourcePriority=16384)
+HandlerActivation(commandId=AUTOGEN:::org.maven.ide.eclipse.openProjectPageDependencyNode/org.maven.ide.eclipse.ui.openPomDependencyUrl,
+	handler=ActionDelegateHandlerProxy(null,org.maven.ide.eclipse.actions.OpenUrlAction:org.maven.ide.eclipse.openProjectPage),
+	expression=WorkbenchWindowExpression(org.eclipse.ui.internal.WorkbenchWindow@1e3a0ec),sourcePriority=16384)

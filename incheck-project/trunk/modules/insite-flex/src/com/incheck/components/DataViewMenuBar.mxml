@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:commn="com.incheck.common.*"
+		 xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 creationComplete="initMenu()">
+	
+	<fx:Script>
+		<![CDATA[
+
+			import mx.controls.Alert;
+			import com.incheck.IncheckModel;
+			import com.incheck.common.DataViewCursorTypes;
+			import com.incheck.common.DataViewScalingTypes;
+
+			import mx.events.MenuEvent;
+
+
+			private function menuItemEventHandler(event:MenuEvent):void
+			{
+				switch (event.item.label)
+				{
+					case "Acceleration":
+					{
+						IncheckModel.instance().setGraphSelection('accel');
+						break;
+					}
+					case "Velocity":
+					{
+						IncheckModel.instance().setGraphSelection('velo');
+						break;
+					}
+					case "Displacement":
+					{
+						IncheckModel.instance().setGraphSelection('disp');
+						break;
+					}
+					case "Bearing Demodulation":
+					{
+						IncheckModel.instance().setGraphSelection('brndem');
+						break;
+					}
+					case "Waveform":
+					{
+						IncheckModel.instance().setFunctionSelection('wave');
+						break;
+					}
+					case "Spectrum":
+					{
+						IncheckModel.instance().setFunctionSelection('spec')
+						break;
+					}
+					case "Disabled":
+					{
+						IncheckModel.instance().setCursorSelection(DataViewCursorTypes.Disabled);
+						break;
+					}
+					case "Single":
+					{
+						IncheckModel.instance().setCursorSelection(DataViewCursorTypes.Single);
+						break;
+					}
+					case "Double":
+					{
+						IncheckModel.instance().setCursorSelection(DataViewCursorTypes.Double);
+						break;
+					}
+					case "Harmonic":
+					{
+						IncheckModel.instance().setCursorSelection(DataViewCursorTypes.Harmonic);
+						break;
+					}
+					case "Sideband":
+					{
+						IncheckModel.instance().setCursorSelection(DataViewCursorTypes.Sideband);
+						break;
+					}
+					case "Peaks":
+					{
+						IncheckModel.instance().setCursorSelection(DataViewCursorTypes.PeakFinder);
+						break;
+					}
+					case "HZoom":
+					{
+						IncheckModel.instance().setScalingSelection(DataViewScalingTypes.HZoom);
+						break;
+					}
+					case "VZoom":
+					{
+						IncheckModel.instance().setScalingSelection(DataViewScalingTypes.VZoom);
+						break;
+					}
+					case "Pan":
+					{
+						IncheckModel.instance().setScalingSelection(DataViewScalingTypes.Pan);
+						break;
+					}
+					case "Reset":
+					{
+						IncheckModel.instance().setHistoryScalingSelection(DataViewScalingTypes.Disabled);
+						(IncheckModel.instance().right as RightNavigator).autoscale.selected = false;
+						(IncheckModel.instance().right as RightNavigator).dataViewChart.resetHorizontalZoom();
+						(IncheckModel.instance().right as RightNavigator).dataViewChart.resetVerticalZoom();
+						zreset.toggled = false;
+						break;
+					}
+					case "Peak":
+					{
+						IncheckModel.instance().MesType = 'Peak';
+						break;
+					}
+					case "RMS":
+					{
+						IncheckModel.instance().MesType = 'RMS';
+						break;
+					}
+					case "g":
+					{
+						IncheckModel.instance().AccEUnit = 'AccG';
+						IncheckModel.instance().right.dataViewChart.regenLineSeriesWithZoomReset();
+						break;
+					}
+					case "in/s²":
+					{
+						IncheckModel.instance().AccEUnit = 'AccInSec2';
+						IncheckModel.instance().right.dataViewChart.regenLineSeriesWithZoomReset();
+						break;
+					}
+					case "m/s²":
+					{
+						IncheckModel.instance().AccEUnit = 'AccMtrPerSec2';
+						IncheckModel.instance().right.dataViewChart.regenLineSeriesWithZoomReset();
+						break;
+					}
+					case "mm/s²":
+					{
+						IncheckModel.instance().AccEUnit = 'AccMmSec2';
+						IncheckModel.instance().right.dataViewChart.regenLineSeriesWithZoomReset();
+						break;
+					}
+					case "dB":
+					{
+						if (event.item.group == "Acceleration")
+						{
+							IncheckModel.instance().AccEUnit = 'AccDb';
+						}
+						if (event.item.group == "Velocity")
+						{
+							IncheckModel.instance().VelEUnit = 'VelDb';
+						}
+						IncheckModel.instance().right.dataViewChart.regenLineSeriesWithZoomReset();
+						break;
+					}
+					case "in/s":
+					{
+						IncheckModel.instance().VelEUnit = 'VelInSec';
+						IncheckModel.instance().right.dataViewChart.regenLineSeriesWithZoomReset();
+						break;
+					}
+					case "m/s":
+					{
+						IncheckModel.instance().VelEUnit = 'VelMtrSec';
+						IncheckModel.instance().right.dataViewChart.regenLineSeriesWithZoomReset();
+						break;
+					}
+					case "mm/s":
+					{
+						IncheckModel.instance().VelEUnit = 'VelMmSec';
+						IncheckModel.instance().right.dataViewChart.regenLineSeriesWithZoomReset();
+						break;
+					}
+					case "mil":
+					{
+						IncheckModel.instance().DispEUnit = 'DisplMil';
+						IncheckModel.instance().right.dataViewChart.regenLineSeriesWithZoomReset();
+						break;
+					}
+					case "mm":
+					{
+						IncheckModel.instance().DispEUnit = 'DisplMm';
+						IncheckModel.instance().right.dataViewChart.regenLineSeriesWithZoomReset();
+						break;
+					}
+					case "Hz":
+					{
+						IncheckModel.instance().FreqEUnit = 'FreqHz';
+						IncheckModel.instance().right.dataViewChart.regenLineSeriesWithZoomReset();
+						break;
+					}
+					case "CPM":
+					{
+						IncheckModel.instance().FreqEUnit = 'FreqCPM';
+						IncheckModel.instance().right.dataViewChart.regenLineSeriesWithZoomReset();
+						break;
+					}
+					case "s":
+					{
+						IncheckModel.instance().TimeEUnit = 'TimeSec';
+						IncheckModel.instance().right.dataViewChart.regenLineSeriesWithZoomReset();
+						break;
+					}
+					case "ms":
+					{
+						IncheckModel.instance().TimeEUnit = 'TimeMiliSec';
+						IncheckModel.instance().right.dataViewChart.regenLineSeriesWithZoomReset();
+						break;
+					}
+					case "°C":
+					{
+						IncheckModel.instance().TempEUnit = 'TempC';
+						break;
+					}
+					case "°F":
+					{
+						IncheckModel.instance().TempEUnit = 'TempF';
+						break;
+					}
+					default:
+					{
+						break;
+					}
+				}
+			}
+
+
+			private function initMenu():void
+			{
+				setMenuItemsToUserPreferences();
+			}
+
+
+			public function setMenuItemsToUserPreferences():void
+			{
+				setMenuItemWithLabel(accelerationUnitsMenu, IncheckModel.instance().getUserAccelerationUnits());
+				setMenuItemWithLabel(velocityUnitsMenu, IncheckModel.instance().getUserVelocityUnits());
+				setMenuItemWithLabel(displacementUnitsMenu, IncheckModel.instance().getUserDisplacementUnits());
+				setMenuItemWithLabel(frequencyUnitsMenu, IncheckModel.instance().getUserFrequencyUnits());
+				setMenuItemWithLabel(timeUnitsMenu, IncheckModel.instance().getUserTimeUnits());
+				setMenuItemWithLabel(temperatureUnitsMenu, IncheckModel.instance().getUserTemperatureUnits());
+				//setMenuItemWithLabel(pressureUnitsMenu, IncheckModel.instance().getUserPressureUnits());
+				setMenuItemWithLabel(graphMenu, IncheckModel.instance().getUserVibrationType());
+				setMenuItemWithLabel(measurementTypeMenu, IncheckModel.instance().getUserMeasurementType());
+			}
+
+
+			private function setMenuItemWithLabel(menu:MenuItem, label:String):void
+			{
+				for each (var menuItem:MenuItem in menu.children)
+				{
+					if (menuItem.label == label)
+					{
+						if (!menuItem.toggled)
+						{
+							menuItem.toggled = true;
+							// manually execute the menuItemEventHandler method with a menuEvent that has the information as if the user had clicked the menuItem
+							var menuEvent:MenuEvent = new MenuEvent(MenuEvent.ITEM_CLICK, false, true, menuBar, null, menuItem);
+							menuItemEventHandler(menuEvent);
+						}
+					}
+					else
+					{
+						if (menuItem.toggled)
+							menuItem.toggled = false;
+					}
+				}
+			}
+
+		]]>
+	</fx:Script>
+
+	<mx:MenuBar id="menuBar"
+				showRoot="false"
+				itemClick="menuItemEventHandler(event)">
+		<commn:MenuItem id="rootMenu">
+			<commn:MenuItem id="graphMenu"
+							label="Function">
+				<commn:MenuItem id="accel"
+								label="Acceleration" group="graph" toggled="true" type="radio" />
+
+				<commn:MenuItem id="velo"
+								label="Velocity" group="graph" toggled="false" type="radio" />
+				<!--<commn:MenuItem id="disp" label="Displacement" type="radio" group="graph" toggled="false"/>-->
+				<!--<commn:MenuItem id="brndem" label="Bearing Demodulation" type="radio" group="graph" toggled="false"/>-->
+			</commn:MenuItem>
+
+			<commn:MenuItem id="functionMenu"
+							label="Graph">
+				<commn:MenuItem id="wave"
+								label="Waveform" group="func" toggled="false" type="radio" />
+
+				<commn:MenuItem id="spec"
+								label="Spectrum" group="func" toggled="true" type="radio" />
+			</commn:MenuItem>
+
+			<commn:MenuItem id="cursorMenu"
+							label="Cursor">
+				<commn:MenuItem id="dis"
+								label="Disabled" group="curs" toggled="true" type="radio" />
+
+				<commn:MenuItem id="cursOne"
+								label="Single" group="curs" toggled="false" type="radio" />
+
+				<commn:MenuItem id="cursTwo"
+								label="Double" group="curs" toggled="false" type="radio" />
+
+				<commn:MenuItem label="Harmonic" group="curs" toggled="false" type="radio" />
+
+				<commn:MenuItem label="Sideband" group="curs" toggled="false" type="radio" />
+
+				<commn:MenuItem label="Peaks" group="curs" toggled="false" type="radio" />
+			</commn:MenuItem>
+
+			<commn:MenuItem id="Scaling"
+							label="Scaling">
+				<commn:MenuItem id="hzoom"
+								label="HZoom" group="scaling" toggled="false" type="radio" />
+
+				<commn:MenuItem id="vzoom"
+								label="VZoom" group="scaling" toggled="false" type="radio" 
+								enabled="{!(IncheckModel.instance().right as RightNavigator).autoscale.selected}"/>
+
+				<commn:MenuItem id="panzoom"
+								label="Pan" group="scaling" toggled="false" type="radio" />
+
+				<commn:MenuItem id="zreset"
+								label="Reset" group="scaling" toggled="false" type="radio" />
+			</commn:MenuItem>
+
+			<commn:MenuItem label="Units">
+				<commn:MenuItem id="measurementTypeMenu"
+								label="Measurement Type">
+					<commn:MenuItem label="Peak" group="MesType" toggled="true" type="radio" />
+
+					<commn:MenuItem label="RMS" group="MesType" toggled="false" type="radio" />
+				</commn:MenuItem>
+
+				<commn:MenuItem id="accelerationUnitsMenu"
+								label="Acceleration">
+					<commn:MenuItem label="g" group="Acceleration" toggled="true" type="radio" />
+
+					<commn:MenuItem label="in/s{new String('\u00B2')}" group="Acceleration" toggled="false" type="radio" />
+
+					<commn:MenuItem label="m/s{new String('\u00B2')}" group="Acceleration" toggled="false" type="radio" />
+
+					<commn:MenuItem label="mm/s{new String('\u00B2')}" group="Acceleration" toggled="false" type="radio" />
+
+					<commn:MenuItem label="dB" group="Acceleration" toggled="false" type="radio" enabled="{spec.toggled}"/>
+				</commn:MenuItem>
+
+				<commn:MenuItem id="velocityUnitsMenu"
+								label="Velocity">
+					<commn:MenuItem label="in/s" group="Velocity" toggled="true" type="radio" />
+
+					<commn:MenuItem label="m/s" group="Velocity" toggled="false" type="radio" />
+
+					<commn:MenuItem label="mm/s" group="Velocity" toggled="false" type="radio" />
+
+					<commn:MenuItem label="dB" group="Velocity" toggled="false" type="radio" enabled="{spec.toggled}"/>
+				</commn:MenuItem>
+
+				<commn:MenuItem id="displacementUnitsMenu"
+								label="Displacement">
+					<commn:MenuItem label="mil" group="Displacement" toggled="true" type="radio" />
+
+					<commn:MenuItem label="mm" group="Displacement" toggled="false" type="radio" />
+				</commn:MenuItem>
+
+				<commn:MenuItem id="frequencyUnitsMenu"
+								label="Frequency">
+					<commn:MenuItem label="Hz" group="Frequency" toggled="true" type="radio" />
+
+					<commn:MenuItem label="CPM" group="Frequency" toggled="false" type="radio" />
+				</commn:MenuItem>
+
+				<commn:MenuItem id="timeUnitsMenu"
+								label="Time">
+					<commn:MenuItem label="s" group="Time" toggled="true" type="radio" />
+
+					<commn:MenuItem label="ms" group="Time" toggled="false" type="radio" />
+				</commn:MenuItem>
+
+				<commn:MenuItem id="temperatureUnitsMenu"
+								label="Temperature">
+					<commn:MenuItem label="{new String('\u00B0')}C" group="Temperature" toggled="true" type="radio" />
+
+					<commn:MenuItem label="{new String('\u00B0')}F" group="Temperature" toggled="false" type="radio" />
+				</commn:MenuItem>
+			</commn:MenuItem>
+		</commn:MenuItem>
+	</mx:MenuBar>
+
+	<mx:HBox id="extraCursors"
+			 includeInLayout="{extraCursors.visible}" visible="false">
+		<mx:Label id="extraCursLabel"
+				  text="Number of Cursors: " />
+
+		<mx:NumericStepper id="numOfExtraCursors"
+						   maximum="50"
+						   minimum="1"
+						   value="8"
+						   change="IncheckModel.instance().right.dataViewChart.invalidateDisplayList()"
+						   click="IncheckModel.instance().right.dataViewChart.invalidateDisplayList()"
+						   creationComplete="numOfExtraCursors.mx_internal::inputField.editable=false"
+						   dataChange="IncheckModel.instance().right.dataViewChart.invalidateDisplayList()"
+						   mouseMove="IncheckModel.instance().right.dataViewChart.invalidateDisplayList()" />
+	</mx:HBox>
+</mx:HBox>

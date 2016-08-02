@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<renderer:TreeRendererBase xmlns:mx="http://www.adobe.com/2006/mxml"
+						   xmlns:renderer="com.incheck.admin.view.directory.renderer.*"
+
+						   titleLabelText="{model ? model.serialNumber : (channel.sensor ? channel.sensor.serialNumber : '')}"
+						   extraIconBitmapData="{channel ? CHANNEL_EXTRA_ICON : null}">
+
+	<!--<mx:HBox id="modulePart" width="100%" click="onModuleClick()"-->
+	<!--includeInLayout="{model}" visible="{model}">-->
+	<!--<mx:Image source="@Embed(source='/../imgs/module.png')"/>-->
+	<!--<mx:Canvas>-->
+	<!--<mx:Label text="{model.deviceID}"/>-->
+	<!--<mx:Label text="{model.serialNumber}" color="0x51a882" y="15"/>-->
+	<!--</mx:Canvas>-->
+	<!--</mx:HBox>-->
+
+	<!--<mx:HBox id="channelPart" width="100%" click="onChannelClick()"-->
+	<!--includeInLayout="{channel}" visible="{channel}">-->
+	<!--<mx:Image source="@Embed(source='/../imgs/blue_line.png')"-->
+	<!--visible="{channel.sensor}"/>-->
+	<!--<mx:Canvas width="100%" height="100%">-->
+	<!--<mx:HBox width="100%">-->
+	<!--<mx:Image source="@Embed(source='/../imgs/channel.png')"/>-->
+	<!--<mx:Label text="{channel.channelID}"/>-->
+	<!--</mx:HBox>-->
+	<!--<mx:Label text="{channel.sensor.serialNumber}" y="20"/>-->
+	<!--</mx:Canvas>-->
+	<!--</mx:HBox>-->
+
+	<!--<mx:Binding source="{channel.channelID || model.deviceID || aaa}{'\n'}{channel.sensor.serialNumber || model.serialNumber || aaa}" destination="label.text"/>-->
+
+</renderer:TreeRendererBase>

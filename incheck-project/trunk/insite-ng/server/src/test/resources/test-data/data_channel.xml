@@ -1,0 +1,11 @@
+<!DOCTYPE dataset SYSTEM "data_channel.dtd">
+<dataset>
+    <dam ID="-1" SERIAL_NUMBER="00:D0:69:41:55:CA" DESCRIPTION="Test Data Acquisition Module" DEVICE_TYPE="-1"/>
+    <sensor ID="-1" DAM_ID="-1" SENSOR_TYPE_ID="-1" NAME="Sensor Test #1"/>
+    <sensor ID="-2" DAM_ID="-1" SENSOR_TYPE_ID="-3" NAME="Sensor Test #2"/>
+    <channel ID="-1" SENSOR_ID="-1" DEVICE_CHANNEL_ID="1" CHANNEL_TYPE_ID="0" CHANNEL_MEASURE_TYPE_ID="1"/>
+    <channel ID="-2" SENSOR_ID="-1" DEVICE_CHANNEL_ID="2" CHANNEL_TYPE_ID="0" CHANNEL_MEASURE_TYPE_ID="2"/>
+    <channel ID="-3" SENSOR_ID="-2" DEVICE_CHANNEL_ID="3" CHANNEL_TYPE_ID="1" CHANNEL_MEASURE_TYPE_ID="1"/>
+    <channel ID="-4" SENSOR_ID="-2" DEVICE_CHANNEL_ID="4" CHANNEL_TYPE_ID="1" CHANNEL_MEASURE_TYPE_ID="2"/>
+    <channel ID="-5" SENSOR_ID="-2" DEVICE_CHANNEL_ID="5" CHANNEL_TYPE_ID="0" CHANNEL_MEASURE_TYPE_ID="1"/>
+</dataset>

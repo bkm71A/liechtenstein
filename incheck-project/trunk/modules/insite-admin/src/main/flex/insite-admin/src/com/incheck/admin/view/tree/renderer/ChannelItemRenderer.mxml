@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script><![CDATA[
+        import com.incheck.admin.model.Channel;
+
+        [Bindable("dataChange")]
+        public function get model() : Channel {
+            return data as Channel;
+        }
+        ]]></mx:Script>
+    <mx:Image source="@Embed(source='/../imgs/channel.png')" />
+    <mx:Label text="{model.channelID}" />
+</mx:HBox>

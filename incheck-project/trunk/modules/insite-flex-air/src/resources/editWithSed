@@ -1,0 +1,11 @@
+sed 
+    # replace beginning of each line with {spectrum:
+    -e 's/^/{spectrum:/' 
+    # replace each occurance of , with ,wave:
+    -e 's/,/,waveform:/' 
+    # appends to each line },
+    -e 's/$/},/' 
+    spect_wave4.csv > spect_wave40.csv
+    
+# another example  
+sed -e 's/{/</' -e 's/,/<\/spectrum></' -e's/:/>/g' -e's/},/<\/waveform>/' spect_wave1.csv

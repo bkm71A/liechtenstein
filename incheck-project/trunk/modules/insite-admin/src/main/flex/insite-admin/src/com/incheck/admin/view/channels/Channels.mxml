@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<channels:ChannelsBase xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:view="com.incheck.admin.view.*"
+                       xmlns:channels="com.incheck.admin.view.channels.*">
+    <mx:Label text="Setup/edit Data Channel"/>
+    <mx:HBox>
+        <mx:Label fontWeight="bold" text="Device ID:" width="100"/>
+        <mx:Text text="{device.deviceID}" color="0x325b5c" fontWeight="bold"/>
+    </mx:HBox>
+    <mx:HBox>
+        <mx:Label fontWeight="bold" text="Channel ID:" width="100"/>
+        <mx:Text text="{channel.channelID}" color="0x325b5c" fontWeight="bold"/>
+    </mx:HBox>
+    <mx:HBox>
+        <mx:Label text="Channel Type" width="100"/>
+        <mx:ComboBox id="channelType" selectedItem="{channel.channelType}" prompt="Select type" dataProvider="{channelTypes}"/>
+    </mx:HBox>
+    <mx:HBox>
+        <mx:Label text="Connector Num" width="100"/>
+        <mx:ComboBox id="connectorNum" selectedItem="{connectorNumValue(channel)}" dataProvider="{connectorTypes}" prompt="Select"/>
+    </mx:HBox>
+    <mx:HBox>
+        <mx:Label text="Offset/Bias" width="100"/>
+        <mx:TextInput id="offset" text="{isNaN(channel.offset) ? '' : channel.offset}"/>
+    </mx:HBox>
+    <mx:HBox>
+        <mx:Label text="Channel ID" width="100"/>
+        <mx:TextInput id="channelId" text="{channel.channelID}"/>
+    </mx:HBox>
+    <mx:HBox>
+        <mx:Label width="100"/>
+        <mx:Button label="Save"
+                   enabled="{channel}"
+                   click="onSaveChannel(channelType.selectedItem as String, connectorNum.selectedItem as String, channelId.text, offset.text)"/>
+    </mx:HBox>
+</channels:ChannelsBase>

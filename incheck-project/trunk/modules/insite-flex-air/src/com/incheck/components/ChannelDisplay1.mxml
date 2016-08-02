@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<components:ChannelDisplay2 xmlns:mx="http://www.adobe.com/2006/mxml" 
+							xmlns:components="com.incheck.components.*"
+							width="140" height="75"
+							paddingLeft="4" paddingRight="4" paddingTop="2" paddingBottom="4"
+							cornerRadius="0" borderStyle="solid" borderThickness="1" 
+							borderColor="black"	backgroundColor="white"
+							verticalGap="-2"
+							horizontalScrollPolicy="off" verticalScrollPolicy="off"> 
+
+	<fx:Script>
+		<![CDATA[
+			
+			import com.incheck.IncheckModel;
+			
+			import mx.formatters.DateFormatter;
+
+			
+			[Bindable]
+			public var myColorSet:uint = uint.MAX_VALUE;
+			
+			
+			public function updateColor(event:Event):void
+			{
+				event.stopImmediatePropagation();
+				myColorSet = colorPick.selectedColor;
+				IncheckModel.instance().right.dataViewChart1.setDashboardColors();
+				IncheckModel.instance().right.dataViewChart1.regenLineSeries();
+			}
+			
+		]]>
+	</fx:Script>
+	
+	
+	<mx:DateFormatter id="dateFormatter" formatString="MM/DD/YYYY HH:NN A" />
+	
+	
+	<mx:HBox width="100%">
+		
+		<mx:ColorPicker id="colorPick" 
+						width="19" height="18" 
+						selectedColor="{myColorSet}"
+						change="updateColor(event)" />
+		
+		<mx:Label id="channelLabel" 
+				  width="100%" 
+				  text="{node.desc.length > 0 ? node.desc : 'Unnamed'}"
+				  fontFamily="Arial" fontWeight="bold" fontStyle="italic" />
+		
+	</mx:HBox>
+	
+	<mx:Canvas width="100%" height="2"
+			   backgroundColor="black" />
+	
+	<mx:Label id="mashineLabel" 
+			  width="{width - 5}" truncateToFit="true"
+			  text="{machine.getMachine().name.length + node.name.length > 0 ? machine.getMachine().name + '/' + node.name : 'Unnamed'}"
+			  fontWeight="bold" />
+	
+	<mx:Label id="timeStampLabel" 
+			  width="100%" 
+			  fontSize="11" color="gray"
+			  text="{dateFormatter.format(node.incomingDataTimestamp)}" />
+	
+	<mx:Label id="overallValue" 
+			  width="100%" 
+			  text="{!isNaN(node.rms) ? node.rms : 0} g RMS" />
+	
+</components:ChannelDisplay2>

@@ -1,0 +1,23 @@
+<!DOCTYPE dataset SYSTEM "data_incheck_user.dtd">
+<dataset>
+    <incheck_user ID="-1"
+						ACCOUNT_EXPIRED="0"
+						ACCOUNT_LOCKED="0"
+						CREDENTIALS_EXPIRED="0"
+						EMAIL="test@incheck.com"
+						FIRST_NAME="Test"
+						LAST_NAME="Integration"
+						VERSION="1"
+						ADDRESS="Testing Street #1"
+						PASSWORD="password"
+						USERNAME="integration-test-user"
+						IS_ENABLED="1"
+						CREATED_ON="2012-01-01 00:00:01"
+						CREATED_BY="-1"
+						UPDATED_ON="2012-01-01 00:00:01"
+						UPDATED_BY="-1"/>
+    <role ID="-1" NAME="Test Role" DESCRIPTION="Created by Integration Tests"/>
+    <user_role USER_ID="-1" ROLE_ID="1"/>
+    <user_role USER_ID="-1" ROLE_ID="2"/>
+    <user_role USER_ID="-1" ROLE_ID="3"/>
+</dataset>

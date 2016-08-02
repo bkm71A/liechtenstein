@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<service id="data-service" 
+    class="flex.data.DataService">
+
+    <adapters>
+        <adapter-definition id="actionscript" class="flex.data.adapters.ASObjectAdapter" default="true"/>
+        <adapter-definition id="java-dao" class="flex.data.adapters.JavaAdapter"/>
+    </adapters>
+<default-channels>
+        <channel ref="my-rtmp"/>
+    </default-channels>
+
+    <destination id="product">
+
+        <adapter ref="java-dao" />
+
+        <properties>
+            <source>com.inchecktech.dpm.flex.ICNodeAssembler</source>
+            <scope>application</scope>
+
+            <metadata>
+                <identity property="id"/>
+                <one-to-many property="children" destination="product"/>
+            </metadata>
+            
+            
+		<item-class>
+		com.inchecktech.dpm.beans.ICNode
+		</item-class>
+
+            <network>
+                <session-timeout>20</session-timeout>
+                <paging enabled="false" pageSize="10" />
+                <throttle-inbound policy="ERROR" max-frequency="500"/>
+                <throttle-outbound policy="REPLACE" max-frequency="500"/>
+            </network>
+        </properties>
+    </destination>
+</service>

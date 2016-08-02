@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 width="100%" height="100%"
+		 implements="IChart">
+
+	<fx:Declarations>
+
+		<s:Power id="powerEasing"
+				 exponent="5" />
+
+		<s:Parallel id="rotateEffect">
+
+			<s:Rotate angleFrom="{currentAngle}" angleTo="{_angle}" duration="1500" easer="{powerEasing}" target="{arrow}" />
+
+		</s:Parallel>
+
+	</fx:Declarations>
+
+	<fx:Script>
+		<![CDATA[
+
+			import spark.filters.DropShadowFilter;
+
+			// Private
+			[Bindable]
+			private var _angle:Number = 0;
+
+			private var _rmsValue:Number = 0;
+
+			[Bindable]
+			private var _minValue:Number = 0;
+			
+			[Bindable]
+			private var _quarterValue1:Number = 0.2;
+			
+			[Bindable]
+			private var _midValue:Number = 0.4;
+			
+			[Bindable]
+			private var _quarterValue2:Number = 0.6;
+			
+			[Bindable]
+			private var _maxValue:Number = 0.8;
+			
+			private var _warningValue:Number = 0;
+
+			private var _alertValue:Number = 1;
+
+            private var roundNumber : uint = 100;
+			
+			[Bindable]
+			private var _displayedPrecision:Number = 3;
+
+
+			[Bindable]
+			public function get rmsValue():Number
+			{
+				return _rmsValue;
+			}
+
+
+			public function set rmsValue(value:Number):void
+			{
+				_rmsValue = value;
+				
+				while((value < 0.2 * _maxValue) || (value > 0.8 * _maxValue)){
+					if(value < 0.2 * _maxValue)
+						_maxValue = 0.5*_maxValue;
+					else if(value > 0.8 * _maxValue)
+						_maxValue = 2*_maxValue;
+				}
+
+				_midValue = Math.round((_maxValue - _minValue) / 2 * roundNumber) / roundNumber;
+				_quarterValue1 = Math.round((_midValue - _minValue) / 2 * roundNumber) / roundNumber;
+				_quarterValue2 = _midValue + Math.round((_maxValue - _midValue) / 2 * roundNumber) / roundNumber;
+				
+				_angle = Math.abs(_rmsValue/_maxValue) * 180;
+
+				rotateEffect.play();
+			}
+
+
+			public function get warningValue():Number
+			{
+				return _warningValue;
+			}
+
+
+			public function set warningValue(value:Number):void
+			{
+				_warningValue = value;
+			}
+
+
+			public function get alertValue():Number
+			{
+				return _warningValue;
+			}
+
+
+			public function set alertValue(value:Number):void
+			{
+				_alertValue = value;
+			}
+
+
+			[Bindable]
+			public function get currentAngle():Number
+			{
+				return arrow.rotation;
+			}
+
+
+			public function set currentAngle(value:Number):void
+			{
+			}
+			
+			public function set displayedPrecision(value:Number):void{
+				_displayedPrecision = value; 
+			}
+			
+			private function getStringValue(value:Number):String{
+				var number:Number = value;
+				if(number != 0){
+					return number.toFixed(2);
+				}
+				return number.toString();
+			}
+
+		]]>
+	</fx:Script>
+
+	<s:layout>
+		<s:VerticalLayout paddingLeft="5" paddingTop="5" paddingBottom="10" />
+	</s:layout>
+
+	<s:Group>
+
+		<mx:Image source="@Embed(source='/assets/gauge/assets.swf', symbol='com.exadel.gaugechart.Gauge')"
+				  cacheAsBitmap="true" />
+
+		<mx:Image id="arrow"
+				  x="142" y="136"
+				  source="@Embed(source='/assets/gauge/assets.swf', symbol='com.exadel.gaugechart.Arrow')" toolTip="{rmsValue.toFixed(_displayedPrecision)}"
+				  cacheAsBitmap="true" filters="{[ new DropShadowFilter(2, 45, 0, 0.5, 4, 4, 1, 2) ]}" />
+
+		<s:Label id="minValue"
+				 x="-15" y="130"
+				 width="35"
+				 text="{getStringValue(_minValue)}"
+				 textAlign="right" fontWeight="bold" />
+		
+		<s:Label id="quarterValue1"
+				 x="20" y="45"
+				 width="35"
+				 text="{getStringValue(_quarterValue1)}"
+				 textAlign="right" fontWeight="bold" />
+		
+		<s:Label id="midValue"
+				 x="125" y="5"
+				 width="35"
+				 text="{getStringValue(_midValue)}"
+				 textAlign="center" fontWeight="bold" />
+		
+		<s:Label id="quarterValue2"
+				 x="225" y="45"
+				 width="35"
+				 text="{getStringValue(_quarterValue2)}"
+				 textAlign="left" fontWeight="bold" />
+		
+		<s:Label id="maxValue"
+				 x="260" y="130"
+				 width="35"
+				 text="{getStringValue(_maxValue)}"
+				 textAlign="left" fontWeight="bold" />
+		
+	</s:Group>
+
+</s:Panel>

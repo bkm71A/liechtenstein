@@ -1,0 +1,738 @@
+<mx:TabNavigator xmlns:admin="com.incheck.admin.*"
+				 xmlns:commn="com.incheck.common.*"
+				 xmlns:components="com.incheck.components.*"
+				 xmlns:flexlib="http://code.google.com/p/flexlib/"
+				 xmlns:fx="http://ns.adobe.com/mxml/2009"
+				 xmlns:mx="library://ns.adobe.com/flex/mx"
+				 xmlns:ns1="com.incheck.*"
+				 xmlns:renderers="com.incheck.components.renderers.*"
+				 xmlns:s="library://ns.adobe.com/flex/spark"
+				 width="100%" height="100%"
+				 creationComplete="complete()"
+				 change="changeTab(event)">
+
+	<fx:Script>
+		<![CDATA[
+			import com.incheck.IncheckModel;
+			import com.incheck.common.DeviceEventsGroup;
+			import com.incheck.common.EventLogUtils;
+			import com.incheck.components.events.InCheckEvent;
+			import com.incheck.model.UserPreferencesModel;
+			import com.incheck.model.UserProfileModel;
+			
+			import mx.collections.ArrayCollection;
+			import mx.collections.IList;
+			import mx.controls.Menu;
+			import mx.core.IToolTip;
+			import mx.events.FlexEvent;
+			import mx.events.IndexChangedEvent;
+			import mx.events.MenuEvent;
+			import mx.managers.ToolTipManager;
+			
+			import spark.events.IndexChangeEvent;
+
+			private var _events:ArrayCollection;
+
+			public function get events():ArrayCollection
+			{
+				return _events;
+			}
+
+			public function set events(value:ArrayCollection):void
+			{
+				_events = value;
+			}
+
+
+			private var saveMenu:Menu;
+
+			private var saveToFileButtonTip:IToolTip;
+
+
+			/*
+						[Bindable]
+						private function get dashboardHasChildren():Boolean
+						{
+							if (dashboard)
+							{
+								return dashboard.numChildren > 0;
+							}
+							else
+							{
+								return false;
+							}
+						}
+
+
+						private function set dashboardHasChildren(value:Boolean):void
+						{
+
+						}
+			 */
+			
+			private function changeTab(event:IndexChangedEvent):void{
+				if(event.newIndex == 3 && eventTab){
+					IncheckModel.instance().getAllAlerts();
+				}
+			}
+
+			private function onEventsShowChanged():void
+			{
+				var dp:ArrayCollection = events;
+				if (eventsType.selectedIndex == 0)
+				{
+					alertsGrid.dataProvider = events;
+				}
+				else if (eventsType.selectedIndex == 1)
+				{
+					alertsGrid.dataProvider = filterEvent(events, true);
+				}
+				else if (eventsType.selectedIndex == 2)
+				{
+					alertsGrid.dataProvider = filterEvent(events, false);
+				}
+			}
+
+
+			private function filterEvent(col:ArrayCollection, acknowledged:Boolean):ArrayCollection
+			{
+				var result:ArrayCollection = new ArrayCollection();
+				for each (var obj:Object in col)
+				{
+					if (obj.acked == acknowledged)
+					{
+						result.addItem(obj);
+					}
+				}
+				return result;
+			}
+
+
+			public function updateCursorValues(vals:ArrayCollection, xTitle:String, yTitle:String):void
+			{
+				//	dataPointsGrid.updateData(vals, xTitle, yTitle);
+			}
+
+			[Bindable]
+			private var _userProfileModel:UserProfileModel = new UserProfileModel();
+
+
+			private function complete():void
+			{
+				IncheckModel.instance().registerRight(this);
+
+				_userProfileModel.updateUsername(IncheckModel.instance().currentUser.userName);
+				IncheckModel.instance().userPreferencesModel.addEventListener(UserPreferencesModel.GET_USER_PREFERENCES_COMPLETE, getUserPreferencesCompleteHandler);
+				IncheckModel.instance().userPreferencesModel.userId = IncheckModel.instance().currentUser.userId;
+				for (var i:int = 0; i < this.tabBar.numChildren; i++)
+				{
+					this.getTabAt(i).addEventListener(FlexEvent.BUTTON_DOWN, onTabClick);
+				}
+			}
+
+
+			private function getUserPreferencesCompleteHandler(event:Event):void
+			{
+				if (dataViewMenuBar)
+				{
+					dataViewMenuBar.setMenuItemsToUserPreferences();
+				}
+				if (historyViewMenuBar)
+				{
+					historyViewMenuBar.setMenuItemsToUserPreferences();
+				}
+			}
+
+
+			private function onTabClick(event:FlexEvent):void
+			{
+				if (event.currentTarget.label == "Dashboard")
+				{
+					IncheckModel.instance().changeLeftTabSelectedIndex(0);
+				}
+				else if (event.currentTarget.label == "Analysis")
+				{
+					if ((IncheckModel.instance().left as LeftNavigator).selectedChannelsBox.numChildren > 0)
+					{
+						IncheckModel.instance().changeLeftTabSelectedIndex(1);
+						IncheckModel.instance().changeLeftAccordionSelectedIndex(0);
+					}
+					else
+					{
+						IncheckModel.instance().changeLeftTabSelectedIndex(0);
+					}
+				}
+				else if (event.currentTarget.label == "History")
+				{
+					if ((IncheckModel.instance().left as LeftNavigator).selectedHistoryBox.numChildren > 0)
+					{
+						IncheckModel.instance().changeLeftTabSelectedIndex(1);
+						IncheckModel.instance().changeLeftAccordionSelectedIndex(1);
+					}
+					else
+					{
+						IncheckModel.instance().changeLeftTabSelectedIndex(0);
+					}
+				}
+				else if (event.currentTarget.label == "Event Viewer")
+				{
+					IncheckModel.instance().changeLeftTabSelectedIndex(0);
+				}
+				else if (event.currentTarget.label == "Settings")
+				{
+					IncheckModel.instance().changeLeftTabSelectedIndex(0);
+				}
+				IncheckModel.instance().changeLeftTabLabel("s");
+			}
+
+
+			private function saveToPdf():void
+			{
+				dispatchEvent(new InCheckEvent(InCheckEvent.SAVE_GRAPH));
+			}
+
+
+			public function getGraphImage(bitmap:BitmapData, offset:Number):void
+			{
+				var matrix:Matrix = new Matrix();
+				matrix.translate(offset, 0);
+				if (selectedIndex == 1)
+				{
+					bitmap.draw(DataviewPanel);
+				}
+				else if (selectedIndex == 2)
+				{
+					bitmap.draw(historyPanel);
+				}
+			}
+
+
+			protected function autoscale_clickHandler(event:MouseEvent):void
+			{
+				dataViewMenuBar.vzoom.toggled = false;
+				dataViewChart.resetVerticalZoom();
+			}
+
+
+			private function getStatus(eventGroup:DeviceEventsGroup, targer:*):String
+			{
+				return ((!eventGroup || !eventGroup.active) ? "Disconnected" : "Connected");
+			}
+
+
+			protected function saveToFileButtonClick(event:MouseEvent):void
+			{
+				trace(saveToFileButton.selectedField);
+				if (saveToFileButton.selectedField != null)
+				{
+					switch (saveToFileButton.selectedField)
+					{
+						case "csv":
+						{
+							IncheckModel.instance().saveCsv();
+							break;
+						}
+						case "pdf":
+						{
+							IncheckModel.instance().savePdf();
+							break;
+						}
+					}
+				}
+			}
+
+
+			private function saveButtonCreationComplete():void
+			{
+				saveMenu = new Menu();
+				var dp:Object = [{label:"Save to PDF", id:"pdf"}, {label:"Save to CSV", id:"csv"}];
+				saveMenu.dataProvider = dp;
+				saveMenu.selectedIndex = -1;
+				saveMenu.addEventListener(MenuEvent.ITEM_CLICK, itemClickHandler);
+				saveToFileButton.popUp = saveMenu;
+				saveToFileButton.toolTip = "Please select the target for saving";
+				ToolTipManager.showDelay = 0;
+			}
+
+
+			private function itemClickHandler(event:MenuEvent):void
+			{
+				saveToFileButton.label = event.item.label;
+				saveToFileButton.close();
+				saveToFileButton.selectedField = event.item.id;
+				saveToFileButton.toolTip = "Click to save the Analyzer data into file";
+				ToolTipManager.showDelay = 2000;
+			}
+
+		]]>
+	</fx:Script>
+
+	<!-- Dashboard -->
+	<s:NavigatorContent id="dashboardTab"
+						label="Dashboard">
+
+		<s:Group width="100%" height="100%">
+
+			<components:SelectMessage visible="{dashboard.numChildren == 0}" />
+
+			<s:Scroller width="100%" height="100%">
+
+				<s:VGroup id="dashboard"
+						  width="100%" />
+			</s:Scroller>
+
+		</s:Group>
+
+	</s:NavigatorContent>
+
+
+	<s:NavigatorContent id="dataViewTab"
+						label="Analysis">
+		<!-- Data View -->
+		<s:Group width="100%" height="100%">
+
+			<mx:HBox id="dataViewBox"
+					 width="100%" height="100%"
+					 backgroundColor="white">
+
+				<s:Panel id="DataviewPanel"
+						 width="100%" height="100%"
+						 skinClass="com.incheck.components.skins.DefaultPanelSkin"
+						 title="Data View">
+
+					<s:Group width="100%" height="100%">
+
+						<s:BorderContainer top="26"
+										   width="100%" height="100%"
+										   styleName="chartContainer">
+
+							<mx:ProgressBar id="AnalysisChartProgBar"
+											x="264" y="300"
+											width="329" height="41"
+											indeterminate="true" label="Loading... Please wait..."
+											visible="false" />
+
+							<ns1:IncheckChart3 id="dataViewChart"
+											   width="100%" height="100%"
+											   showDataTips="true">
+
+								<ns1:annotationElements>
+
+									<RangeSelector xmlns="com.incheck.charts.*" />
+
+								</ns1:annotationElements>
+
+							</ns1:IncheckChart3>
+
+						</s:BorderContainer>
+
+						<s:HGroup paddingTop="2">
+
+							<components:DataViewMenuBar id="dataViewMenuBar"
+														height="26" />
+
+							<mx:CheckBox id="autoscale"
+										 label="Autoscale" selected="false"
+										 click="autoscale_clickHandler(event)" />
+
+						</s:HGroup>
+
+						<renderers:DataPointsCont right="0"
+												  height="100%" />
+					</s:Group>
+				</s:Panel>
+			</mx:HBox>
+
+			<components:SelectMessage id="dvSelectMessage"
+									  horizontalCenter="0" verticalCenter="-20"
+									  visible="{!dataViewChart.numCharts}" />
+
+			<!--s:Button id="saveAnalysisToPDF"
+					  top="5" right="10"
+					  label="Save to PDF"
+					  click="saveToPdf()" /-->
+
+			<mx:PopUpButton id="saveToFileButton"
+							top="5" right="10"
+							width="120"
+							label="Save Chart Data" toolTip="Click to save the Analyzer data into file"
+							click="saveToFileButtonClick(event)" creationComplete="saveButtonCreationComplete()" />
+
+		</s:Group>
+
+	</s:NavigatorContent>
+
+
+	<!-- History View -->
+	<s:NavigatorContent id="tabHistory"
+						label="History">
+
+		<s:Group width="100%" height="100%">
+
+			<s:Panel id="historyPanel"
+					 width="100%" height="100%"
+					 skinClass="com.incheck.components.skins.DefaultPanelSkin"
+					 backgroundColor="white"
+					 title="History">
+
+				<s:VGroup width="100%" height="100%"
+						  gap="-2">
+
+					<s:VGroup paddingRight="2" paddingTop="2">
+
+						<components:HistoryViewMenuBar id="historyViewMenuBar"
+													   width="100%" height="26" />
+					</s:VGroup>
+
+					<s:BorderContainer width="100%" height="100%"
+									   styleName="chartContainer">
+
+						<ns1:IncheckChartHistory2 id="historyChart"
+												  width="100%" height="100%">
+
+							<ns1:annotationElements>
+
+								<RangeSelectorHistory xmlns="com.incheck.charts.*" />
+
+							</ns1:annotationElements>
+
+						</ns1:IncheckChartHistory2>
+
+					</s:BorderContainer>
+
+				</s:VGroup>
+
+			</s:Panel>
+
+			<components:SelectMessage id="historySelectMessage"
+									  horizontalCenter="0" verticalCenter="-20"
+									  visible="{!historyChart.numCharts}" />
+
+			<s:Button id="saveHistoryToPDF"
+					  top="5" right="10"
+					  label="Save to PDF"
+					  click="saveToPdf()" />
+		</s:Group>
+
+	</s:NavigatorContent>
+
+	<!-- Log View -->
+	<s:NavigatorContent id="logview"
+						label="Events">
+
+		<s:Group id="eventTab" width="100%" height="100%">
+
+			<mx:ProgressBar id="logviewProgBar"
+							x="264.5" y="300"
+							width="329" height="41"
+							indeterminate="true" label="Loading... Please wait..."
+							visible="false" />
+
+			<mx:VBox width="100%" height="100%">
+
+				<mx:HBox width="100%">
+
+					<mx:Label text="Show" />
+
+					<mx:ComboBox id="eventsType"
+								 selectedIndex="0"
+								 change="onEventsShowChanged()">
+
+						<mx:dataProvider>
+
+							<fx:String>All events</fx:String>
+
+							<fx:String>Acknowledged events</fx:String>
+
+							<fx:String>Not acknowledged events</fx:String>
+
+						</mx:dataProvider>
+
+					</mx:ComboBox>
+
+				</mx:HBox>
+
+				<mx:AdvancedDataGrid id="alertsGrid"
+									 x="10" y="0"
+									 width="100%" height="80%"
+									 selectable="true"
+									 designViewDataType="flat" editable="true" name="alertsGridName" sortableColumns="true" visible="true">
+
+					<mx:groupedColumns>
+
+						<mx:AdvancedDataGridColumn dataField="channelLocation" editable="false" headerText="Name" />
+
+						<mx:AdvancedDataGridColumn dataField="severity" editable="false" headerText="Severity" />
+
+						<mx:AdvancedDataGridColumn dataField="overall_tr_type" editable="false" headerText="Type" />
+
+						<mx:AdvancedDataGridColumn dataField="threshold_tr_value" editable="false" headerText="Value" />
+
+						<mx:AdvancedDataGridColumn dataField="strTimeStamp" editable="false" headerText="Time Stamp" />
+
+						<mx:AdvancedDataGridColumnGroup headerText="Acknowledge">
+
+							<mx:AdvancedDataGridColumn dataField="acked" editorDataField="selected" headerText="Acknowledge" rendererIsEditor="true">
+								<mx:itemRenderer>
+
+									<fx:Component>
+
+										<mx:CheckBox change="checkbox1_changeHandler(event)">
+
+											<fx:Script>
+												<![CDATA[
+
+													import com.incheck.common.EventLogUtils;
+
+
+													protected function checkbox1_changeHandler(event:Event):void
+													{
+														data.acked = this.selected;
+														EventLogUtils.updateItem(data);
+													}
+
+												]]>
+											</fx:Script>
+
+										</mx:CheckBox>
+									</fx:Component>
+								</mx:itemRenderer>
+							</mx:AdvancedDataGridColumn>
+
+							<!--mx:AdvancedDataGridColumn headerText="User" dataField="ackuser" itemRenderer="mx.controls.Label" rendererIsEditor="true" editorDataField="userName"/-->
+							<mx:AdvancedDataGridColumn labelFunction="EventLogUtils.labelFuncUser"
+													   dataField="ackuser" editable="false" headerText="User">
+								<mx:itemRenderer>
+									<fx:Component>
+										<mx:Label />
+									</fx:Component>
+								</mx:itemRenderer>
+							</mx:AdvancedDataGridColumn>
+
+							<mx:AdvancedDataGridColumn dataField="notes" editable="true" editorDataField="text" headerText="Notes" rendererIsEditor="true">
+								<mx:itemRenderer>
+									<fx:Component>
+										<mx:TextInput change="textinput1_changeHandler(event)" focusOut="textinput1_focusOutHandler(event)">
+											<fx:Script>
+												<![CDATA[
+
+													import com.incheck.common.EventLogUtils;
+
+													private var changed:Boolean = false;
+
+
+													protected function textinput1_changeHandler(event:Event):void
+													{
+														data.notes = this.text;
+														changed = true;
+													}
+
+
+													protected function textinput1_focusOutHandler(event:FocusEvent):void
+													{
+														if (changed)
+														{
+															EventLogUtils.updateItem(data);
+															changed = false;
+														}
+													}
+
+												]]>
+											</fx:Script>
+										</mx:TextInput>
+
+									</fx:Component>
+								</mx:itemRenderer>
+							</mx:AdvancedDataGridColumn>
+						</mx:AdvancedDataGridColumnGroup>
+					</mx:groupedColumns>
+				</mx:AdvancedDataGrid>
+			</mx:VBox>
+		</s:Group>
+
+	</s:NavigatorContent>
+
+	<!-- Setting View -->
+	<s:NavigatorContent id="settingsView"
+						label="Settings">
+
+		<s:Group width="100%" height="100%">
+
+			<mx:TabNavigator id="settingsNav"
+							 width="100%" height="100%">
+
+				<s:NavigatorContent label="Channels">
+
+					<mx:TabNavigator id="channelSettings"
+									 width="100%" height="100%"
+									 creationPolicy="all">
+
+						<s:NavigatorContent label="Channel Settings">
+
+							<components:SelectMessage id="settingsSelectMessage"
+													  visible="{specConfig.numElements == 0}" />
+
+							<mx:HBox id="specConfig"
+									 width="100%" height="100%"
+									 label="Channel Settings" />
+
+						</s:NavigatorContent>
+
+						<s:NavigatorContent label="{bandSettings.label}">
+
+							<admin:BandSettings id="bandSettings" />
+
+						</s:NavigatorContent>
+
+					</mx:TabNavigator>
+
+				</s:NavigatorContent>
+
+				<s:NavigatorContent label="Alerts">
+
+					<mx:TabNavigator id="EtEditorB"
+									 width="100%" height="100%"
+									 creationPolicy="all">
+
+						<s:NavigatorContent label="{treshholdSettings.label}">
+
+							<admin:ThresholdSettings id="treshholdSettings" />
+
+						</s:NavigatorContent>
+
+						<s:NavigatorContent label="{deliverySettings.label}">
+
+							<admin:DeliverySettings id="deliverySettings" />
+
+						</s:NavigatorContent>
+
+					</mx:TabNavigator>
+
+				</s:NavigatorContent>
+
+				<s:NavigatorContent label="User Profile">
+
+					<components:UserProfileView userProfileModel="{_userProfileModel}" />
+
+				</s:NavigatorContent>
+
+				<s:NavigatorContent label="User Defaults">
+
+					<components:UserPreferencesView userPreferencesModel="{IncheckModel.instance().userPreferencesModel}" />
+
+				</s:NavigatorContent>
+
+				<s:NavigatorContent label="Global settings">
+
+					<components:GlobalSettings />
+
+				</s:NavigatorContent>
+
+			</mx:TabNavigator>
+
+		</s:Group>
+
+	</s:NavigatorContent>
+
+	<!-- System Status View -->
+	<s:NavigatorContent id="systemStatusView"
+						label="System Status">
+
+		<s:Group width="100%" height="100%">
+
+			<mx:DataGrid id="systemStatusGrid"
+						 dataProvider="{IncheckModel.instance().systemStatusEvents}"
+						 name="systemStatusName" sortableColumns="false" variableRowHeight="true" wordWrap="true">
+				<mx:columns>
+					<mx:DataGridColumn dataField="deviceName" editable="false" headerText="Device" />
+
+					<mx:DataGridColumn width="300"
+									   headerText="Connected">
+						<mx:itemRenderer>
+							<fx:Component>
+								<mx:Text htmlText="{connectedLabelFunction(data as DeviceEventsGroup, null)}">
+									<fx:Script>
+										<![CDATA[
+
+											import com.incheck.common.DeviceEventsGroup;
+
+											import mx.collections.IList;
+											import mx.formatters.DateFormatter;
+
+
+											private function connectedLabelFunction(eventGroup:DeviceEventsGroup, targer:*):String
+											{
+												var dates:IList = eventGroup.getEventDatesByEventType(DeviceEventsGroup.CONNECT_EVENT_TYPE);
+												var result:String = "";
+												if (dates)
+												{
+													var dateFormatter:DateFormatter = new DateFormatter();
+													dateFormatter.formatString = "MM/DD/YYYY HH:NN:SS";
+													for each (var date:Date in dates)
+													{
+														result += (dateFormatter.format(date) + "<br/>");
+													}
+												}
+												return result;
+											}
+
+										]]>
+									</fx:Script>
+								</mx:Text>
+
+							</fx:Component>
+						</mx:itemRenderer>
+					</mx:DataGridColumn>
+
+					<mx:DataGridColumn width="300"
+									   headerText="Disconnected">
+						<mx:itemRenderer>
+							<fx:Component>
+								<mx:Text htmlText="{disconnectedLabelFunction(data as DeviceEventsGroup, null)}">
+									<fx:Script>
+										<![CDATA[
+
+											import com.incheck.common.DeviceEventsGroup;
+
+											import mx.collections.IList;
+											import mx.formatters.DateFormatter;
+
+
+											private function disconnectedLabelFunction(eventGroup:DeviceEventsGroup, targer:*):String
+											{
+												var dates:IList = eventGroup.getEventDatesByEventType(DeviceEventsGroup.DISCONNECT_EVENT_TYPE);
+												var result:String = "";
+												if (dates)
+												{
+													var dateFormatter:DateFormatter = new DateFormatter();
+													dateFormatter.formatString = "MM/DD/YYYY HH:NN:SS";
+													for each (var date:Date in dates)
+													{
+														result += (dateFormatter.format(date) + "<br/>");
+													}
+												}
+												return result;
+											}
+
+										]]>
+									</fx:Script>
+								</mx:Text>
+
+							</fx:Component>
+						</mx:itemRenderer>
+					</mx:DataGridColumn>
+
+					<mx:DataGridColumn labelFunction="{getStatus}"
+									   headerText="Currently" />
+				</mx:columns>
+			</mx:DataGrid>
+		</s:Group>
+
+	</s:NavigatorContent>
+
+	<!-- Admin View
+	<s:Group  label="User Admin" width="100%" height="100%">
+		<admin:adminuserSite />
+	</s:Group>
+	-->
+</mx:TabNavigator>
