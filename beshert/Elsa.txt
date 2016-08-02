@@ -1,0 +1,238 @@
+
+
+
+
+http://www.iimaginestudio.com/beshert/.
+==
+ This message is not flagged. [ Flag Message - Mark as Unread ]  
+
+From: "Elsa Malinsky" <elsa@beshert.com> | This is spam | Add to Address Book 
+To: "Slava Kovalenko" <bkm71@yahoo.com> 
+Subject: voprosnik 
+Date: Thu, 5 Jun 2003 22:36:57 -0500 
+       
+ 
+
+
+Slava,
+Our new website is temporary on http://www.iimaginestudio.com/beshert/
+ 
+Click on link YOUR PROFILE and you will see the questionnaire. 
+ 
+There several mistakes in the questionnaire. The designers said that by Tuesday they should correct all the errors. 
+
+ 
+
+ 
+Here are some mistakes they have to correct: 
+ 
+ Your profile. 
+ 
+
+a) . Objectives (above "your personal characteristics"   Marriage should have a check box and should appear first
+
+ 
+
+b)  Under "willing to relocate? 
+
+Correct question is "Would you like to have children if married" Yes      No      Open
+
+this question is broken incorrectly into 2 parts
+
+Would you like to have children                                 if married? 
+
+c) Religion   we don't need "Unspecified" radio box
+
+d) Attending Synagogue:   the first radio box should be "every Shabbat"
+
+e) Job description -- should have a box so people will write their job position
+
+f) MUSIC / DANCING has skating and sailing at the bottom  -- should be removed
+
+ PERSON YOU ARE LOOKING FOR: 
+
+g)  PERSON YOU ARE LOOKING FOR:      STATE (SHOULD HAVE A DROP DOWN BOX) 
+
+h)  PERSON YOU ARE LOOKING FOR:  Income -- the last choice should be "Doesn't matter"  instead of "Ask my accountant"
+
+i)  PERSON YOU ARE LOOKING FOR:  drinking and smoking habits should be radio boxes (people may choose more than one)
+ 
+
+==
+This message is not flagged. [ Flag Message - Mark as Unread ]  
+
+From: "elsa@beshert.com" <beshert@sbcglobal.net> | This is spam | Add to Address Book 
+To: "Slava Kovalenko" <bkm71@yahoo.com> 
+Subject: Your balance 
+Date: Mon, 30 Jun 2003 14:06:54 -0500 
+       
+ 
+
+
+Slava,
+ 
+I want to finish the questionnaire and move on. 
+ 
+Two things are not working properly:
+ 
+1. saving text on the page before uploading pictures.
+2. verifying that the pictures are actually uploaded and stored in db. (the instructions you sent me are confusing for me)
+ 
+The rest of  requirements are extra.
+After you correct item 1, you can stop by and show me the way to see the pictures .  I prepared the check for you for $300.
+  
+ 
+How is you availability? Can you take care of questionnaire and make modifications which are listed in this email? If yes, what's the fee and time frame? Also, if you cannot insert the drop-down country in contact information, please make the country as a free text and erase USA.
+ 
+The questionnaire is very functional works well and if it will take too much time or money to correct it (see the list below)  I can live with a current version. 
+ 
+ 
+Regards,
+Elsa
+ 
+Here are extra requirements for the questionnaire:
+ 
+Page 1 (added requirements)
+
+unique email 
+country (please make a drop-down with list of countries, USA as a default) same as in Country of Birth 
+zip code will be verified only if someone is from USA
+Question: phone number can be required field for people from USA and Canada (Residents from other countries will have different format for their phone numbers -- and we can not require that they enter their phone numbers.  But  for US and Canada it's mandatory.
+ 
+
+______________________________________________________________________________________
+
+page 2  Keep required fields as there are now (marital status only and objectives)
+
+ 
+
+a) Low priority but desirable  Languages you speak   Radio box Other  Make it a rectangular box for  a free text in case someone wants to write language(s) outside of choice we asked. 
+
+ 
+
+b) Height   Please start from “4”  feet   (not 3)
+
+ 
+
+c) The displayed value in each of the following boxes  should be “Choose one”.
+
+ If someone will not make a choice -- the value in our database field  will be “unspecified” 
+
+ 
+
+ 
+
+children
+ 
+
+ethnicity 
+religion 
+attending synagogue 
+keeping kosher
+ 
+
+ 
+
+body type
+ 
+
+hair color? 
+eye color? 
+do you drink? 
+do you smoke? 
+how is your health? 
+Highest Academic Degree Earned
+ 
+
+ 
+
+______________________________________________________________________________________
+
+page 3
+
+upload photo     
+
+when the photo is done uploading – the fields on this page get erased (please check) or just an essay field gets erased  -- it confusing for users. The info should stay there as the user is going to press “save and continue”  or “save and exit”
+
+ 
+
+Also, see my comments at the top of this email about setting a limit of 120 kg.
+
+______________________________________________________________________________________
+
+page 4  
+
+ 
+
+person you are looking for
+
+a) Age from 18 to now (till 70)  Make it till 100 (I don’t want to discriminate people who are 70+)
+
+b) country
+
+2nd column 
+
+under USA we need another  rectangular with free text in case someone wants to meet a person who lives outside of USA and countries which we listed 
+
+ 
+
+c)  keeping kosher 
+
+instead of  ”unspecified  ” say  ”does not matter”
+
+ 
+
+d. height   
+
+1) in addition   to “to” or “from”   please make a box  doesn’t  matter
+
+ 
+
+2) default  is "4" inches    not 3 -- 
+
+ 
+
+e) body type 
+
+instead of unspecified   say     doesn’t matter    (unspecified should appear in the db field in case someone enters nothing)
+
+ 
+
+f) the displayed values for the fields should be “Choose one” – please see my comments for  Page 2. The country could still have a default USA, and state IL 
+
+ 
+
+==
+ Country:
+a)when I left it blank -- I did not have an error message. It has to be a
+required field
+b) Please make a drop down with list of countries --  USA as default
+c) Validate zip only if the country is USA
+3. When I entered all the data and tried to touch other links (without
+clicking), just touching, I see a square with the "x".in the middle.
+
+I understand that the country was an additional requirement. We talked about
+it and you said that it would cost me additional $50.
+Let me know if this is correct.
+
+Best regards,
+Elsa
+847-853-0474
+
+
+
+
+Slava,
+ 
+Attached is information for the Speed dating web page. At the bottom of the page you will see Schedule of events. Instead of this schedule I would like to have a calendar which will include all the Beshert events as well as speed dating. More detailed information will be included in either pop-up screen or a link (or both).
+ 
+About PayPal (shopping cart). Please contact Sofa at  sofa-m@yakov.dls.net telephone (847) 814-5337. She did installation of PayPal on my website www.beshert.com  (see Pay Online) and recently did installation of PayPal shopping cart on another website. She told me today that she will help you.
+ 
+The web designers told me that once we finish with architecture of the website they will start with questionnaire.
+ 
+
+
+
+http://www.thesmallworld.net
+
+

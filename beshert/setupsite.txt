@@ -1,0 +1,253 @@
+Database beshert - maintenance.
+
+Hello.
+
+I tried to set up maintenance plan or do database backup and it looks like I 
+don't have access rights.
+
+How it usually works - do you do backups or you could grant me access rights ?
+Also - what is the size of log file - could it be increased ?
+
+Server : 209.133.228.101 Database - beshert
+
+
+Thanks,
+Slava KOvalenko
+
+
+From: webmaster@setupsite.com | This is spam | Add to Address Book 
+To: "Slava K" <bkm71@yahoo.com> 
+Date: Wed, 07 May 2003 14:51:26 -0400 
+Subject: Re: SQL Server  
+       
+ 
+
+
+Hi,
+
+Your database: beshert
+username: beshert
+pw: bkm71   has been setup.
+To connect to your SQL database on our servers, here are the steps you need 
+to do first configure your Client Network Utility:
+1) open the Client Network Utility which comes with SQL 2000
+2) Make sure that the default network library is set to TCP/IP on the general 
+tab
+3) add a server alias by clicking add
+4) type in 209.133.228.101 then click ok and apply the changes
+
+Next you need to add our SQL server in Enterprise Manager:
+1) right click on SQL Server Group
+2) Click New SQL Server Registration
+3) choose to use the wizard your first time doing this and click next
+4) in available servers, type in 209.133.228.101  and click add and next
+5) Click the SQL server login from the connection options
+6) Enter the username and password you were given/requested
+7) Click add the SQL server to an existing server group and choose one
+8) Click finish
+Please note that many of these options can be changed to configure your 
+server setup how you would like it.
+
+Frank
+Setup Site
+
+On 7 May 2003 at 10:55, Slava K wrote:
+
+
+===============================
+
+tech@setupsite.com 
+webmaster@setupsite.com
+webmasterS@setupsite.com
+
+SQL Server 
+
+Could you, please, setup MS SQL Server database for my site. 
+> HTTP
+> IP 209.133.246.220
+> www.beshertnew.com
+> beshertnew.com
+
+DB Name : beshert
+DB Admin uid='bkm71'
+Password ='bkm71'
+I don't need DSN , ADO.NET will be used to access it from ASP.NET pages.
+
+How could I access this db when installed ? Could I do it from my pc through MS SQL Enterprise Manager?
+
+
+Please reply to bkm71@yahoo.com and elsa@beshert.com
+
+Best regards,
+Slava Kovalenko
+
+
+
+
+http://www.setupsite.com/controlpanelhelp/control_panel.htm
+
+From: "Elsa Malinsky" <elsa@beshert.com> | This is spam | Add to Address Book 
+To: "Slava Kovalenko" <bkm71@yahoo.com> 
+Subject: Fw: Setup Site Inc. - Your Login Details 
+Date: Mon, 5 May 2003 15:33:14 -0500 
+
+Slava,
+This information I received from www.SetupSite.com. Let me know if you need
+anything in addition.
+Elsa
+847-853-0474
+
+----- Original Message -----
+From: <webmaster@setupsite.com>
+To: <elsa@beshert.com>
+Sent: Monday, May 05, 2003 3:19 PM
+Subject: Setup Site Inc. - Your Login Details
+
+
+> Dear Elsa Malinsky,
+>
+> We have setup the account for you, it should be live as soon as domain
+updates are complete. You can however now upload your files using the ip
+address. When uploading your files using ftp please upload them to the
+"\www" directory. It is also required that you either delete or overwrite
+the file default.htm in order to get your site to come up when you type in
+the url.
+>
+> Below is the access information you will need for your domain.
+>
+> HTTP
+> IP 209.133.246.220
+> www.beshertnew.com
+> beshertnew.com
+>
+> MAIL
+> Web mail can be collected at
+> mail.beshertnew.com
+> username : admin@beshertnew.com
+> password : central
+>
+> POP3 server is
+> mail.beshertnew.com
+> username : admin@beshertnew.com
+> password : central
+>
+> FTP Login is
+> www.beshertnew.com or beshertnew.com or
+> 209.133.246.220
+> username : beshertnewcom
+> password : central
+>
+> Frontpage Login is
+> 209.133.246.220
+> www.beshertnew.com  or beshertnew.com
+> username : KINGJOSH\beshertnewcom
+> password : central
+>
+> SETTING UP YOUR MAIL PROGRAM
+>
+> Create a new user in your mail program or edit your existing user account.
+Change the POP3 Server to mail.yourdomain.com and enter the login
+information supplied above.
+>
+> To login to your domain from mail programs like pegasus mail it might be
+necessary to replace the "@" symbol with a "%" in the login name.
+>
+>
+> CATCH ALL E-MAIL
+>
+> To create a catch all e-mail, login to your web based e-mail select add
+alias and create an alias called "nobody" then specify the e-mail address
+where you would like all the e-mail to go to. This will create an account
+that will catch all e-mail that does not have an account already on the
+server.
+>
+>
+> WHAT HAPPENS WITH DOMAIN TRANSFERS
+>
+> If we are moving your domain for you, we will send an e-mail to the
+registering organisation who will then respond to us and the person who owns
+the domain. After you accept the changes it should take between 24 and 48
+hours to complete registration. If you are transfering the your domain by
+yourself then our name servers are:
+> Primary name server hostname: NS1.setupsite.com
+> Primary name server IP: 209.133.228.10
+> Secondary name server hostname: NS2.setupsite.com
+> Seconday name server IP: 209.133.228.11
+>
+> HOW DO I TRANSFER MY DOMAIN NAME
+>
+> If you have chosen us to register your domain name for you then you do not
+need to take any steps to change the name server information. If you are
+registering your domain with another company then you will need to provide
+them with the following name server information when you register the
+domain. Primary name server: NS1.setupsite.com - 209.133.228.10, Secondary
+name server: NS2.setupsite.com - 209.133.228.11
+>
+> WHEN WILL MY NEW DOMAIN BE ACTIVE
+>
+> It can take 24 - 48 Hours for a new domain to become active normally it
+will be active the day after you register it.
+>
+> CONTROL PANEL
+>
+> Please read the following information *carefully* about the control panel
+before using it. This control panel is unique to SetupSite and may differ
+from others that you might have used before.
+>
+> WILL I BE ABLE TO USE THE CONTROL PANEL WITH ALL MY DOMAINS
+>
+> Most customers will be able to use the control panel with all their
+domains. However a couple of servers do not have the control panel software
+installed yet and you may find one or more of your domains are inaccessible
+from the control panel when you log in. We plan to have the control panel
+installed on all of our servers in a week or two time.
+>
+> WHEN CAN I USE THE CONTROL PANEL?
+> It takes at least 24 hours once you receive this e-mail before you can
+actually logon to the control panel. Any changes you make to your account
+such as adding Extra Domains also take about 24 hours to appear in the
+control panel. At present you can only log on  to the control panel once
+your name server information has be transfered to Setup Site. We are looking
+into a way to make it possible to log on to the control panel before name
+server information has changed.
+>
+> Your control panel login  details are as follows
+>
+> Download the control panel from www.setupsite.com
+>
+> Control Panel ID:       F856433EZ
+> Password: sobohas
+>
+> Go to the login page and type in  your control panel ID (exactly as above)
+and your password (case sensitive).
+>
+>
+> WHAT RISKS AND OTHER THINGS DO I NEED TO BE AWARE OF WHEN USING THE
+CONTROL PANEL?
+>
+> Some of the features of the control panel can make your site insecure if
+used incorrectly. These features are:
+>
+> Changing directory permissions
+> Creation of a DSN
+>
+> The risks can easily avoided by taking the following steps:
+>
+> 1) Change only the permissions to "Change" in your cgi-bin directory or a
+directory, other than your www directory, that contains an access database
+> 2) When you create a DSN, do not place your database in the www directory.
+Instead create a folder in the www directory e.g. Databases and place your
+database in there.
+>
+> Currently you can only create about 7 DSNs for your account. This should
+be more than enough for most people, however if you do need to setup more
+contact technical support.
+>
+> If you have any questions please feel free to contact us.
+>
+> Thanks Keith
+>
+> www.setupsite.com
+>
+>
+

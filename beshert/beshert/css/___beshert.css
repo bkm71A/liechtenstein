@@ -1,0 +1,129 @@
+.addressname {
+	FONT-SIZE: 12px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular
+}
+.currentnews {
+	FONT-SIZE: 11px; MARGIN-BOTTOM: 10px; MARGIN-LEFT: 10px; FONT-FAMILY: Arial, Helvetica
+}
+.currentnewstext {
+	MARGIN-TOP: 10px; FONT-SIZE: 10px; MARGIN-LEFT: 10px; FONT-FAMILY: Arial, Helvetica
+}
+.currentnewsmed {
+	MARGIN-TOP: 10px; FONT-SIZE: 11px; MARGIN-LEFT: 10px; FONT-FAMILY: Arial, Helvetica
+}
+.bkgimage {
+	BACKGROUND: url(../_images/headingbkg.gif) repeat-x; MARGIN-LEFT: 10px
+}
+.intelcentheading {
+	FONT-SIZE: 12px; LEFT: 4px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular; POSITION: relative
+}
+.intelcentheadspaced {
+	FONT-SIZE: 12px; LEFT: 4px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular; LETTER-SPACING: 2px; POSITION: relative
+}
+.intelcenttitles {
+	FONT-SIZE: 11px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular
+}
+.intelcenttitlesspaced {
+	FONT-SIZE: 12px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular; LETTER-SPACING: 1px
+}
+.attention {
+	FONT-SIZE: 18px; LEFT: 50px; LINE-HEIGHT: 28px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular; POSITION: relative
+}
+.backtotop {
+	FONT-SIZE: 12px; LEFT: 65px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular; POSITION: relative
+}
+.footnote {
+	FONT-SIZE: 10px; MARGIN-LEFT: 15px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular
+}
+.disclosure {
+	FONT-SIZE: 10px; MARGIN-LEFT: 8px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular; TEXT-DECORATION: none
+}
+.footnoteformat {
+	FONT-SIZE: 11px; MARGIN-LEFT: 10px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular
+}
+.intelcenttext {
+	FONT-SIZE: 10px; LEFT: 4px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular; POSITION: relative
+}
+.formtext {
+	FONT-SIZE: 14px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular
+}
+.hangingindent {
+	FONT-WEIGHT: 600; FONT-SIZE: 12px; VISIBILITY: inherit; LINE-HEIGHT: 15px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular; TEXT-ALIGN: left
+}
+.heading {
+	FONT-SIZE: 15px; MARGIN-LEFT: 15px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular
+}
+.headinglarge {
+	FONT-SIZE: 15px; MARGIN-LEFT: 15px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular
+}
+.linklist {
+	FONT-WEIGHT: 600; FONT-SIZE: 13px; LEFT: 65px; LINE-HEIGHT: 13px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular; POSITION: relative
+}
+.list {
+	FONT-WEIGHT: 600; FONT-SIZE: 13px; LEFT: 65px; LINE-HEIGHT: 15px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular; POSITION: relative; TEXT-DECORATION: none
+}
+.listcollage {
+	FONT-WEIGHT: 600; FONT-SIZE: 13px; LEFT: 35pt; LINE-HEIGHT: 26px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular; POSITION: relative; TEXT-DECORATION: none
+}
+.listcollage2 {
+	FONT-WEIGHT: 600; FONT-SIZE: 13px; LEFT: 35pt; LINE-HEIGHT: 17px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular; POSITION: relative; TEXT-DECORATION: none
+}
+.namebio {
+	FONT-SIZE: 18px; LINE-HEIGHT: 19px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular
+}
+.paragraphsquare {
+	FONT-SIZE: 12px; LEFT: 16px; VISIBILITY: inherit; OVERFLOW: scroll; WIDTH: 460px; LINE-HEIGHT: 18px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular; POSITION: relative; HEIGHT: 400px
+}
+.paragraphbase {
+	FONT-SIZE: 12px; LINE-HEIGHT: 18px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular
+}
+.paragraph {
+	FONT-SIZE: 12px; MARGIN-LEFT: 15px; LINE-HEIGHT: 18px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular
+}
+.pargraph_italic {
+	FONT-SIZE: 12px; COLOR: black; LINE-HEIGHT: 18px; FONT-STYLE: italic; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular, FontName
+}
+.mapnewcent {
+	FONT-SIZE: 12px; COLOR: green; LINE-HEIGHT: 18px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular; TEXT-DECORATION: underline
+}
+.mapnote {
+	BORDER-RIGHT: black 1px solid; BORDER-TOP: black 1px solid; FONT-SIZE: 13px; BORDER-LEFT: black 1px solid; LINE-HEIGHT: 18px; BORDER-BOTTOM: black 1px solid; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular; BACKGROUND-COLOR: #ffd700
+}
+.mapucca {
+	FONT-SIZE: 12px; COLOR: blue; LINE-HEIGHT: 18px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular; TEXT-DECORATION: underline
+}
+.maplwood {
+	FONT-SIZE: 12px; LINE-HEIGHT: 18px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular; TEXT-DECORATION: underline
+}
+.paragraphcollage {
+	FONT-WEIGHT: 600; FONT-SIZE: 13px; LEFT: 7px; WIDTH: 435px; LINE-HEIGHT: 18px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular; POSITION: relative
+}
+.quote {
+	FONT-SIZE: 13px; LINE-HEIGHT: 20px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular
+}
+H1 {
+	FONT-WEIGHT: normal; FONT-SIZE: 14px; LINE-HEIGHT: 1pt; FONT-STYLE: normal; FONT-FAMILY: "Times New Roman", Times
+}
+H2 {
+	FONT-WEIGHT: normal; FONT-SIZE: 15px; FONT-STYLE: normal; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular
+}
+H3 {
+	FONT-WEIGHT: normal; FONT-SIZE: 14px; FONT-STYLE: normal; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular
+}
+H4 {
+	FONT-WEIGHT: normal; FONT-SIZE: 13px; FONT-STYLE: normal; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular
+}
+H5 {
+	FONT-WEIGHT: normal; FONT-SIZE: 12px; FONT-STYLE: normal; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular
+}
+H6 {
+	FONT-WEIGHT: normal; FONT-SIZE: 11px; FONT-STYLE: normal; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular
+}
+h7 {
+	FONT-WEIGHT: normal; FONT-SIZE: 10px; FONT-STYLE: normal; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular
+}
+h9 {
+	FONT-WEIGHT: normal; FONT-SIZE: 9px; FONT-STYLE: normal; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular
+}
+.popupwin {
+	PADDING-RIGHT: 2px; PADDING-LEFT: 4px; FONT-SIZE: 11px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular
+}

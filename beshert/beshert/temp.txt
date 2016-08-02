@@ -1,0 +1,22 @@
+ALTER TABLE [dbo].[PERSON] ADD 
+	CONSTRAINT [FK_PERSON_COUNTRY] FOREIGN KEY 
+	(
+		[COUNTRY]
+	) REFERENCES [dbo].[COUNTRY] (
+		[CODE]
+	)
+GO
+
+Hi, Elsa.
+
+Cannot reach you by phone.
+
+I have few questions
+
+Could I delete data in database ? ( I need to add new field 'Country' and new constraints )
+
+Could I delete those temporary files or you still need them ? ( xbkm71test.aspx, zbkm71test.aspx, Calendar.aspx )
+
+
+Slava_K
+
