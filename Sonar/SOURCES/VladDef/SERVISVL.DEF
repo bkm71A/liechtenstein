@@ -1,0 +1,20 @@
+DEFINITION MODULE ServisVl; (* Copyright 1991,1992 M.V.N. *)
+
+
+(* возвращает имя последнего логического диска в системе *)
+(* PROCEDURE GetNameLastDrive(): CHAR; *)
+
+PROCEDURE Soundock(); (* просто пищит *)
+PROCEDURE GetDate(VAR systemdate: ARRAY OF CHAR);
+(* возвращает дату в виде "число.месяц.год" *)
+
+PROCEDURE CheckDrive(drive: SHORTCARD): SHORTCARD;
+PROCEDURE DiskFree(): LONGCARD;
+(* возвращает количество свободных байт на текущем диске *)
+PROCEDURE CleanBuffer();
+(* очищает буфер опережающего ввода *)
+PROCEDURE SetCursor(page,x,y: SHORTCARD);
+(* устанавливает курсор в указанную позицию " в.страница,столбец,строка" *)
+PROCEDURE Attantion(quant: INTEGER;s1,s2,s3: ARRAY OF CHAR);
+
+END ServisVl.

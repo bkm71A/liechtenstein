@@ -1,0 +1,6 @@
+DEFINITION MODULE PrnEt;
+IMPORT FIO;
+
+PROCEDURE PrintEtik(hdl: FIO.File; file_name:ARRAY OF CHAR):  CARDINAL;
+
+END PrnEt.

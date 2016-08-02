@@ -1,0 +1,19 @@
+DEFINITION MODULE Code; 	(* Interface to the code generator *)
+
+FROM
+  Analyse
+IMPORT
+  TOKEN;
+
+CONST
+  NONE = 0;			(* Value associated with operators *)
+
+VAR
+  NextLabel : INTEGER;		(* Unique number for next label    *)
+  Loaded : BOOLEAN;		(* Set when the register is loaded *)
+
+PROCEDURE Declare (S : ARRAY OF CHAR);
+PROCEDURE Generate (Tok : TOKEN; Value : INTEGER);
+
+END Code.
+

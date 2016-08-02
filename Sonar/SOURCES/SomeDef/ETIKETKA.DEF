@@ -1,0 +1,4 @@
+DEFINITION MODULE Etiketka;
+(* вывод содеpжимого этикетки на экpан *)
+PROCEDURE  title(file_name: ARRAY OF CHAR);
+END Etiketka.

@@ -1,0 +1,6 @@
+DEFINITION MODULE FFT;
+(* быстрое преобразование Фурье *)
+PROCEDURE  nfft(n,m:CARDINAL;VAR a1,a2:ARRAY OF REAL);
+(*Передаем: n - комплексная длина,m - log 2 длины массива
+            передаем массивы a1,a2 *)
+END FFT.

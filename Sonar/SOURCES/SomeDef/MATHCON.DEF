@@ -1,0 +1,11 @@
+DEFINITION MODULE MathCon;
+VAR
+  shadow_o:    CARDINAL;
+  answ:        CHAR;
+  computer:    INTEGER;
+  conteins:    ARRAY [0..2] OF ARRAY[0..6] OF CHAR;
+
+PROCEDURE Differen();
+PROCEDURE Integral();
+
+END MathCon.

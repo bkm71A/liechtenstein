@@ -1,0 +1,15 @@
+(*$D D_DATA *)
+DEFINITION MODULE _Window;
+
+FROM Window IMPORT WinDef,WinType ;
+
+CONST max = 25 ;   (* максимальное количество описателей теней в стэке *)
+VAR  Opis      : ARRAY[0..max],[1..2] OF WinDef;
+     Stack_Win : ARRAY[0..max],[0..2] OF WinType;
+
+PROCEDURE Open_Shadow   (ww : WinType) : CARDINAL ;
+PROCEDURE Change_Shadow ( T : CARDINAL );
+PROCEDURE Close_Shadow  ( T : CARDINAL );
+PROCEDURE Shadow        (ww : WinType) ;
+
+END _Window.

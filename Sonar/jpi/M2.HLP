@@ -1,0 +1,917 @@
+! Help Index
+                   {Main Help Index}
+
+        Main Menu                 General Topics
+        ---------                 --------------
+        {Files Menu|Files}                {Window Control|WindowCo}
+        {Editor|Editor}                    {Menu System|MenuSyst}
+        {Compile|Compiler}                   {ShortCut Keys|ShortCut}
+        {Make|Make}                      {Editing Keys|EdKeys}
+        {Link|Linker}                      {DOS Commands|DOSComma}
+        {Run |RunProgr}                      {Compiler Directives|CompDire}
+        {Options Menu|Options}              {Library summary|LibSum}
+        {Info|Info}                      {Environment Files|EnvFiles}
+!Files
+   { Files Menu}      { Function}
+
+    {Load file|Loadfile}         Loads file to edit
+    {Pick file|Loadfile}         Selects recent file to edit
+    {Save file|Savefile}         Saves edited file to disk
+    {All save|Saveallf}          Saves all changed files to disk
+    {Main module|mainmodu}       Sets main module name
+    {Change dir|Changedi}        Changes current directory
+    {Files dir|director}         Displays directory listing
+    {Dos shell|Dosshell}         Enters DOS command shell
+    {Execute|Execute}           Executes any single-line DOS command
+    {Quit|Quit}              Exits the JPI environment
+!Loadfile
+                 {Loading Files for Editing}
+
+{Load File} ShortCut F3
+
+Loads a file into one of the four Editor Windows and then
+opens that window ready for editing.
+
+{Pick File} ShortCut AltF3
+
+Allows you to pick the name of a file to load from a list of
+recently loaded files. The cursor is restored to the point
+you last edited the file.
+                                                  {Files Menu|Files}
+!Savefile,Saveallf
+                 {Saving Edited Files}
+
+{Save File} ShortCut F2
+
+Saves the file currently being edited to disk. This is
+equivalent to the Save command (CtrlK D) in the editor.
+
+{All Save}
+
+Saves all files being edited that have been changed since
+they were last saved.
+
+                                                  {Files Menu|Files}
+!director,ChangeDi
+                  {DOS Directory Commands}
+
+{Change Dir}
+
+Changes the current DOS directory. If you enter a blank
+directory name, a selection window opens, allowing you
+to select a new directory by moving the cursor.
+
+{Files Dir}
+
+Displays  a directory listing. Press the SpaceBar to toggle
+between long and short file descriptions.
+                                                  {Files Menu|Files}
+!mainmodu
+{Main Module}
+
+Sets the name of the Main Module. This name is used by
+{Run|RunProgr}, {Make|Make}, {Make All|MakeAll} and {Link|Linker}.
+
+You can clear the Main Module name by entering a blank name.
+
+
+
+
+
+
+                                                  {Files Menu|Files}
+!DOSshell
+                 {DOS Shell (ShortCut AltD)}
+
+Enters a DOS shell from which you can execute any DOS
+commands and run programs.
+
+To exit the DOS shell you should type EXIT. You will then
+return to the environment at the point where you left.
+
+If you would like all edited files to be automatically saved
+before  entry to the DOS shell then set the AutoSave
+Environment option.
+
+                                                  {Files Menu|Files}
+!Execute
+                       {Execute}
+
+Allows you to run a single line DOS command.
+
+After the command is completed, you return immediately to the
+environment.
+
+As  with the DOS Shell, the AutoSave option can be  used  to
+ensure all edited files are saved.
+
+
+
+                                                  {Files Menu|Files}
+!Quit
+                    {Quit (ShortCut AltX)}
+
+Exits the Environment returning to the DOS command line.
+
+The environment will prompt to save edited files before
+exiting, unless the AutoSave option is set in which case
+the save is automatic.
+
+Details of the session are saved in the file M2.SES and are
+restored when you re-enter the Environment.
+
+
+                                                  {Files Menu|Files}
+!Editor
+           {The Editor (ShortCut AltE)}
+
+The JPI Editor is a multi-window editor in which you can
+edit up to four files simultaneously.
+
+Topics of help are:
+
+          {Editor Keys|EdKeys}
+          {Loading and Saving files|EdLoadSave}
+          {The Editor Menu System|EdMenus}
+          {Moving between Editor Windows|EdMove}
+          {Editor Options|OptEditor}
+!EdLoadSave
+          {Loading and Saving Files}
+
+You can load a file into the editor by using:
+
+      {Load file|LoadFile}       (ShortCut {F3})
+or    {Pick file|LoadFile}       (ShortCut {AltF3})
+
+You can save a file to disk using:
+
+      {Save file|SaveFile}       (ShortCut {F2} or {CtrlK D})
+or    {Write to ..|WriteTo}
+or    {All Save|SaveFile}
+                                                      {Editor|Editor}
+!WriteTo
+                  {Write to ...}
+
+This Editor Menu command allows you to save the current file
+being edited to a different name.
+
+
+
+
+
+
+
+
+                                                      {Editor|Editor}
+!EdKeys
+                    {Editor Keys}
+
+The Editor keys are configured to be WordStar compatible.
+The following help topics are available:
+
+            {Cursor Movement|EdCursor}
+            {Insertion and Deletion|EdInsDel}
+            {Block Commands|EdBlock}
+            {Editor Options|EdOpt}
+            {Search and Replace|EdSearchR}
+            {Other Editor Commands|EdOther}
+
+                                                      {Editor|Editor}
+!EdMenus
+                   {Editor Menus}
+
+You can invoke the main Editor Menu by pressing {F9}
+
+Editor sub-menus automatically "pop-up" after a short delay,
+when only part of a longer key command is pressed.
+
+      {CtrlK} pops up the {Block Menu|EdBlock}
+      {CtrlQ} pops up the {Quick Menu|EdCurMore}
+      {CtrlO} pops up the {Options Menu|EdOpt}
+
+
+                                                      {Editor|Editor}
+!EdMove
+
+          {Moving between Editor Windows}
+
+To move between the four Editor Windows the ShortCut keys
+{Alt1}, {Alt2}, {Alt3} and {Alt4}  can be used.
+
+
+           {Window Cycle (Shortcut F6)}
+
+You also can move between Editor Windows by pressing {F6},
+which will cycle through any open Editor Windows.
+
+                                                      {Editor|Editor}
+!EdCursor
+                    {Cursor Movement}
+
+{~27}       or {CtrlS}       Moves cursor left.
+{~26}       or {CtrlD}       Moves cursor right.
+{~24}       or {CtrlE}       Moves cursor up.
+{~25}       or {CtrlX}       Moves cursor down.
+{Ctrl ~27}  or {CtrlA}       Moves cursor to previous word.
+{Ctrl ~26}  or {CtrlF}       Moves cursor to next word.
+{PgUp}    or {CtrlR}       Moves one page up.
+{PgDn}    or {CtrlC}       Moves one page down.
+           {CtrlW}       Scrolls window up.
+           {CtrlZ}       Scrolls window down.
+                                                        {More|EdCurMore}
+!EdCurMore
+                    {Cursor Movement}
+
+{Home}      or {CtrlQ S}     Moves to start of line.
+{End}       or {CtrlQ D}     Moves to end of line.
+{CtrlHome}  or {CtrlQ E}     Moves to top of screen.
+{CtrlEnd}   or {CtrlQ X}     Moves to bottom of screen.
+{CtrlPgUp}  or {CtrlQ R}     Moves to top of file.
+{CtrlPgDn}  or {CtrlQ C}     Moves to bottom of file.
+             {CtrlQ B}     Moves to start of block.
+             {CtrlQ K}     Moves to end of block.
+             {CtrlQ P}     Moves to the previous pos.
+             {CtrlQ G}     Moves to line number.
+                                                 {Editor Keys|EdKeys}
+!EdInsDel
+                 {Insertion and Deletion}
+
+{Ins}       or {CtrlV}      Toggles insert/overwrite.
+{~17~217}        or {CtrlM}      Inserts line.
+             {CtrlN}      Inserts line below.
+{Tab}       or {CtrlI}      Inserts to the next tab position
+{Del}       or {CtrlG}      Deletes character to right.
+{BackSpace} or {CtrlH}      Deletes character to left.
+             {CtrlT}      Deletes word to right.
+             {CtrlY}      Deletes line.
+             {CtrlQ Y}    Deletes to the end of line.
+             {CtrlP}      Prefixes a character.
+                                                 {Editor Keys|EdKeys}
+!EdBlock
+                  {Block Commands}
+
+{CtrlK B}   Marks the start of the block.
+{CtrlK K}   Marks the end of the block.
+{CtrlK T}   Marks a single word.
+{CtrlK L}   Marks a single line.
+{CtrlK H}   Toggles whether the block is displayed.
+{CtrlK C}   Copies the block to the current cursor position.
+{CtrlK V}   Moves the block to the current cursor position.
+{CtrlK Y}   Deletes the block.
+
+
+                                                        {More|EdBlkMore}
+!EdBlkMore
+                  {Block Commands}
+
+{CtrlK W}   Writes the contents of the block to a file.
+{CtrlK R}   Read the contents of a file into a block.
+{CtrlK G}   Gets a block from a different Editor Window.
+{CtrlK P}   Prints the contents of the block.
+{CtrlK I}   Indents (+ or -) the text of the block.
+
+
+
+
+
+                                                 {Editor Keys|EdKeys}
+!EdOpt,EDOPTHAR,EDOPTIND,EDOPTTAB,EDINSERT
+                    {Editor Options}
+
+
+{CtrlO V}   Toggles between Insert and Overwrite modes.
+{CtrlO I}   Toggles Auto Indent on and off.
+{CtrlO T}   Toggles between spaces and "hard" tabs.
+{CtrlO W}   Sets the width between tab stops.
+
+
+There are also {Editor System Options|OptEditor} on the Options Menu.
+
+                                                 {Editor Keys|EdKeys}
+!EdSearchR
+                  {Search and Replace}
+
+{CtrlQ F}   Searches for a string moving the cursor if found.
+
+{CtrlQ A}   Replaces occurrences of one string with another.
+
+{CtrlL}     Repeats the last find or replace.
+
+
+When searching or replacing one or more {Options|SRoptions} may be
+specified.
+
+                                                 {Editor Keys|EdKeys}
+!SRoptions
+                  {Search/Replace Options}
+
+{B}         Search or replace backwards from the cursor.
+{U}         Ignore Upper/lower case of the string in search.
+{W}         Only match with whole words.
+{G}         Replace globally throughout the file.
+{L}         Replace locally within the current block.
+{R}         Replace in the rest of the file from the cursor.
+{N}         Replace without prompting for confirmation.
+{number}    Replaces a specified number of times.
+
+
+                                                 {Editor Keys|EdKeys}
+!EdOther
+                  {Other Editor Commands}
+
+{CtrlU}     Converts the current word to uppercase.
+{ShiftF7}   Sets the case of the current word same as previous
+          the previous occurrence of that word in the file.
+
+{CtrlQ 1}   Sets marker 1 at the current cursor position.
+{CtrlQ 2}   Sets marker 2 at the current cursor position.
+{CtrlK 1}   Goes to marker 1.
+{CtrlK 2}   Goes to marker 2.
+{F8}        Move to next error if present.
+{F7}        Move to previous error if present.
+
+                                                 {Editor Keys|EdKeys}
+!Compiler
+        {Compiling Programs (ShortCut AltC)}
+
+To start compiling a file, you should either select {C}ompile
+from the Main-Menu or type {AltC}.
+
+If you are editing a file that has a {.MOD} extension, the
+compiler will start compiling that file. Otherwise you will
+be prompted for the name of the file to compile.
+
+The compiler window shows the file being compiled and the
+current definition file and line number. The thermometer
+style indicator shows the percentage already compiled.
+                                                        {More|CompMore}
+!CompMore
+        {Compiling Programs (ShortCut AltC)}
+
+If errors are detected during compilation, you can edit the
+file in error by pressing {~17~217}. The Error Editor Window then
+opens taking you to the position of the first error. You can
+move between errors by using {F8} (Next) and {F7} (previous).
+When you have finished editing {Esc} can be used to restart
+compilation.
+You can abort the compilation by pressing {Esc} again.
+
+Other Compiler related help topics:
+
+{Compiler Options|OptComp}   {Compiler Directives|CompDire}   {Make|Make}   {Run|RunProgr}   {Link|Linker}
+!Make
+        {Making a Program (ShortCut AltM)}
+
+The JPI Modula-2 compiler's automatic Make facility
+calculates dependencies and automatically re-compiles all
+the out-of-date modules within your program.
+
+During the Make the Make Windows shows all the files being
+compiled. If all these compilations are successful then
+the {linker|Linker} is invoked to link the objects together into
+an executable ({.EXE}) file.
+
+To invoke the make command you should select {M}ake from the
+Main-Menu, or press the ShortCut key {AltM}.
+!Linker
+       {Linking a Program (ShortCut AltL)}
+
+The JPI Linker is a fast "smart" linker that only links the
+code and data actually used within the program, producing
+the smallest {.EXE} file possible.
+
+The linker is either invoked during a {M}ake or can be
+run separately by the {L}ink command on the Main Menu.
+
+Other linker help topics:
+
+         {Linker Options|OptLink}
+         {Linker Errors|LinkerErr}
+!LinkerErr
+                {Linker Errors}
+
+{Date/time error}     You have date/time inconsistencies
+                    between the modules of your program.
+                    Make or Make All will correct these.
+
+{Non-main module}     This  message is output  if  you attempt
+                    to link an implementation module instead
+                    of a main module.
+
+{Bad object file}     These can occur if you have a corrupt or
+{Unexpected segment}  invalid object file.
+{Unexpected group}                                        {More|LnkErrMore}
+!LnkErrMore
+{Not enough memory}   This means the environment hasn't
+                    enough space to link your program. You
+                    can try using the batch linker instead.
+
+{Group/Segment}       This can occur if have used the {$M} or {$D}
+  {exceeds 64K}       compiler directives and have created
+                    segments larger than 64K.
+
+{Definition duplicated}  These errors can occur when linking
+{Fixup overflow}         non Modula-2 modules together.
+{Symbol is Unresolved}
+
+                                                      {Linker|Linker}
+!Runprogr
+            {Running Programs (ShortCut AltR)}
+
+You can run your completed program within the environment
+by using the Run command on the Main-Menu or the ShortCut
+key {AltR}. This first performs an automatic Make, (unless
+the Auto-Make {Run Option|OptRun} is OFF). If the Make completes
+successfully, your program is run in a full-screen window.
+
+When your program has finished you are prompted to press
+{Esc} to return to the environment exactly as you left.
+
+If any {Run-Time Errors|RunErr} detected, you will be prompted
+to find their position within the program source text.
+!RunErr
+                { Run-Time Errors}
+
+If you have the appropriate compiler directives enabled, the
+following run-time errors may be reported whilst running
+your program.
+
+{Error Type}                             {Directive}
+Index Out Of Range                       (*$I+*)
+Arithmetic Overflow                      (*$O+*)
+Stack Overflow                           (*$S+*)
+Subrange Value Out Of Range              (*$R+*)
+Enumeration Value Out Of Range           (*$R+*)
+Dereference Of NIL Pointer               (*$Z+*)         {Run|RunProgr}
+!Options
+            {The Options Menu (ShortCut AltO)}
+
+The Options Menu can be invoked from the Main-Menu or by
+the ShortCut key {AltO}.  This menu contains the following
+five sub-menus:
+
+           {Compiler Options|OptComp}
+           {Linker Options|OptLink}
+           {Run Options|OptRun}
+           {Editor Options|OptEditor}
+           {Setup Options|OptSetup}
+
+The Options Menu also contains the {Make All|MakeAll} command.
+!OptComp,COMPOPTE,COMPOPTF,COMPOPTN,COMPOPTU,COMPOPTV
+               {Compiler Options}
+
+The following options modify the behavior of {Compile|Compiler} and
+{Make|Make}:
+
+{E - Stop On First Error} : Stop compiling at first error
+
+{F - Filename Check}      : Check Module Name matches filename
+
+{N - Line Numbers}        : Generate line-numbers in the map
+
+{V - Volatile Variables}  : Make all variables volatile
+!OptLink,LINKOPTC,LINKOPTI,LINKOPTM,LINKOPTN,LINKOPTS,LINKOPTT,LINKOPTW
+                     {Linker Options}
+
+The following options govern the operation of the {Linker|Linker}
+
+{M - Map File}              : Generate a MapFile ({Main.MAP})
+
+{I - Initialize Segments}   : Zero-fill uninitialized segments
+
+{S - Detailed Segment Map}  : Generate detailed segment map
+
+{C - Case Sensitive Link}   : Enable Alphabetic Case checking
+
+{W - Suppress Warnings}     : Stops the display of warnings
+!OptRun,RUNOPTA,RUNOPTT,COMMANDL,FINDERRO
+                      {Run Options}
+
+The Run Options modify the operation of the {Run|RunProgr} command.
+
+{C - Command Line}        : Sets the DOS command line
+
+{A - Auto Make}           : Enables automatic make before {R}un
+
+{T - Timed Run}           : Times the execution of the program
+
+{F - Find Error}          : Finds the position of a run-time
+                          error within the program source
+!OptEditor,NOOFBACK,BOTTOMSC,DEFAULTE,DEFAULTF,TOPSCROL
+                     {Editor Options}
+
+The Editor Options modify the operation of the {Editor|Editor}
+
+{A - Auto Save Files}    : Makes the editor save all changed
+                         files before running a program, DOS
+                         shell or exiting the environment
+
+{F - Default Filenames}  : Sets the default initial filenames
+{E - Default Extensions} : Sets the default file extensions
+{N - Number Of Backups}  : Sets the number of Backup files
+{T - Top Scroll Zone}    : Sets the top scroll zone depth
+{B - Bottom Scroll Zone} : Sets the bottom scroll zone depth
+!OptSetup,ENVOPTB,ENVOPTC,ENVOPTH,ENVOPTS
+                    {Setup Options}
+
+The setup options allow you to set up various aspects of the
+environment and also to save and restore configuration files
+and load a new redirection file.
+
+{C - CGA Snow Check}  : Sets whether your CGA monitor "snows"
+{B - BIOS Scrolling}  : Enables the use of the BIOS to scroll
+{H - High Background} : Enables "bright" color backgrounds
+{X - Solid Cursor}    : Set a flashing "block" cursor
+
+
+                                                        {More|OptSetMore}
+!OptSetMore
+
+
+{R - Load Redirection File}  : Loads a new redirection file
+
+{L - Load Options/Windows}   : Loads a saved .CFG file
+
+{S - Save Options/Windows}   : Saves a .CFG file
+
+The configuration ({.CFG}) file contains all option settings,
+window colors and window layout.
+
+
+                                                     {Options|Options}
+!MakeAll
+                       {Make All}
+
+Make All performs a make in exactly the same way as {Make|Make}
+except ALL component modules whose source can be found,
+are re-compiled, not just the out-of-date ones.
+
+This  can  be useful in resolving date/time linker errors.
+!Info
+       {The Information Window (ShortCut AltI)}
+
+The Information Window contains the following information
+about the current state of the environment:
+
+       {Date and time},
+
+       {Current logged drive and directory},
+
+       {Filenames and current size of files being edited},
+
+       {Memory free space within the environment},
+       {Disk free space}.
+!WindowCo
+                  {Changing Windows}
+
+At any time you can change the position, size, and coloring
+of the active window by pressing {ScrollLock} which enters
+the Window Control Mode.
+
+In this mode you can {Re-Size|resize} and {Re-Position|resize} the window, or
+by pressing {~17~217}, {Re-Color|recolor} the window.
+
+To exit the Window Control Mode press {ScrollLock} again
+
+You can also re-sizing the window to full size, ({Zoomed|Zoom}),
+by using the {F5} key.
+!resize
+{Re-Positioning Windows}
+
+To re-position a window, use the cursor keys on the numeric
+keypad after pressing ScrollLock. These move the window to
+the required position, uncovering any windows that lie
+beneath.
+
+{Re-Sizing Editor Windows}
+
+Each of the Editor Windows can be re-sized after pressing
+ScrollLock by using Shift Cursor keys to move the right
+and the lower window edges.
+                                              {Window Control|windowco}
+!recolor
+                {Re-Coloring Windows}
+
+The active window can be re-colored by pressing ScrollLock
+then {~17~217}. Different areas can be re-colored by pressing
+{PgUp} or {PgDn} until the text in the required area flashes.
+
+The {~27} and {~26} keys change the background and {~24} and {~25} change
+the foreground colors.
+To abort re-coloring, {CtrlU} restores the original colors.
+
+The HelpLine at the bottom of the screen can be re-colored
+by pressing {*} whilst re-coloring.
+                                              {Window Control|windowco}
+!zoom
+                     {Zoom/UnZoom}
+
+Each of the Editor Windows can be be Zoomed to the maximum
+size possible by pressing {F5}.
+
+This is convenient  for  full  screen editing, allowing the
+maximum area possible for showing text.
+
+When the window is required to be "UnZoomed", {F5} should be
+pressed again to shrink the window back to its original
+size.
+
+                                              {Window Control|windowco}
+
+
+The zoomed state of each window is saved in the Configuration
+and session files.
+!MenuSyst
+               {Moving around Menus}
+
+ {~24}       Moves the menu-bar up one line.
+ {~25}       Moves the menu-bar down one line.
+
+ {~17~217}      Goes down into a sub-menu or selects a function
+ {Esc}     Exits to the menu above or closes the menu
+
+ {Home}    Moves the menu-bar to the first line.
+ {End}     Moves the menu-bar to the last line.
+
+ {H}igh    Selects the line with a highlighted letter
+ {F10}     Returns to the Main Menu
+!ShortCut
+                     {ShortCut Keys}
+
+ {Alt1-4|Editor} Editor Window 1-4         {AltF5|ReviewSc}   Review Screen
+ {AltC|Compiler}   Compile                   {AltM|Make}    Make Program
+ {AltL|Linker}   Link Program              {AltR|RunProgr}    Run Program
+ {AltO|Options}   Options Menu              {AltF|Files}    Files Menu
+ {AltE|Editor}   Last Editor Window        {AltI|Info}    Info Window
+ {AltD|DOSshell}   DOS Shell                 {AltX|Quit}    Exit Environment
+
+ {F5|Zoom}     Zoom Window               {F6|EdMove}      Cycle Window
+ {F7|EdOther}     Previous error            {F8|EdOther}      Next Error
+ {F9|Editor}     Editor Menu               {F10|MenuSyst}     Main Menu
+!DOScomma
+                     {DOS commands}
+
+To execute DOS commands you can enter a {DOS shell|Dosshell} ({AltD}).
+
+To execute a single DOS command, you can use the {Execute|Execute}
+Files-Menu command.
+
+To review the result screen after executing a DOS command,
+use {AltF5} {Review Screen|ReviewSc}.
+
+If you require to execute the same commands often, you can
+easily configure the M2.MNU file to add your own DOS
+commands, which can invoked by menus and/or ShortCut keys.
+!CompDire
+                 {Compiler Directives}
+
+{$A+/-}   Enable(default)/disable aliased behavior on global
+        variables.
+
+{$B+/-}   Include(default)/exclude a control-break handler in
+        the program.
+
+{$C h}    Selects which registers are preserved by procedures.
+        AX=1, CX=2, DX=4, BX=8, DS=10, ES=20, SI=40, DI=80.
+        Default is F0 = DS+ES+SI+DI. BP is always preserved.
+
+                                                        {More|CompDir2}
+!CompDir2
+{$D n}    Specifies the name of the (data-)segment in which
+        to put the global variables declared by the module.
+        Default is to use the module name.
+
+{$E+/-}   Enable/disable(default) relaxed alias-treatment of
+        variant-records.
+
+{$F}      Procedures will be called with FAR calls. Likewise,
+        procedure types are 32-bit. This is  default and
+        applies only to global procedures; local procedures
+        are always NEAR.
+
+                                                        {More|CompDir3}
+!CompDir3
+{$G+/-}   Enable(default)/disable module-prefixes in external
+        names.
+
+{$H+/-}   Enable/disable(default) treating constant aggregates
+        as variables, allowing them to be modified.
+
+{$I+/-}   Enable/disable(default) index-checking. If enabled,
+        accessing a non-existent array-element will produce
+        a run-time  error.
+
+{$J+/-}   Enable/disable(default) interrupt procedures
+        generating IRET instead of RET instructions.
+                                                        {More|CompDir4}
+!CompDir4
+{$K+/-}   Enable/disable(default) C-language calling
+        convention for procedures.
+
+{$M n}    Specifies the name of the (code-)segment in which to
+        place code. Default is to use the module name.
+
+{$N}      Procedures will be called with NEAR calls. This
+        requires that callers are in the same  code-segment.
+        Likewise, procedure types are 16-bit.
+
+{$O+/-}   Enable/disable(default) overflow checking on
+        whole number operations.
+                                                        {More|CompDir5}
+!CompDir5
+{$P+/-}   Enable/disable(default) generating external names
+        for local procedures.
+
+{$Q+/-}   Enable/disable(default) procedure tracing. If
+        enabled, procedures will execute an INT 60H on entry
+        and an INT 61H on exit.
+
+{$R+/-}   Enable/disable(default) subrange checking.
+
+{$S h}    Specifies the stack size in hex for the program.
+        This directive must be in the main module.
+
+                                                        {More|CompDir6}
+!CompDir6
+{$S+/-}   Enable/disable(default) stack-overflow checking.
+
+{$V+/-}   Enable(default)/disable copying of open-array value
+        parameters.
+
+{$W+/-}   Enable/disable(default) volatile variables.
+        Volatile variables are not kept in registers across
+        statements.
+
+{$X+/-}   Enable/disable(default) 8087 spilling for
+        procedures. Spilling is required if nested function
+        calls exhaust the 8087 stack.
+                                                        {More|CompDir7}
+!CompDir7
+{$Y+/-}   Enable/disable(default) coinciding variant fields.
+        If enabled, it is allowed to use the same name for
+        fields in distinct variant alternatives, provided
+        they have the same type and are at the same offset
+        in the record.
+
+{$Z+/-}   Enable/disable(default) checks for dereferencing of
+        NIL pointers, which then generate a run-time error.
+        When enabled, all local variables are initialized
+        to zero. If enabled in the main module, all global
+        variables are also zeroed.
+
+                                         {Compiler Directives|CompDire}
+!LibSum
+                    { Library Summary}
+
+JPI Modula-2 supplies the following standard libraries.
+
+System level   : {SYSTEM|LibSys}
+
+Assembly level : {AsmLib|LibSys}, {MATHLIB|LibMath}
+
+Utility level  : {Str|LibStr}, {Lib|LibLib}, {Storage|LibStr}, {Process|ProcLib}, {Graph|ProcLib}, {FloatExc|LibMath}
+
+IO level       : {IO|LibIO}, {FIO|LibFIO}
+
+Window level   : {Window|LibWin}
+!LibSys
+
+{SYSTEM} covers:
+
+   Support for specifics of the 8086 family of processors;
+   Support for concurrent processes.
+
+
+{AsmLib}
+   is an auxiliary module which the user need not use
+   directly. It contains assembler routines for the use
+   of other library modules.
+
+                                             {Library Summary|LibSum}
+!LibMath
+{MATHLIB} covers:
+
+   Trigonometric and hyperbolic functions on reals;
+   Logarithmic functions on reals;
+   Conversion of reals to/from binary coded decimals;
+   8087 specifics.
+
+{FloatExc} covers:
+
+   Enabling/disabling of 8087-exceptions;
+   Reporting of 8087-exceptions.
+
+                                             {Library Summary|LibSum}
+!LibStr
+{Str} covers:
+
+   String concatenation, appending, insertion, deletion;
+   String comparison;
+   String searching, matching;
+   String conversion to and from numeric types.
+
+{Storage} provides:
+
+   Allocation and deallocation of storage;
+   Information about storage availability.
+
+                                             {Library Summary|LibSum}
+!LibLib
+{Lib} covers:
+
+   Sorting;
+   Random number generation;
+   DOS-interrupt calls;
+   Commandline access;
+   Block-memory operations;
+   Long-jumps;
+   Address arithmetic;
+   Break and error handling;
+   Sound procedures.
+
+                                             {Library Summary|LibSum}
+!ProcLib
+{Process} covers:
+
+   Starting up processes;
+   Synchronization by means of semaphores.
+
+{Graph} covers:
+
+   Selecting screen modes;
+   Writing and reading of single pixels;
+   Drawing of lines and circles;
+   Drawing of filled circles and polygons.
+
+                                             {Library Summary|LibSum}
+!LibFIO
+
+{FIO} covers:
+
+   Creating, deleting, renaming, opening, closing files;
+   Reading, writing, seeking on files;
+   Creating, deleting, changing directory;
+   Directory scanning;
+   Reading and writing of characters, booleans, integers,
+   cardinals, reals, strings.
+
+
+
+                                             {Library Summary|LibSum}
+!LibIO
+
+{IO} covers:
+
+   Reading and writing of characters, booleans, integers,
+   cardinals, reals, strings;
+   Redirecting to any device;
+   Reading characters directly from keyboard;
+   Testing for key-ready;
+
+
+
+
+                                             {Library Summary|LibSum}
+!LibWin
+
+Window covers:
+
+   Creating, disposing, opening, closing windows;
+   Setting frame, color, title on windows;
+   Rearranging the size, position, layering of windows;
+   Cursor control inside windows;
+   Inserting and deleting lines in windows;
+   Palette windows
+   Writing to windows (via the IO module).
+
+
+                                             {Library Summary|LibSum}
+!EnvFiles
+       {Files Used by the Environment}
+
+       {M2.EXE}    The JPI Modula-2 Environment
+       {M2.OVL}    Overlay file used by M2.EXE
+       {M2.MNU}    Menu system definition
+       {M2.ERR}    Modula-2 error messages
+       {M2.HLP}    Help text
+
+       In addition the following may exist
+
+       {M2.RED}    Redirection file (user created)
+       {M2.SES}    Session file     (system created)
+       {M2.$$$}    Temporary file   (system created)
+!ReviewSc
+            {Review DOS Screen (ShortCut AltF5)}
+
+Reviews the last DOS screen. This allows you to see
+again the output produced by the last program  or DOS
+Shell executed. This is useful for examining the results
+of a program after you have returned to the environment.
+
+Compile, Make and Link all automatically clear the review
+screen, ready for the next time you run a program.
+
+
+
+                                                {DOS Commands|Doscomma}
+

@@ -1,0 +1,51 @@
+%РАБОТА В СЕТИ,0,0,3
+1. Информационно-справочная система
+	@echo off
+	o:
+	cd o:\rbase
+	rrun ml
+	c:
+	cd c:\prg
+2. Система ввода данных с АЦП
+	@echo off
+	c:\prg\viln
+3. Система ввода и предварительной обработки
+	@echo off
+	c:
+	c:\release
+	c:\mouse\agmouse
+	c:
+	cd c:\prg
+	mainproc
+	c:\release /a
+4. Система полной обработки (К А Р М Э)
+	@echo off
+	c:
+	cd ..
+	cd c:\full
+	mr karme
+	cd ..
+	cd prg
+5. Диалог с администратором
+	@echo off
+	send "@1"СООБЩЕНИЕ АДМИНИСТРАТОРУ (45 симв.)"" to supervisor
+	pause
+6. Пpовеpка сети
+	p: "                    ЖДИТЕ НАЧАЛА РАБОТЫ ПРОГРАММЫ"
+	p: "          ДЛЯ ВЫХОДА ИЗ ПРОГРАММЫ НАЖМИТЕ <Ctrl>+<Break>"
+	ncsnipes
+	@echo off
+	c:
+	cd c:\prg
+7. Конец работы
+	@echo off
+	 c:
+	cd c:\prg
+	df
+	 if errorlevel 103 goto label2
+	 if errorlevel 102 goto label2
+	 c:\prg\out
+	:label2
+	 c:
+	cd c:\prg
+	cf

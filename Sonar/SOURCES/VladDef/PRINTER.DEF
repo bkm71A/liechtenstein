@@ -1,0 +1,19 @@
+DEFINITION MODULE Printer;
+
+VAR
+  wt_print:  WinType;
+CONST
+  wd_print:= WinDef(15,8,65,14,LightGreen,Blue,FALSE,FALSE,FALSE,TRUE,
+                    SingleFrame,LightMagenta,Blue);
+
+PROCEDURE PrinterMesage;
+VAR
+BEGIN
+ IF print_ready= 0 THEN  screen;
+                   ELSE  
+                         wt_print:= Open(wd_print);
+                         GotoXY(5,1);   IO.WrStr('Принтер не готов');
+
+
+END Mesage;
+

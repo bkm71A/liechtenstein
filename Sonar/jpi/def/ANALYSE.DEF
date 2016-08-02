@@ -1,0 +1,16 @@
+DEFINITION MODULE Analyse;	(* Interface for the lexical analyser	*)
+
+TYPE
+  (* Types of tokens recognised by the lexical analyser *)
+  TOKEN = (TIF, TTHEN, TELSE, TENDIF, TREPEAT, TUNTIL, ID, DONE, NUM, DIVI,
+	   MULT, TBEGIN, TEND, PLUS, MINUS, BECOMES, EQUALS, LBRACKET,
+	   RBRACKET, TLABEL, TGOTO, GOFALSE, SEMICOLON);
+
+VAR
+  tokenval : INTEGER;		(* Number associated with each token	*)
+
+PROCEDURE Lex () : TOKEN;		(* Returns next token		*)
+PROCEDURE Error (s : ARRAY OF CHAR);	(* Outputs an error message	*)
+
+END Analyse.
+

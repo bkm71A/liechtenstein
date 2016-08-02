@@ -1,0 +1,4 @@
+DEFINITION MODULE assa;
+PROCEDURE screen;
+PROCEDURE print_ready():INTEGER ;
+END assa.

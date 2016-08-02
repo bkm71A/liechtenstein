@@ -1,0 +1,68 @@
+DEFINITION MODULE LetterR;
+
+  PROCEDURE letA(basaX,basaY,color : CARDINAL);    (* paint letter "Ä" *)
+
+  PROCEDURE letB(basaX,basaY,color : CARDINAL ) ;  (* paint letter "Å" *)
+
+  PROCEDURE letV(basaX,basaY,color : CARDINAL);    (* paint letter "Ç" *)
+
+  PROCEDURE letG(basaX,basaY,color : CARDINAL ) ;  (* paint letter "É" *)
+
+  PROCEDURE letD(basaX,basaY,color : CARDINAL ) ;  (* paint letter "Ñ" *)
+
+  PROCEDURE letE(basaX,basaY,color : CARDINAL ) ;  (* paint letter "Ö" *)
+
+  PROCEDURE letGe(basaX,basaY,color : CARDINAL);    (* paint letter "Ü" *)
+
+  PROCEDURE letZ(basaX,basaY,color : CARDINAL);    (* paint letter "á" *)
+
+  PROCEDURE letI(basaX,basaY,color : CARDINAL ) ;  (* paint letter "à" *)
+
+  PROCEDURE letK(basaX,basaY,color : CARDINAL ) ;  (* paint letter "ä" *)
+
+  PROCEDURE letL(basaX,basaY,color : CARDINAL);    (* paint letter "ã" *)
+
+  PROCEDURE letM(basaX,basaY,color : CARDINAL ) ;  (* paint letter "å" *)
+
+  PROCEDURE letN(basaX,basaY,color : CARDINAL);    (* paint letter "ç" *)
+
+  PROCEDURE letO(basaX,basaY,color : CARDINAL);    (* paint letter "é" *)
+
+  PROCEDURE letP(basaX,basaY,color : CARDINAL ) ;  (* paint letter "è" *)
+
+  PROCEDURE letR(basaX,basaY,color : CARDINAL ) ;  (* paint letter "ê" *)
+
+  PROCEDURE letS(basaX,basaY,color : CARDINAL ) ;  (* paint letter "ë" *)
+
+  PROCEDURE letT(basaX,basaY,color : CARDINAL ) ;  (* paint letter "í" *)
+
+  PROCEDURE letU(basaX,basaY,color : CARDINAL ) ;  (* paint letter "ì" *)
+
+  PROCEDURE letF(basaX,basaY,color : CARDINAL ) ;  (* paint letter "î" *)
+
+  PROCEDURE letH(basaX,basaY,color : CARDINAL);    (* paint letter "ï" *)
+
+  PROCEDURE letC(basaX,basaY,color : CARDINAL);    (* paint letter "ñ" *)
+
+  PROCEDURE letCh(basaX,basaY,color : CARDINAL);    (* paint letter "ó" *)
+
+  PROCEDURE letSh(basaX,basaY,color : CARDINAL);    (* paint letter "ò" *)
+
+  PROCEDURE letSCh(basaX,basaY,color : CARDINAL);    (* paint letter "ô" *)
+
+  PROCEDURE letEe(basaX,basaY,color : CARDINAL ) ;  (* paint letter "ù" *)
+
+  PROCEDURE letYu(basaX,basaY,color : CARDINAL ) ;  (* paint letter "û" *)
+
+  PROCEDURE letYa(basaX,basaY,color : CARDINAL ) ;  (* paint letter "ü" *)
+
+  PROCEDURE letMZ(basaX,basaY,color : CARDINAL ) ;  (* paint letter "ú" *)
+
+  PROCEDURE letTZ(basaX,basaY,color : CARDINAL ) ;  (* paint letter "ö" *)
+
+  PROCEDURE letII(basaX,basaY,color : CARDINAL ) ;  (* paint letter "ú" *)
+
+
+
+END LetterR.
+

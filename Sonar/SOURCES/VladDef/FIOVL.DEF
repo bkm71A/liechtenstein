@@ -1,0 +1,10 @@
+DEFINITION MODULE FioVl; (* Private M.V.N., 1991 *)
+
+TYPE Str24 = ARRAY [1..24] OF CHAR;
+     (*Str81 = ARRAY [1..81] OF CHAR;*)
+
+PROCEDURE FileSave (Name  : ARRAY OF CHAR) ;
+PROCEDURE FileLoad (Name  : ARRAY OF CHAR) ;
+PROCEDURE Help     (Name  : ARRAY OF CHAR ; baseX,baseY : CARDINAL) ;
+
+END FioVl.

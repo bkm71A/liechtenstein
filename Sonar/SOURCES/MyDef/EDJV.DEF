@@ -1,0 +1,5 @@
+DEFINITION MODULE Edjv;
+PROCEDURE Charly(VAR sname:ARRAY OF CHAR;VAR del:ARRAY OF REAL);
+(* Входные : файл даннных REAL,c этикеткой          *)
+(*Выход:  массив дельта [0..7]                      *)
+END Edjv.

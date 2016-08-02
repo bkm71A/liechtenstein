@@ -1,0 +1,113 @@
+DEFINITION MODULE Letter;
+
+  PROCEDURE letA(basaX,basaY,color : CARDINAL);    (* paint letter "A" *)
+
+  PROCEDURE letB(basaX,basaY,color : CARDINAL ) ;  (* paint letter "B" *)
+
+  PROCEDURE letC(basaX,basaY,color : CARDINAL);    (* paint letter "C" *)
+
+  PROCEDURE letD(basaX,basaY,color : CARDINAL ) ;  (* paint letter "D" *)
+
+  PROCEDURE letE(basaX,basaY,color : CARDINAL ) ;  (* paint letter "E" *)
+
+  PROCEDURE letF(basaX,basaY,color : CARDINAL ) ;  (* paint letter "F" *)
+
+  PROCEDURE letG(basaX,basaY,color : CARDINAL);    (* paint letter "G" *)
+
+  PROCEDURE letH(basaX,basaY,color : CARDINAL);    (* paint letter "H" *)
+
+  PROCEDURE letI(basaX,basaY,color : CARDINAL ) ;  (* paint letter "I" *)
+
+  PROCEDURE letJ(basaX,basaY,color : CARDINAL ) ;  (* paint letter "J" *)
+
+  PROCEDURE letK(basaX,basaY,color : CARDINAL);    (* paint letter "K" *)
+
+  PROCEDURE letL(basaX,basaY,color : CARDINAL ) ;  (* paint letter "L" *)
+
+  PROCEDURE letM(basaX,basaY,color : CARDINAL);    (* paint letter "M" *)
+
+  PROCEDURE letN(basaX,basaY,color : CARDINAL);    (* paint letter "N" *)
+
+  PROCEDURE letO(basaX,basaY,color : CARDINAL ) ;  (* paint letter "O" *)
+
+  PROCEDURE letP(basaX,basaY,color : CARDINAL ) ;  (* paint letter "P" *)
+
+  PROCEDURE letQ(basaX,basaY,color : CARDINAL ) ;  (* paint letter "Q" *)
+
+  PROCEDURE letR(basaX,basaY,color : CARDINAL ) ;  (* paint letter "R" *)
+
+  PROCEDURE letS(basaX,basaY,color : CARDINAL ) ;  (* paint letter "S" *)
+
+  PROCEDURE letT(basaX,basaY,color : CARDINAL ) ;  (* paint letter "T" *)
+
+  PROCEDURE letU(basaX,basaY,color : CARDINAL);    (* paint letter "U" *)
+
+  PROCEDURE letV(basaX,basaY,color : CARDINAL);    (* paint letter "V" *)
+
+  PROCEDURE letW(basaX,basaY,color : CARDINAL);    (* paint letter "W" *)
+
+  PROCEDURE letX(basaX,basaY,color : CARDINAL);    (* paint letter "X" *)
+
+  PROCEDURE letY(basaX,basaY,color : CARDINAL);    (* paint letter "Y" *)
+
+  PROCEDURE letZ(basaX,basaY,color : CARDINAL ) ;  (* paint letter "Z" *)
+
+  PROCEDURE letERROR(basaX,basaY,color : CARDINAL ) ;(* paint letter "ERROR" *)
+
+  PROCEDURE letQUEST(basaX,basaY,color : CARDINAL ) ;(* paint letter "?" *)
+
+  PROCEDURE letPOINT(basaX,basaY,color : CARDINAL ) ;(* paint letter "." *)
+
+  PROCEDURE letZPT(basaX,basaY,color : CARDINAL ) ;  (* paint letter "," *)
+
+  PROCEDURE let2POINT(basaX,basaY,color : CARDINAL ) ;(* paint letter ":" *)
+
+  PROCEDURE letPROC(basaX,basaY,color : CARDINAL ) ;(* paint letter "%" *)
+
+  PROCEDURE letVOICE(basaX,basaY,color : CARDINAL ) ;(* paint letter "!" *)
+
+  PROCEDURE letSkLeft(basaX,basaY,color : CARDINAL ) ;(* paint letter "(" *)
+
+  PROCEDURE letSkRight(basaX,basaY,color : CARDINAL ) ;(* paint letter ")" *)
+
+  PROCEDURE letKvSkL(basaX,basaY,Color : CARDINAL) ;
+	
+  PROCEDURE letKvSkR(basaX,basaY,Color : CARDINAL) ;
+
+  PROCEDURE letKosL(basaX,basaY,Color : CARDINAL) ;
+
+  PROCEDURE letImpers(basaX,basaY,Color : CARDINAL) ;
+
+  PROCEDURE letUndLin(basaX,basaY,Color : CARDINAL) ;
+
+  PROCEDURE letZvzd(basaX,basaY,Color : CARDINAL) ;
+
+  PROCEDURE letEQUIVALENT(basaX,basaY,color : CARDINAL ) ;  (* paint letter "EQUIVALENT" *)
+
+  PROCEDURE letPLUS(basaX,basaY,color : CARDINAL ) ;  (* paint letter "+" *)
+
+  PROCEDURE letMINUS(basaX,basaY,color : CARDINAL ) ;  (* paint letter "-" *)
+
+  PROCEDURE let0(basaX,basaY,color : CARDINAL ) ;  (* paint letter "0" *)
+
+  PROCEDURE let1(basaX,basaY,color : CARDINAL ) ;  (* paint letter "1" *)
+
+  PROCEDURE let2(basaX,basaY,color : CARDINAL ) ;  (* paint letter "2" *)
+
+  PROCEDURE let3(basaX,basaY,color : CARDINAL ) ;  (* paint letter "3" *)
+
+  PROCEDURE let4(basaX,basaY,color : CARDINAL ) ;  (* paint letter "4" *)
+
+  PROCEDURE let5(basaX,basaY,color : CARDINAL ) ;  (* paint letter "5" *)
+
+  PROCEDURE let6(basaX,basaY,color : CARDINAL ) ;  (* paint letter "6" *)
+
+  PROCEDURE let7(basaX,basaY,color : CARDINAL ) ;  (* paint letter "7" *)
+
+  PROCEDURE let8(basaX,basaY,color : CARDINAL ) ;  (* paint letter "8" *)
+
+  PROCEDURE let9(basaX,basaY,color : CARDINAL ) ;  (* paint letter "9" *)
+
+
+END Letter.
+

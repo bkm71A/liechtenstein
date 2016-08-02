@@ -1,0 +1,25 @@
+DEFINITION MODULE DigitCon;
+FROM Window IMPORT WinDef,WinType,Color,SingleFrame;
+VAR
+ wt_mathmet,
+ wt_invmat,
+ wt_out:     WinType;
+ shadow_o:   CARDINAL;
+ space:      LONGINT;
+ out_name:   ARRAY [0..12] OF CHAR;
+ beta:       ARRAY [0..13] OF REAL;
+CONST
+ wd_mathmet=WinDef(0,0,0,0,White,Blue,FALSE,FALSE,TRUE,TRUE,SingleFrame,Yellow,Blue);
+ wd_invmat=WinDef(0,0,0,0,Black,Green,TRUE,FALSE,TRUE,FALSE,SingleFrame,Red,Red);
+ wd_out=WinDef(12,8,68,13,White,Blue,FALSE,FALSE,TRUE,TRUE,SingleFrame,Cyan,Blue);
+
+PROCEDURE Meth_1();  (* ----- фильтрация в полосе частот ----- *)
+PROCEDURE Meth_2();  (* - сглаживание реализации окном Тьюки - *)
+PROCEDURE Meth_3();  (* -------- вычисление спектра ---------- *)
+PROCEDURE Meth_4();  (* -- вычиление спектральной плотности -- *)
+PROCEDURE Meth_5();  (* вычисление автокорреляционной функции  *)
+PROCEDURE Meth_6();  (* сглаживание спектральной плотности по частотам *)
+PROCEDURE Meth_7();  (* сглаживание спектр. плотности по ансамблю частотам *)
+PROCEDURE Meth_8(number: CARDINAL); (* -- Хеннинг и Хемминг -- *)
+
+END DigitCon.

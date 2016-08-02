@@ -1,0 +1,9 @@
+DEFINITION MODULE AsmImage;
+
+    (* пишем на графический экран в координатах X,Y строку символов *)
+    (*          +80H - текст XORит с изображением на экране         *)
+PROCEDURE WriteStr_XY(page,X,Y,Color:CARDINAL ; str:ARRAY OF CHAR) ;
+
+PROCEDURE Graph_Plot(XX,YY,Color : CARDINAL ) ;
+
+END AsmImage.

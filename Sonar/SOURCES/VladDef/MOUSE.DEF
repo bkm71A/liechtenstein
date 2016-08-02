@@ -1,0 +1,9 @@
+DEFINITION MODULE mouse; (* Private M.V.N., 1991 *)
+
+TYPE mouse_reg     = CARDINAL   ;
+VAR
+    pa,pb,pc,pd  : mouse_reg ;
+
+PROCEDURE moufunc(a,b,c,d : CARDINAL);
+
+END mouse.

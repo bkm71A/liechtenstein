@@ -1,0 +1,15 @@
+DEFINITION MODULE Sounds;
+
+PROCEDURE Faucet;
+PROCEDURE Phone;
+PROCEDURE Alert;
+  PROCEDURE Computer;    (* UNTIL KeyPressed *)
+PROCEDURE Siren;
+PROCEDURE Horse;
+  PROCEDURE Swamp;       (* UNTIL KeyPressed *)
+PROCEDURE Heart;
+PROCEDURE Door;
+PROCEDURE Bottle;
+PROCEDURE PlaneCrash;
+  PROCEDURE Woods;       (* UNTIL KeyPressed *)
+END Sounds.

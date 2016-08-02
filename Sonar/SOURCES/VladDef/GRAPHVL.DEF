@@ -1,0 +1,19 @@
+DEFINITION MODULE GraphVl;  (* Copyright 1991, M.V.N. *)
+
+
+VAR  str : ARRAY[1..81] OF CHAR ;
+
+PROCEDURE GetYear(): CARDINAL;
+PROCEDURE SetCurs(page,col,row : SHORTCARD);
+PROCEDURE OutText(page,col,row,color: SHORTCARD; str: ARRAY OF CHAR);
+(* PROCEDURE PaintString(adr:Address; basaX,basaY:CARDINAL; Color:CARDINAL); *)
+PROCEDURE PWriteString(col,row:SHORTCARD;str:ARRAY OF CHAR;cwet:CHAR);
+PROCEDURE MakeStr(col,row:SHORTCARD;kolvo:CARDINAL;color,col_fn:SHORTCARD):CARDINAL;
+PROCEDURE PolygonFr(x1,y1,x2,y2: CARDINAL; FillColor,Color_fr : CARDINAL);
+PROCEDURE PolygonDoubleFr(px,py: ARRAY OF CARDINAL; FillColor,Color_fr: CARDINAL);
+PROCEDURE PunkHLine(x1,y,x2,length,color: INTEGER);
+PROCEDURE PunkVLine(y1,x,y2,length,color: INTEGER);
+
+PROCEDURE Grafick(Name  : ARRAY OF CHAR);
+
+END GraphVl.

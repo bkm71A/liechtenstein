@@ -1,0 +1,6 @@
+DEFINITION MODULE Timer;
+
+PROCEDURE Ystanovka();
+PROCEDURE Reset();
+
+END Timer.

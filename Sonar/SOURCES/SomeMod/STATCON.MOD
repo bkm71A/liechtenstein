@@ -1,0 +1,3 @@
+IMPLEMENTATION MODULE StatCon;
+
+END StatCon.

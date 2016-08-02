@@ -1,0 +1,11 @@
+DEFINITION MODULE statish ;
+
+FROM Window IMPORT WinType,WinDef,Color,SingleFrame;
+
+VAR    wt_contain: WinType;
+CONST  wd_contain= WinDef(2,6,33,14,LightCyan,Blue,FALSE,FALSE,TRUE,TRUE,
+                          SingleFrame,Yellow,Blue);
+
+   PROCEDURE stat();
+
+END statish.

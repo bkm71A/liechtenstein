@@ -1,0 +1,795 @@
+module AsmImage ;
+
+segment INITCODE(CODE,28H); segment C_CODE(CODE,28H)
+segment D_DATA1(CODE,68H) ; group G_CODE(C_CODE)
+
+select D_DATA1
+Byte_Font : db 0
+ostat     : db 0  (* остаток от деления /кол. пикселов смещения изобр влево/*)
+Seg_Tab_Font: dw 0
+
+select C_CODE
+public AsmImage$WriteStr_XY : page=18    ; XX=16    ; YY=14   ; Color=12
+                              SizeStr=10 ; SegStr=8 ; OfsStr=6
+   push bp
+   mov bp,sp
+   pushf
+   push ds
+   push es
+   push si
+   push di
+
+   push bp
+   mov ax,1130H    (* определяем текущий графический режим *)
+   mov bh,1
+   int 10H
+      mov ax,D_DATA1
+      mov ds,ax
+   mov [Byte_Font],cl
+   mov bx,bp                  (*  bx:= [Ofs_Tab_Font] *)
+   mov [Seg_Tab_Font],es
+   pop bp
+
+   xor dx,dx
+   mov ax,[bp][XX]    (* взяли DX *)
+   mov cx,8
+   div cx                (* DX_AX / 8 *)
+   mov [ostat],dl
+   mov si,ax
+   mov ax,[bp][YY]    (* Y * 80 *)
+   mov cx,80
+   mul cx
+   add si,ax             (* ax:=Y*80 + (X div 8)*)(* начало вывода изображ*)
+
+   cmp word [bp][page],0
+   jz M1
+   mov ax,0A800H
+   jmp M2
+M1:mov ax,0A000H
+M2:mov es,ax
+
+(* подготовка для первого вхождения *)
+   cli            (* чтоб никто не мог вклиниться в уже настроеный монитор *)
+   mov dx,3CEH    (* регистр установки цвета *)
+   mov al,1
+   out dx,al
+   inc dx
+   mov ax,[bp][Color]
+   xor al,0FH
+   out dx,al
+   jns Black_Background
+
+   dec dx         (* выбрали регистр маски монитора 3CE/8*)
+   mov al,8
+   out dx,al
+   inc dx    (* номер порта для ввода маски изображения 3CF *)
+   jmp Paint
+
+con:
+   mov dx,3CEH    (* регистр установки цвета *)
+   mov al,1
+   out dx,al
+   inc dx         (* разрешено менять битовые плоскости *)
+   xor al,al
+   out dx,al
+
+   dec dx         (* регистр маски изображения *)
+   mov al,8
+   out dx,al
+   mov al,0FFH    (* разрешено менять все 8 бит изображения *)
+   inc dx
+   out dx,al
+
+   pop di
+   pop si
+   pop es
+   pop ds
+   popf
+   pop bp
+   ret far 14
+
+Paint:  (* верхний цикл по количеству выводимых символов *)
+   push ds
+      lds di,[bp][OfsStr]
+      mov al,[di]         (* получили байт символа строки *)
+   pop ds
+   cmp al,0               (* если конец строки КОНЕЦ *)
+   je con
+
+   mul byte [Byte_Font]   (* str[i] * байт/символ  *)
+                          (* bx  <-- [Ofs_Tab_Font]*)
+   add ax,bx              (* BP+str[i]*byte/char   *)(* тек. ADR фонта *)
+   mov di,ax
+
+   xor ch,ch              (* считаем количество выведеных строк растра *)
+   push si
+(* внутренний цикл рисует один символ *)
+M4:                       (* ES -0A000H *)
+   mov ah,es:[si]         (* байт изображ. в регистр-защелку контролера монитора*)
+   mov ax,[Seg_Tab_Font]  (* читаем байт фонта *)
+   push ds
+     mov ds,ax
+     mov ah,[di]
+   pop ds
+
+   xor al,al         (* al:=0 *)
+   mov cl,[ostat]    (* количество пикселов сдвига вправо *)
+   shr ax,cl         (* сдвигаем вправо байт фонта в ah *)
+   xchg ah,al
+   out dx,al         (* ввели маску изображения в монитор *)
+
+   mov es:[si],al    (* вывод изображения *)
+
+   inc si
+   mov al,es:[si]    (* в регистр защелку следующий символ *)
+   xchg ah,al
+   out dx,al
+
+   mov es:[si],al    (* вывод изображения *)
+
+   add si,79
+   inc di
+   inc ch
+   cmp [Byte_Font],ch
+ jnz M4
+   pop si
+   inc si
+   inc word [bp][OfsStr]
+ jmp Paint
+
+Black_Background : (* верхний цикл по количеству выводимых символов *)
+   mov dx,3C4H     (* регистр маски битовой плоскости *)
+   mov al,2        (* при записи записывать во все плоскости *)
+   out dx,al
+   inc dx
+   mov al,0FH
+   out dx,al
+
+   mov dx,3CEH        (* выбрали регистр маски изображения монитора 3CE/8*)
+   mov al,8
+   out dx,al
+   inc dx
+
+B5 :
+   push ds
+      mov di,[bp][OfsStr]
+      mov ax,[bp][SegStr]
+      mov ds,ax
+      mov al,[di]         (* получили байт символа строки *)
+   pop ds
+   cmp al,0               (* если конец строки КОНЕЦ *)
+   je con
+
+   mul byte [Byte_Font]   (* str[i] * байт/символ  *)
+                          (* bx  <-- [Ofs_Tab_Font]*)
+   add ax,bx              (* BP+str[i]*byte/char   *)(* тек. ADR фонта *)
+   mov di,ax
+
+   xor ch,ch              (* считаем количество выведеных строк растра *)
+   push si
+     (* внутренний цикл рисует один символ *)
+B4:                       (* ES -0A000H *)
+   mov ax,[Seg_Tab_Font]  (* читаем байт фонта *)
+   push ds
+     mov ds,ax
+     mov ah,[di]
+   pop ds
+
+   push bx
+   mov bx,ax
+   xor bl,bl         (* bl:=0 *)
+   mov cl,[ostat]    (* количество пикселов сдвига вправо *)
+   shr bx,cl         (* сдвигаем вправо байт фонта в bh *)
+
+   mov ax,0FF00H     (* циклический сдвиг шаблона *)
+   mov cl,[ostat]
+   ror ax,cl
+   mov cl,es:[si]    (* байт изображ. в регистр-защелку *)
+     xchg ah,al
+     out dx,al         (* регистр маски изображения *)
+   mov es:[si],bh    (* вывод правой части изображения символа *)
+
+   inc si
+   mov cl,es:[si]
+     xchg ah,al
+     out dx,al
+   mov es:[si],bl    (* вывод правой части фонта *)
+   pop bx
+
+   add si,79
+   inc di
+   inc ch
+   cmp [Byte_Font],ch
+ jnz B4
+   pop si
+   inc si
+   inc word [bp][OfsStr]
+ jmp B5
+
+section ;
+segment INITCODE(CODE,28H); segment C_CODE(CODE,28H)
+segment D_DATA1(CODE,68H) ; group G_CODE(C_CODE)
+
+select D_DATA1
+Byte_Font : db 0
+ostat     : db 0  (* остаток от деления /кол. пикселов смещения изобр влево/*)
+Seg_Tab_Font: dw 0
+
+select C_CODE
+public AsmImage$WriteStr_XY_Vertical :
+                   page=18    ; XX=16    ; YY=14    ; Color=12
+                              SizeStr=10 ; SegStr=8 ; OfsStr=6
+   push bp
+   mov bp,sp
+   pushf
+   push ds
+   push es
+   push si
+   push di
+
+   push bp
+   mov ax,1130H    (* определяем текущий графический режим *)
+   mov bh,1
+   int 10H
+      mov ax,D_DATA1
+      mov ds,ax
+   mov [Byte_Font],cl      (* запомнили количество байтов фонта на символ *)
+   mov bx,bp               (*  bx:= [Ofs_Tab_Font] *)
+   mov [Seg_Tab_Font],es   (* запомнили сегмент таблицы фонтов [Seg_Tab_Font]*)
+   pop bp
+
+   xor dx,dx
+   mov ax,[bp][XX]    (* взяли DX *)
+   mov cx,8
+   div cx             (* DX_AX / 8 *)
+   mov [ostat],dl
+   mov si,ax
+   mov ax,[bp][YY]    (* Y * 80 *)
+   mov cx,80
+   mul cx
+   add si,ax          (* ax:=Y*80 + (X div 8)*)(* начало вывода изображ*)
+
+   cmp word [bp][page],0
+  jz M1
+   mov ax,0A800H
+  jmp M2
+M1:mov ax,0A000H
+M2:mov es,ax
+
+(* подготовка для первого вхождения *)
+   cli            (* чтоб никто не мог вклиниться в уже настроеный монитор *)
+   mov dx,3CEH    (* выбрали  регистр установки цвета монитора 3CE/1*)
+   mov al,1
+   out dx,al
+   inc dx
+   mov ax,[bp][Color]
+   xor al,0FH
+   out dx,al
+(*         НЕ РЕАЛИЗОВАНО
+   jns Black_Background  (* если цвет больше или равен 80Н то XOR с ЭКРАНОМ *)
+*)
+
+   dec dx         (* выбрали регистр маски изображения 3CE/8*)
+   mov al,8
+   out dx,al
+   inc dx         (* номер порта для ввода маски изображения 3CF *)
+
+
+Paint:  (* верхний цикл по количеству выводимых символов *)
+   push ds
+      lds di,[bp][OfsStr]
+      mov al,[di]         (* получили байт символа строки *)
+   pop ds
+   cmp al,0               (* если конец строки КОНЕЦ *)
+  je con
+
+   mul byte [Byte_Font]   (* ax - смещение фонта текущего символа в таблице фонтов *)
+                          (* bx  <-- [Ofs_Tab_Font]*)
+   add ax,bx              (* BP+str[i]*byte/char   *)(* тек. ADR фонта *)
+   mov di,ax
+
+   push [Byte_Font]      (* сохраняем и восстанавливаем два байта *)
+   push si
+
+M3:
+ (* внутренний цикл рисует полностью один символ *)
+   push bx                (* базовый абрес таблицы фонтов *)
+   push si                (* адрес вывода изображения *)
+   mov ax,[Seg_Tab_Font]    (* читаем байт фонта в  AH *)
+   push ds                  (* *)
+     mov ds,ax              (* *)
+     mov ah,[di]            (* *)
+   pop ds                   (* *)
+
+   mov al,80H
+   mov cl,[ostat]
+   shr al,cl         (* маска вертикального столбика *)
+
+(* ставим вертикально точки обного байта фонта *)
+   mov bl,80H        (* для просмотра по битам байта фонта *)
+M4 :
+   test ah,bl        (* если бит = 0 то проверяем сл. бит *)
+   jz DD
+     mov cl,es:[si]    (* байт изображ. в регистр-защелку контролера монитора*)
+     out dx,al         (* ввели маску изображения в монитор *)
+     mov es:[si],al    (* вывод изображения /одна точка/ *)
+DD :
+   sub si,80         (* адрес вывода изображения на строку выше *)
+   shr bl,1          (* пepеместили маску *)
+  jnz M4
+
+   pop si
+   pop bx
+   inc di
+   dec byte [Byte_Font]
+  jnz DD1
+  jmp DD2
+DD1:
+   inc byte [ostat]
+   cmp byte [ostat],8
+  jnz M3
+   mov byte [ostat],0
+   inc si
+  jmp  M3
+
+DD2:
+   pop si
+   pop [Byte_Font]
+   mov al,80
+   mul byte [Byte_Font]
+   sub si,ax
+   inc word [bp][OfsStr]
+  jmp Paint
+
+con:
+   mov dx,3CEH    (* регистр установки цвета *)
+   mov al,1
+   out dx,al
+   inc dx         (* разрешено менять ВСЕ битовые плоскости *)
+   xor al,al
+   out dx,al
+
+   dec dx         (* регистр маски изображения *)
+   mov al,8
+   out dx,al
+   mov al,0FFH    (* разрешено менять все 8 бит изображения *)
+   inc dx
+   out dx,al
+
+   pop di
+   pop si
+   pop es
+   pop ds
+   popf
+   pop bp
+   ret far 14
+
+
+section ;
+segment INITCODE(CODE,28H)
+segment C_CODE(CODE,28H)
+segment D_DATA(CODE,28H)
+group G_CODE(C_CODE)
+
+select D_DATA
+start    : dw 0
+kol_byte : dw 0    (* количество байтов в перемещаемой строке *)
+Y_strok  : dw 0
+
+select C_CODE
+public AsmImage$Move_Image_X : XX1=14 ; YY1=12 ; XX2=10 ; YY2=8 ; N=6
+   push bp
+   mov bp,sp
+   push ds
+   push es
+   push si
+   push di
+   pushf
+       mov ax,D_DATA
+       mov ds,ax
+   mov bx,[bp][XX1]
+   shr bx,1             (*   XX1/8  *)
+   shr bx,1
+   shr bx,1
+
+   mov ax,[bp][YY1]
+   mov cx,[bp][YY2]  (* YY2 *)
+   sub cx,ax
+   mov [Y_strok],cx     (* количество строк растра Y2-Y1 *)
+
+   mov cx,80            (* YY1*80 *)
+   mul cx
+   add ax,bx
+   mov [start],ax       (* YY1*80 + XX1/8 *)
+
+   mov ax,[bp][XX2]  (* кол.байтов одной строки растра (XX2>>3 - XX1>>3 - 1) *)
+   shr ax,1
+   shr ax,1
+   shr ax,1
+   sub ax,bx
+   dec ax
+   mov [kol_byte],ax
+
+   mov dx,3C4H         (* регистр маски битовой плоскости *)
+   mov al,2            (* запись данных только в плоскости 1 и 3 *)
+   out dx,al
+   inc dx
+   mov al,0AH          (* цвет ЯРКОЗЕЛЕНЫЙ *)
+   out dx,al
+
+   mov dx,3CEH         (* регистр выбора плоскости для чтения *)
+   mov al,4            (* чтение данных из плоскости 3 (ЯРКОСТЬ) *)
+   out dx,al
+   inc dx
+   mov al,3            (* 3 - это плоскость 3 *)
+   out dx,al
+
+   cmp word [bp][N],0    (* 0 - влево  *)
+   jz K1
+   std
+   mov ax,[kol_byte]
+   add [start],ax
+   jmp M2
+K1:cld
+M2:mov ax,0A000H
+   push ds
+   mov cx,[kol_byte]
+   mov si,[start]
+   mov ds,ax
+   mov es,ax
+   mov di,si
+
+   cmp word [bp][N],0    (* 0 - влево  *)
+   jz D1
+   inc di
+   jmp D2
+D1:inc si
+D2:
+rep
+   movsb
+   pop ds
+   add word [start],80
+   dec word [Y_strok]
+   jnz M2
+                       (* ПОДГОТОВКА К ВЫХОДУ *)
+   mov dx,3C4H         (* регистр маски битовой плоскости *)
+   mov al,2            (* разрешаем писать во все битовые плоскости *)
+   out dx,al
+   inc dx
+   mov al,0FH
+   out dx,al
+
+   popf
+   pop di
+   pop si
+   pop es
+   pop ds
+   pop bp
+   ret far 10
+
+section ;
+segment INITCODE(CODE,28H)
+segment C_CODE(CODE,28H)
+segment D_DATA1(CODE,68H)
+group G_CODE(C_CODE)
+
+select C_CODE
+public AsmImage$Graph_Plot : XX=10 ; YY=8 ; color=6
+   push bp
+   mov bp,sp
+   push ds
+   push si
+     mov ax,0A000H
+     mov ds,ax
+
+   mov bx,[bp][XX]
+   mov ax,bx       (* эмулируем деление на 8 *)
+   shr bx,1
+   shr bx,1
+   shr bx,1        (* сохранили разность от деления в bl *)
+
+   and ax,07H      (* остаток от деления *)
+
+   mov ch,80H
+   mov cl,al
+   shr ch,cl       (*  ch - шаблон точки /применяют в маске и видеопамяти *)
+
+   mov ax,[bp][YY]
+   mov dx,80
+   mul dx
+
+   mov si,ax
+   add si,bx       (* вычислили смещение байта в видеопамяти *)
+
+   mov dx,3CEH     (* устанавливаем цвет выводимой точки *)
+   mov al,1
+   out dx,al
+   inc dx
+   mov ax,[bp][color]
+   xor al,0FH
+   out dx,al
+   jns M1
+
+   dec dx         (* OR с регистром-защелкой, если цвет больше 80H *)
+   mov al,3
+   out dx,al
+   inc dx
+   mov al,10H
+   out dx,al
+
+M1 :
+   mov al,[si]    (* байт изображения в регистр-защелку монитора *)
+
+   dec dx         (* маска изображения *)
+   mov al,8
+   out dx,al
+   inc dx
+   mov al,ch
+   out dx,al
+
+   mov [si],ch
+
+   dec dx         (* разрешаем менять все цвета при выходе *)
+   mov al,1
+   out dx,al
+   inc dx
+   xor al,al
+   out dx,al
+
+   dec dx         (* разрешаем в маске изображения менять все при выходе *)
+   mov al,8
+   out dx,al
+   inc dx
+   mov al,0FFH
+   out dx,al
+
+   dec dx         (* регист вращения данных  OR с регистром-защелкой не делать *)
+   mov al,3
+   out dx,al
+   inc dx
+   xor al,al
+   out dx,al
+
+   pop si
+   pop ds
+   pop bp
+   ret far 6
+
+section ; segment C_CODE(CODE,28H) ; segment D_DATA(CODE,68H) ; group G_CODE(C_CODE)
+
+select C_CODE
+start : dw 0     (* начальный адреc памяти для сохранения *)
+kol   : dw 0     (* количество байтов сохранения *)
+
+MOVE :
+   mov ds,ax
+   mov es,bx
+
+   mov dx,3CEH      (* НЕ разрешаем в маске изображения ничего менять *)
+   mov al,8
+   out dx,al
+   inc dx
+   mov al,0H
+   out dx,al
+
+   mov cx,cs:[kol]
+ret :
+   movsb
+   add si,79
+   add di,79
+   dec cx
+   jnz ret
+
+   mov dx,3CEH      (* разрешаем в маске изображения менять все при выходе *)
+   mov al,8
+   out dx,al
+   inc dx
+   mov al,0FFH
+   out dx,al
+
+   ret near 0
+
+public AsmImage$Save_Image : X=12 ; Y1=10 ; Y2=8 ; bool=6
+    (* bool=0 - сохранять всегда ; bool=1 - сохранять только если было изменение Y*)
+   push bp
+   mov bp,sp
+   push ds
+   push es
+
+   mov bx,[bp][X]
+   shr bx,1             (* эмулируем деление на 8 *)
+   shr bx,1
+   shr bx,1
+   mov dx,[bp][Y2]
+   mov ax,[bp][Y1]   (* *80 *)
+   sub dx,ax
+   mov cs:[kol],dx
+   mov dx,80
+   mul dx
+   add bx,ax
+   cmp word [bp][bool],0
+    jz prodolg
+   cmp bx,cs:[start]
+    je con
+prodolg :
+   mov cs:[start],bx
+   cld              (* установить флаг направления для movsb в 0 *)
+   push si
+   push di
+
+   mov ax,0A000H  (* откуда ds:si --> *)
+   mov bx,0A800H  (* куда   es:di *)
+   mov si,cs:[start]  (* установили ds,si -> es,di *)
+   xor di,di
+   call near MOVE
+
+   pop di
+   pop si
+con:
+   pop es
+   pop ds
+   pop bp
+   ret far 8
+
+public AsmImage$Restore_Image :
+   push bp
+   mov bp,sp
+   push ds
+   push es
+   push si
+   push di
+
+   mov ax,0A800H  (* откуда *)
+   mov bx,0A000H  (* куда *)
+   mov di,cs:[start]        (* установили ds,si -> es,di *)
+   xor si,si
+   call near MOVE
+
+   pop di
+   pop si
+   pop es
+   pop ds
+   pop bp
+   ret far 0
+
+section ; segment C_CODE(CODE,28H) ; segment D_DATA(CODE,68H) ; group G_CODE(C_CODE)
+
+                       xx=8 ; yy=6
+select C_CODE
+
+maska   : dw 7F00H,3F80H,1FC0H,0FE0H,07F0H,03F8H,01FCH,00FEH
+pr      : dw 0
+adr     : dw 0
+old_yy  : dw 0
+old_xx  : dw 0
+
+XXXX:
+   cld
+   mov ax,0A000H  (* устанавливаем DS ES SI *)
+   mov ds,ax
+   mov es,ax
+
+   mov dx,3CEH     (* НЕ разрешаем в маске изображения ничего менять *)
+   mov al,8
+   out dx,al
+   inc dx
+   xor al,al
+   out dx,al
+
+   movsb          (* (ES:DI)<-(DS:SI) передать байт через регистр-защелку *)
+   movsb
+   movsb
+ret near 0
+
+SOHR :
+   mov ax,80
+   mul word [bp][yy]
+   mov si,ax       (* Y*80 *)
+   mov ax,[bp][xx]
+   sub ax,4
+
+   mov bx,ax
+   and bx,0007H
+   shl bx,1       (* BX - смещение слова маски *)
+   shr ax,1
+   shr ax,1
+   shr ax,1
+   add si,ax      (* Y*80+xx *)
+   dec si
+   mov cs:[adr],si
+
+   mov di,28000   (* адрес области сохранения *)
+   call near XXXX
+ret near 0
+
+RISOV:
+   mov dx,3CEH    (* устанавливаем цвет выводимой точки *)
+   mov al,1
+   out dx,al
+   inc dx
+   mov ax,2       (*  цвеt яркомалиновый *)
+   out dx,al
+
+   mov dx,3CEH    (* разрешаем в маске изображения менять по маске *)
+   mov al,8
+   out dx,al
+   inc dx
+
+   mov bx,cs:[maska][bx]  (* загрузили маску *)
+   mov di,cs:[adr]
+   inc di
+
+   mov al,es:[di] (* байт в регистр-защелку *)
+   mov al,bh
+   out dx,al
+   stosb          (* (ES:DI) <- AL *)
+
+   mov al,es:[di] (* следующий байт в регистр-защелку *)
+   mov al,bl
+   out dx,al
+   mov es:[di],al
+ret near 0
+
+public AsmImage$Krest :
+   push bp
+   mov bp,sp
+   push ds
+      mov ax,C_CODE
+      mov ds,ax
+
+   mov ax,[bp][yy]      (* сравниваем старые и новые координаты xx,yy *)
+   cmp [old_yy],ax
+     jnz Vpered
+   mov bx,[bp][xx]
+   cmp [old_xx],bx
+     jnz Vpered
+   jmp con
+
+Vpered:
+   push es
+   push si
+   push di
+
+   mov [old_xx],bx
+   mov [old_yy],ax
+   mov word [pr],1  (* крест нарисован *)
+
+   call near SOHR
+   call near RISOV
+
+   pop di
+   pop si
+   pop es
+con:
+   pop ds
+   pop bp
+   ret far 4
+
+public AsmImage$Clear_Krest :
+   push bp
+   mov bp,sp
+
+   cmp word cs:[pr],0
+   jz konec
+
+   push ds
+   push es
+   push di
+   push si
+
+   mov word cs:[pr],0
+   mov di,cs:[adr] (* адрес изображения *)
+   mov si,28000    (* адрес области сохранения *)
+   call near XXXX
+
+   pop si
+   pop di
+   pop es
+   pop ds
+konec:
+   pop bp
+ret far 0
+
+
+end
+

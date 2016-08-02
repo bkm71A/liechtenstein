@@ -1,0 +1,26 @@
+DEFINITION MODULE SymbolTable;		(* Interface to the symbol table *)
+
+FROM Analyse IMPORT
+  TOKEN;
+
+CONST
+  MAXTAB = 1000;	(* Symbol table size *)
+
+TYPE
+  table = RECORD	(* Record used in the symbol table *)
+	    t : TOKEN;
+	    Entry : POINTER TO ARRAY [0..30] OF CHAR;
+	  END;
+
+VAR
+  Symtab : ARRAY [1..MAXTAB] OF table;	(* Symbol table *)
+
+(* Looks for identifier in the symbol table returns its position or zero *)
+PROCEDURE Lookup (S : ARRAY OF CHAR) : INTEGER;
+
+(* Adds a string to the symbol table *)
+PROCEDURE Insert (S : ARRAY OF CHAR; TokenType : TOKEN;
+		  Size : INTEGER) : INTEGER;
+
+END SymbolTable.
+

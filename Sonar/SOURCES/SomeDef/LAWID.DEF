@@ -1,0 +1,14 @@
+DEFINITION MODULE Lawid;
+IMPORT FIO;
+FROM   Window IMPORT WinType,WinDef,SingleFrame,Color;
+TYPE Buf = ARRAY [1..8*512+FIO.BufferOverhead] OF BYTE;
+VAR
+  wt_lawid: WinType;
+  buffer:   Buf;
+CONST
+  wd_lawid= WinDef(0,0,79,24,Yellow,Blue,FALSE,FALSE,FALSE,TRUE,SingleFrame,Yellow,Blue);
+
+
+PROCEDURE IntDif_law(law_name: CHAR);
+
+END Lawid.

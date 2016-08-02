@@ -1,0 +1,19 @@
+DEFINITION MODULE Current;
+IMPORT SYSTEM;
+FROM Window    IMPORT WinType,WinDef,Open,Close,Clear,TextColor,TextBackground,
+                      Color,GotoXY,SingleFrame,Use;
+VAR
+  OldSeg,OldOfs: CARDINAL;
+  aa[0B800H:0]:  CARDINAL;
+  i:             CARDINAL;
+  wt_line:       WinType;
+  r:             SYSTEM.Registers;
+CONST
+ wd_line=WinDef(2,22,75,22,Red,Red,FALSE,FALSE,FALSE,FALSE,SingleFrame,Red,Red);
+
+
+PROCEDURE InitScr();
+PROCEDURE LineMov();
+PROCEDURE DeInitScr();
+
+END Current.

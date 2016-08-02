@@ -1,0 +1,80 @@
+module Assa
+        (*  Печать графической копии дисплея *)
+segment initcode(code,28H)
+segment c_code(code,28H)
+group g_code(initcode,c_code)
+segment mp_code(code,68H)
+select c_code
+public Assa$Screen :
+                 esc=27;        (* Символ escape *)
+                 push bp;       (* регистр bp в стек *)
+                 mov bp,sp;
+                 mov  al, esc;  (* Установка перевода строки на 1/8 дюйма *)
+                 call print
+                 mov  al, '3'
+                 call print
+                 mov  al, 24;   (* 1/8 = 24/216 дюйма *)
+                 call print
+                 mov  dx, 0;    (* Номер строки *)
+        next_row:
+                 mov  al, esc
+                 call print
+                 mov  al, 'L'
+                 call print
+                 mov  al, 640-512
+                 call print
+                 mov  al, 2
+                 call print
+                 mov  cx, 0;     (*Номер столбца*)
+     next_column:
+                 push dx           ; (*Сохранение номера строки*)
+                 mov  bx, 8        ; (*Число одновременно обрабатываемых точек*)
+        next_dot:
+                 shl  bh, 1        ; (*Освобождение младшего разряда*)
+                 mov  ah, 13       ; (*Чтение цвета точки из памяти дисплея*)
+                 int  10H
+                 or   al, al
+                 jz   background   ; (*Проверка на цвет фона*)
+                 or   bh, 1        ; (*Если не фон, необходимо вывести точку на печать*)
+      background:
+                 inc  dx           ; (*Переключение на следующую строку*)
+                 dec  bl           ; (*Уменьшение счетчика строк в данном проходе*)
+                 jnz  next_dot
+                 mov  al, bh       ; (*Печать 8-ми точек*)
+                 call print        ; (*Вывод на печать*)
+                 pop  dx           ; (*Восстановление номера строки начала прохода*)
+                 inc  cx           ; (*Переключение на следуюий столбец*)
+                 cmp  cx, 640      ; (*Все столбцы выведены?*)
+                 jnz  next_column
+                 mov  al, 13       ; (*Переход на следующую строку на принтере*)
+                 call print
+                 mov  al, 10
+                 call print
+                 add  dx, 8  ;       (* Переключение на слдующую группу из 8 строк*)
+                 cmp  dx, 336      ; (*Все строки выведены?*)
+                 jb   next_row
+                 pop  bp
+                 ret  far 0        ; (*Возврат в modula-2*)
+         print:
+                 push dx
+                 mov  ah, 0        ; (*Печать символа, находящегося в регистре al*)
+                 mov  dx, 0
+                 int  17H
+                 pop  dx
+                 ret  0;
+
+public Assa$Print_ready:
+                 push bp
+                 mov bp,sp
+                 push ds
+                 mov ah,02H
+                 mov dx,0
+                 int 17H
+                 xor ah,29H
+                 or  ah,46H
+                 mov al,ah
+                 mov ah,0
+                 pop ds
+                 pop bp
+                 ret far 0
+end

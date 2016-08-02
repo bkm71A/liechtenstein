@@ -1,0 +1,1677 @@
+(* Copyright (C) 1987 Jensen & Partners International *)
+(* Not a normal module, rtl is linked in every program, and contains
+   the program entry point.
+   It implements routines required by the compiler for situations
+   where in-line code would be impractical, such as :
+   - run time error reporting
+   - complex set operations
+   - saving/restoring floating point registers on procedure entry/exit
+   - long integer multiplication,division,shifting
+   - initialising break handler
+   - zeroing global variables ( when (*Z+*) directive is used )
+*)
+
+module rtl
+
+segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+public Standard@CAP:
+  pop  ax
+  push  cs
+  push  ax
+public Standard$CAP:
+  pop  bx
+  pop  cx
+  pop  ax
+  push  cx
+  push  bx
+  cmp  al,97 (*'a'*)
+  jb  CapSkip
+  cmp  al,122 (*'z'*)
+  ja  CapSkip
+  sub  al,20H
+CapSkip:
+  ret far 0
+
+section ; segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+(* entry : cx contains value to be included in set *)
+(* result: al = bit, di = offset in set, cx changed *)
+
+public @SetVInc:
+  mov  di,cx
+  shr  di,1
+  shr  di,1
+  shr  di,1
+  and  cl,7
+  mov  al,1
+  rol  al,cl
+  ret  0
+
+section ; segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+public $SetVInc:
+  mov  di,cx
+  shr  di,1
+  shr  di,1
+  shr  di,1
+  and  cl,7
+  mov  al,1
+  rol  al,cl
+  ret  far 0
+
+section ; segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+(* entry : cx contains value to be included in set *)
+(* result: al = bit, di = offset in set *)
+(*         cx changed *)
+
+public @SetVExc:
+  mov  di,cx
+  shr  di,1
+  shr  di,1
+  shr  di,1
+  and  cl,7
+  mov  al,0FEH
+  rol  al,cl
+  ret 0
+
+section ; segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+public $SetVExc :
+  mov  di,cx
+  shr  di,1
+  shr  di,1
+  shr  di,1
+  and  cl,7
+  mov  al,0FEH
+  rol  al,cl
+  ret  far 0
+
+
+section ; segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+(* entry : bx contains first value to be included in set *)
+(*   dx contains last  value to be included in set       *)
+(*   es:di contains address of set                       *)
+(* result: cx,ax,bx undefined                            *)
+
+public @SetRInc :
+  cmp  bx,dx
+  ja  retret
+  mov  cl,bl
+  and  cl,7
+  mov  al,1
+  rol  al,cl
+  mov  cx,dx
+  sub  cx,bx
+  shr  bx,1
+  shr  bx,1
+  shr  bx,1
+  or  es:[di][bx],al
+  jcxz  retret
+loo1:  rol  al,1
+  jnc  skip
+  inc  bx
+skip:  or  es:[di][bx],al
+  loop  loo1
+retret:
+  ret 0
+
+section ; segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+public $SetRInc :
+  cmp  bx,dx
+  ja  fretret
+  mov  cl,bl
+  and  cl,7
+  mov  al,1
+  rol  al,cl
+  mov  cx,dx
+  sub  cx,bx
+  shr  bx,1
+  shr  bx,1
+  shr  bx,1
+  or  es:[di][bx],al
+  jcxz  fretret
+floo1:  rol  al,1
+  jnc  fskip
+  inc  bx
+fskip:  or  es:[di][bx],al
+  loop  floo1
+fretret: ret far 0
+
+section ; segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+public @SetRIn1:
+  sub dl,bl
+  jc  skip1
+  inc dl
+  mov cl,bl
+  mov si,1
+  rol si,cl
+  mov cl,dl
+  xor ch,ch
+incl1:
+  or  ax,si
+  rol si,1
+  loop incl1
+skip1:
+  ret 0
+
+section ; segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+public $SetRIn1 :
+  sub dl,bl
+  jc  fskip1
+  inc dl
+  mov cl,bl
+  mov si,1
+  rol si,cl
+  mov cl,dl
+  xor ch,ch
+fincl1:
+  or  ax,si
+  rol si,1
+  loop fincl1
+fskip1:
+  ret far 0
+
+section ; segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+public @SetRIn4:
+  sub dl,bl
+  jc  skip4
+  inc dl
+  mov cl,bl
+  mov ax,1
+  rol ax,cl
+  cmp cl,15
+  jae incl4n
+  mov cl,dl
+  xor ch,ch
+incl4:
+  or  si,ax
+  rol ax,1
+  jc  incl4nm
+  loop incl4
+skip4:
+  ret 0
+
+incl4n:
+  mov cl,dl
+  xor ch,ch
+incl4nl:
+  or  di,ax
+  rol ax,1
+incl4nm:
+  loop incl4nl
+  ret 0
+
+section ; segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+public $SetRIn4 :
+  sub dl,bl
+  jc  fskip4
+  inc dl
+  mov cl,bl
+  mov ax,1
+  rol ax,cl
+  cmp cl,15
+  jae fincl4n
+  mov cl,dl
+  xor ch,ch
+fincl4:
+  or  si,ax
+  rol ax,1
+  jc  fincl4nm
+  loop fincl4
+fskip4:
+  ret far 0
+
+fincl4n:
+  mov cl,dl
+  xor ch,ch
+fincl4nl:
+  or  di,ax
+  rol ax,1
+fincl4nm:
+  loop fincl4nl
+  ret far 0
+
+section ; segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+extrn FISRQQ; extrn FJSRQQ; extrn FIWRQQ
+
+public @FltIn:
+  pop  bx
+  push cs
+  push bx
+public $FltIn:
+  push bx      (* alloc 2 bytes on the stack *)
+  mov  bx,sp
+  fixup FISRQQ; db 9BH; fixup FJSRQQ; db 36H, 0DDH, 03FH (* fstsw  ss:[bx] *)
+  fixup FIWRQQ; db 90H, 9BH  (* fwait *)
+  pop  cx      (* cx = status word *)
+  mov  cl,3
+  shr  ch,cl
+  mov  cl,ch
+  neg  cx
+  and  cx,7    (* cx = number of elements on stack *)
+  mov  bx,sp
+(* jcxz   Easy  *) (* might make 8086/8088 go faster *)
+  mov  al,10
+  mul  cl      (* ax = size of float registers *)
+  sub  bx,ax
+Easy:
+  pop  ax      (* return ip *)
+  pop  dx      (* return cs *)
+  xchg bx,sp
+  add  sp,4
+  push cx
+  push   dx
+  push   ax
+  jcxz   FloatOk
+SaveElement:
+  sub    bx,10
+  fixup FISRQQ; db 9BH; fixup FJSRQQ; db 36H, 0DBH, 3FH (* fstp tenbyte ss:[bx] *)
+  loop   SaveElement
+FloatOk :
+  ret far 0
+
+section ; segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+extrn FISRQQ; extrn FJSRQQ; extrn FIWRQQ; extrn FIDRQQ
+
+public @FltOutR :
+  pop   bx
+  push  cs
+  push  bx
+public $FltOutR :
+  push   bp
+  mov    bp,sp
+  mov    cx,[bp][6]
+  jcxz   $FloatOutResOk
+
+  lea    bx,[bp][18]     (* adress of 2. element *)
+  dec    cx
+  jcxz   $PopFirst
+
+Restore:
+  fixup FISRQQ; db 9BH; fixup FJSRQQ; db 36H, 0DBH, 2FH (* fld tenbyte ss:[bx] *)
+  fixup FIWRQQ; db 90H, 9BH  (* fwait *)
+  add    bx,10
+  loop   Restore
+
+$PopFirst:          (* bx is the stack top when proc is left *)
+  push   bx
+  lea    bx,[bp][8] (* restore 1. element *)
+
+  fixup FISRQQ; db 9BH; fixup FJSRQQ; db 36H, 0DBH, 2FH (* fld tenbyte ss:[bx] *)
+  fixup FIWRQQ; db 90H, 9BH  (* fwait *)
+
+  mov    ax,[bp][6] (* no of elements *)
+  dec    ax
+  add    ax,ax
+
+  pop    bx      (* stack top after proc return *)
+  pop    bp
+  pop    dx      (* return address *)
+  pop    cx
+  mov    sp,bx
+  push   cx
+  push   dx
+
+  mov    bx,ax   (* swap result and 1. element *)
+  jmp    cs:[$Exchange][bx]
+
+$Exchange : dw l1, l2, l3, l4, l5, l6, l7
+l1: fixup FIDRQQ; db 9BH, 0D9H, 0C9H (* fxch st(1) *) ; ret far 0
+l2: fixup FIDRQQ; db 9BH, 0D9H, 0CAH (* fxch st(2) *) ; ret far 0
+l3: fixup FIDRQQ; db 9BH, 0D9H, 0CBH (* fxch st(3) *) ; ret far 0
+l4: fixup FIDRQQ; db 9BH, 0D9H, 0CCH (* fxch st(4) *) ; ret far 0
+l5: fixup FIDRQQ; db 9BH, 0D9H, 0CDH (* fxch st(5) *) ; ret far 0
+l6: fixup FIDRQQ; db 9BH, 0D9H, 0CEH (* fxch st(6) *) ; ret far 0
+l7: fixup FIDRQQ; db 9BH, 0D9H, 0CFH (* fxch st(7) *) ; ret far 0
+
+$FloatOutResOk:
+  pop    bp
+  ret far 2
+
+section ; segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+extrn FISRQQ; extrn FJSRQQ; extrn FIWRQQ
+
+public @FltOut:
+  pop  bx
+  push  cs
+  push  bx
+public $FltOut:
+  push   bp
+  mov    bp,sp
+  mov    cx,[bp][6]
+  jcxz   FloatOutOk
+  lea    bx,ss:[bp][8]
+Restore2:
+  fixup FISRQQ; db 9BH; fixup FJSRQQ; db 36H, 0DBH, 2FH  (* fld tenbyte ss:[bx] *)
+  fixup FIWRQQ; db 90H, 9BH (* fwait *)
+  add    bx,10
+  loop   Restore2
+
+  pop    bp
+  pop    dx
+  pop    cx
+  mov    sp,bx
+  push   cx
+  push   dx
+  ret far 0
+FloatOutOk:
+  pop    bp
+  ret far 2
+
+section ; segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+public @UnsMol :
+public @SgnMol :
+  pop  ax
+  push cs
+  push ax
+
+public $UnsMol : High1=12; Low1=10; High2=8; Low2=6
+public $SgnMol :
+(* Unsigned/signed multiplication *)
+(* On overflow: modulus 2^32 wrap-around *)
+  push bp
+  mov  bp,sp
+
+  mov  ax,[bp][High1]
+  and  ax,ax
+  jnz  UnsMol2
+  add  ax,[bp][High2]
+  jnz  UnsMol1
+  mov  ax,[bp][Low1]
+  mul  word [bp][Low2]
+
+  pop  bp
+  ret far 8
+
+UnsMol1:
+  mul  word [bp][Low1]
+  mov  dx,[bp][Low1]
+  mov  bp,[bp][Low2]
+  xchg bp,ax
+  mul  dx
+  add  dx,bp
+  pop  bp
+  ret far 8
+
+UnsMol2:
+  mov  dx,[bp][High2]
+  and  dx,dx
+  jnz  UnsMol3
+  mul  word [bp][Low2]
+  mov  dx,[bp][Low1]
+  mov  bp,[bp][Low2]
+  xchg bp,ax
+  mul  dx
+  add  dx,bp
+  pop  bp
+  ret far 8
+
+UnsMol3:
+  push cx
+  mul  word [bp][Low2]
+  mov  cx,ax
+  mov  ax,[bp][High2]
+  mul  word [bp][Low1]
+  add  cx,ax
+  mov  ax,[bp][Low1]
+  mul  word [bp][Low2]
+  add  dx,cx
+  pop  cx
+  pop  bp
+  ret far 8
+
+
+(*
+section ; segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+public @UnsMol :
+  pop  ax
+  push cs
+  push ax
+
+public $UnsMol : High1=12; Low1=10; High2=8; Low2=6
+(* Unsigned multiplication *)
+(* On overflow: modulus 2^32 wrap-around *)
+  push bp
+  mov  bp,sp
+  push bx
+
+  mov  ax,[bp][Low1]
+  mul  word [bp][High2]
+  mov  bx,ax
+  mov  ax,[bp][Low2]
+  mul  word [bp][High1]
+  add  bx,ax
+  mov  ax,[bp][Low1]
+  mul  word [bp][Low2]
+  add  dx,bx
+
+  pop  bx
+  pop  bp
+  ret far 8
+*)
+
+section ; segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+extrn $UnsMul
+
+public @SgnDiv: High1=12; Low1=10; High2=8; Low2=6
+  pop  ax
+  push cs
+  push ax
+
+public $SgnDiv:
+(*Signed division *)
+(*On overflow: result MAXINT, OF set *)
+  push bp
+  mov  bp,sp
+  push cx
+  push si
+
+  xor  si,si
+  mov  dx,[bp][High1]
+  and  dx,dx
+  jge  SgnDiv5
+  not  si
+  neg  dx
+  neg  word [bp][Low1]
+  sbb  dx,0
+  mov  [bp][High1],dx
+SgnDiv5:
+  mov  dx,[bp][High2]
+  and  dx,dx
+  jg   SgnDiv1
+  jz   SgnDiv6
+  not  si
+  neg  dx
+  neg  word [bp][Low2]
+  sbb  dx,0
+  mov  [bp][High2],dx
+  jnz  SgnDiv1
+
+SgnDiv6:
+  mov  cx,[bp][Low2]
+  jcxz SgnDiv0
+  mov  dx,[bp][High1]
+  cmp  dx,cx
+  jae  SgnDivA
+  mov  ax,[bp][Low1]
+  div  cx
+  xor  dx,dx
+
+SgnDiv9:
+  add  ax,si
+  adc  dx,si
+  xor  ax,si
+  xor  dx,si
+
+SgnDiv7:
+  pop  si
+  pop  cx
+  pop  bp
+  ret far 8
+
+SgnDivA:
+  mov  ax,dx
+  xor  dx,dx
+  div  cx
+  mov  cx,ax
+  mov  ax,[bp][Low1]
+  div  word [bp][Low2]
+  mov  dx,cx
+  jmp  SgnDiv9
+
+SgnDiv1:
+  push bx
+  mov  cx,dx
+  mov  bx,[bp][Low2]
+  mov  dx,[bp][High1]
+  mov  ax,[bp][Low1]
+  push cx
+  push bx
+SgnDiv2:
+  shr  dx,1
+  rcr  ax,1
+  shr  cx,1
+  rcr  bx,1
+  and  cx,cx
+  jnz  SgnDiv2
+  div  bx
+  mov  bx,ax
+  push cx
+  push ax
+  call far $UnsMul
+  jo   SgnDiv3
+  cmp  dx,[bp][High1]
+  ja   SgnDiv3
+  jb   SgnDiv4
+  cmp  ax,[bp][Low1]
+  jbe  SgnDiv4
+SgnDiv3:
+  dec  bx
+SgnDiv4:
+  mov  ax,bx
+  xor  dx,dx
+  pop  bx
+  jmp  SgnDiv9
+
+SgnDiv0:
+  mov  al,100
+  add  al,al
+  mov  ax,0FFFFH
+  mov  dx,07FFFH
+  jmp  SgnDiv7
+
+section ; segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+extrn $UnsMul
+
+public @UnsDiv:
+  pop  ax
+  push cs
+  push ax
+public $UnsDiv: High1=12; Low1=10; High2=8; Low2=6
+(*Unsigned division *)
+(*On overflow: result MAXCARD, OF set *)
+  push bp
+  mov  bp,sp
+  push cx
+
+  mov  cx,[bp][High2]
+  and  cx,cx
+  jnz  UnsDiv1
+  add  cx,[bp][Low2]
+  jz   UnsDiv0
+
+  mov  dx,[bp][High1]
+  cmp  dx,cx
+  jae  UnsDiv7    (*!!!!New special case *)
+  mov  ax,[bp][Low1]
+  div  cx
+  xor  dx,dx
+
+UnsDiv8:
+  and  ax,ax
+UnsDiv9:
+  pop  cx
+  pop  bp
+  ret  far 8
+
+UnsDiv7:
+  mov  ax,dx
+  xor  dx,dx
+  div  cx
+  mov  cx,ax
+  mov  ax,[bp][Low1]
+  div  word [bp][Low2]
+  mov  dx,cx
+  jmp  UnsDiv8
+
+UnsDiv1:
+  push bx
+  mov  dx,[bp][High1]
+  mov  ax,[bp][Low1]
+  mov  bx,[bp][Low2]
+  push cx
+  push bx
+UnsDiv2:
+  shr  dx,1
+  rcr  ax,1
+  shr  cx,1
+  rcr  bx,1
+  and  cx,cx
+  jnz  UnsDiv2
+  div  bx
+  mov  bx,ax
+  push cx
+  push ax
+  call far $UnsMul
+  jo   UnsDiv3
+  cmp  dx,[bp][High1]
+  jb   UnsDiv4
+  ja   UnsDiv3
+  cmp  ax,[bp][Low1]
+  jbe  UnsDiv4
+UnsDiv3:
+  dec  bx
+UnsDiv4:
+  mov  ax,bx
+  xor  dx,dx
+  pop  bx
+  jmp  UnsDiv8
+
+UnsDiv0:
+  mov  al,100
+  add  al,al
+  mov  ax,0FFFFH
+  mov  dx,ax
+  jmp  UnsDiv9
+
+
+section ; segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+extrn $UnsMul
+
+public @SgnRem:
+  pop  ax
+  push cs
+  push ax
+public $SgnRem: High1=12; Low1=10; High2=8; Low2=6
+(*Signed remainder *)
+(*On overflow: result 0, OF set *)
+  push bp
+  mov  bp,sp
+  push cx
+  push si
+
+  xor  si,si
+  mov  dx,[bp][High1]
+  and  dx,dx
+  jge  SgnRem5
+  not  si
+  neg  dx
+  neg  word [bp][Low1]
+  sbb  dx,0
+  mov  [bp][High1],dx
+SgnRem5:
+  mov  dx,[bp][High2]
+  and  dx,dx
+  jg   SgnRem1
+  jz   SgnRem6
+  neg  dx
+  neg  word [bp][Low2]
+  sbb  dx,0
+  mov  [bp][High2],dx
+  jnz  SgnRem1
+
+SgnRem6:
+  mov  cx,[bp][Low2]
+  jcxz SgnRem0
+  mov  ax,[bp][High1]
+  div  cx
+  mov  ax,[bp][Low1]
+  div  cx
+  mov  ax,dx
+  xor  dx,dx
+
+SgnRem9:
+  add  ax,si
+  adc  dx,si
+  xor  ax,si
+  xor  dx,si
+
+SgnRem7:
+  pop  si
+  pop  cx
+  pop  bp
+  ret  far 8
+
+SgnRem1:
+  push bx
+  mov  cx,dx
+  mov  bx,[bp][Low2]
+  mov  dx,[bp][High1]
+  mov  ax,[bp][Low1]
+  push cx
+  push bx
+SgnRem2:
+  shr  dx,1
+  rcr  ax,1
+  shr  cx,1
+  rcr  bx,1
+  and  cx,cx
+  jnz  SgnRem2
+  div  bx
+  push cx
+  push ax
+  call far $UnsMul
+  cmp  dx,[bp][High1]
+  ja   SgnRem3
+  jb   SgnRem4
+  cmp  ax,[bp][Low1]
+  jbe  SgnRem4
+SgnRem3:
+  sub  ax,[bp][Low2]
+  sbb  dx,[bp][High2]
+SgnRem4:
+  sub  ax,[bp][Low1]
+  sbb  dx,[bp][High1]
+  neg  dx
+  neg  ax
+  sbb  dx,cx
+  pop  bx
+  jmp  SgnRem9
+
+SgnRem0:
+  mov  al,100
+  add  al,al
+  mov  ax,0
+  mov  dx,ax
+  jmp  SgnRem7
+
+section ; segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+extrn $UnsMul
+
+public @UnsRem:
+  pop  ax
+  push cs
+  push ax
+
+public $UnsRem: High1=12; Low1=10; High2=8; Low2=6
+(*Unsigned remainder/modulus *)
+(*On overflow: result 0, OF set *)
+  push bp
+  mov  bp,sp
+  push cx
+
+  mov  cx,[bp][High2]
+  and  cx,cx
+  jnz  UnsRem1
+  add  cx,[bp][Low2]
+  jz   UnsRem0
+  mov  ax,[bp][High1]
+  xor  dx,dx
+  div  cx
+  mov  ax,[bp][Low1]
+  div  cx
+  mov  ax,dx
+  xor  dx,dx
+
+UnsRem9:
+  pop  cx
+  pop  bp
+  ret  far 8
+
+UnsRem1:
+  push bx
+  mov  dx,[bp][High1]
+  mov  ax,[bp][Low1]
+  mov  bx,[bp][Low2]
+  push cx
+  push bx
+UnsRem2:
+  shr  dx,1
+  rcr  ax,1
+  shr  cx,1
+  rcr  bx,1
+  and  cx,cx
+  jnz  UnsRem2
+  div  bx
+  sub  ax,1
+  adc  ax,0
+  push cx
+  push ax
+  call far $UnsMul
+  add  ax,[bp][Low2]
+  adc  dx,[bp][High2]
+  jc   UnsRem3
+  cmp  dx,[bp][High1]
+  jb   UnsRem4
+  ja   UnsRem3
+  cmp  ax,[bp][Low1]
+  jbe  UnsRem4
+UnsRem3:
+  sub  ax,[bp][Low2]
+  sbb  dx,[bp][High2]
+UnsRem4:
+  sub  ax,[bp][Low1]
+  sbb  dx,[bp][High1]
+  neg  dx
+  neg  ax
+  sbb  dx,cx
+  and  ax,ax
+  pop  bx
+  jmp  UnsRem9
+
+UnsRem0:
+  xor  dx,dx
+  mov  al,100
+  add  al,al
+  mov  ax,dx
+  jmp  UnsRem9
+
+section ; segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+public @UnsMul:
+  pop  ax
+  push cs
+  push ax
+
+public $UnsMul: High1=12; Low1=10; High2=8; Low2=6
+(*Unsigned multiplication *)
+(*On overflow: result MAXCARD, OF set *)
+  push bp
+  mov  bp,sp
+
+  mov  ax,[bp][High1]
+  and  ax,ax
+  jnz  UnsMul1
+  add  ax,[bp][High2]
+  jnz  UnsMul2
+  mov  ax,[bp][Low1]
+  mul  word [bp][Low2]
+
+UnsMul8:
+  and  ax,ax
+UnsMul9:
+  pop  bp
+  ret  far 8
+
+UnsMul1:
+  cmp  word [bp][High2],0
+  jnz  UnsMul0
+  mul  word [bp][Low2]
+  jmp  UnsMul3
+UnsMul2:
+  mul  word [bp][Low1]
+UnsMul3:
+  jc   UnsMul0
+  mov  dx,[bp][Low1]
+  mov  bp,[bp][Low2]
+  xchg ax,bp
+  mul  dx
+  add  dx,bp
+  jnc  UnsMul8
+
+UnsMul0:
+  mov  al,100
+  add  al,al
+  mov  ax,0FFFFH
+  mov  dx,ax
+  jmp  UnsMul9
+
+section ; segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+public @SgnMul:
+  pop  ax
+  push cs
+  push ax
+
+public $SgnMul: High1=12; Low1=10; High2=8; Low2=6
+(*Signed multiplication *)
+(*On overflow: result MAXINT, OF set *)
+  push bp
+  mov  bp,sp
+  push si
+
+  xor  si,si
+  mov  dx,[bp][High1]
+  and  dx,dx
+  jge  SgnMul5
+  not  si
+  neg  dx
+  neg  word [bp][Low1]
+  sbb  dx,0
+  mov  [bp][High1],dx
+SgnMul5:
+  mov  dx,[bp][High2]
+  and  dx,dx
+  jg   SgnMul6
+  jz   SgnMul1
+  not  si
+  neg  dx
+  neg  word [bp][Low2]
+  sbb  dx,0
+  jz   SgnMul1
+
+SgnMul6:
+  cmp  word [bp][High1],0
+  jnz  SgnMul0
+  mov  ax,dx
+  mul  word [bp][Low1]
+  jmp  SgnMul2
+SgnMul1:
+  mov  ax,[bp][High1]
+  and  ax,ax
+  jz   SgnMul2
+  mul  word [bp][Low2]
+SgnMul2:
+  jc   SgnMul0
+  mov  dx,[bp][Low1]
+  mov  bp,[bp][Low2]
+  xchg ax,bp
+  mul  dx
+  add  dx,bp
+  jc   SgnMul0
+  js   SgnMul0
+
+  add  ax,si
+  adc  dx,si
+  xor  ax,si
+  xor  dx,si
+
+SgnMul7:
+  pop  si
+  pop  bp
+  ret  far 8
+
+SgnMul0:
+  mov  al,100
+  add  al,al
+  mov  ax,0FFFFH
+  mov  dx,07FFFH
+  jmp  SgnMul7
+
+section ; segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+public @LngShl :
+  xor  ch,ch
+  jcxz @lshl1
+@lshl2:
+  shl  ax,1
+  rcl  dx,1
+  loop @lshl2
+@lshl1:
+  ret 0
+
+section ; segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+public $LngShl :
+  xor  ch,ch
+  jcxz $lshl1
+$lshl2:
+  shl  ax,1
+  rcl  dx,1
+  loop $lshl2
+$lshl1:
+  ret  far 0
+
+section ; segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+public @LngShr :
+  xor  ch,ch
+  jcxz @lshr1
+@lshr2:
+  sar  dx,1
+  rcr  ax,1
+  loop @lshr2
+@lshr1:
+  ret 0
+
+section ; segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+public  $LngShr :
+  xor  ch,ch
+  jcxz  $lshr1
+$lshr2:
+  sar  dx,1
+  rcr  ax,1
+  loop $lshr2
+$lshr1:
+  ret far 0
+
+section ; segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+public  @ULngShr :
+  xor  ch,ch
+  jcxz @ulshr1
+@ulshr2:
+  shr  dx,1
+  rcr  ax,1
+  loop @ulshr2
+@ulshr1:
+  ret 0
+
+section ; segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+public  $ULngShr :
+  xor  ch,ch
+  jcxz  $ulshr1
+$ulshr2:  shr  dx,1
+  rcr  ax,1
+  loop  $ulshr2
+$ulshr1:  ret far 0
+
+(* Some AsmLib routines are defined here because they are required
+   for floating point run time support, and asmlib.obj may not
+   be included in the link *)
+
+section ; segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+extrn standard@haltChain
+
+public AsmLib$Terminate : a_ptrH=12; a_ptrL=10; c_ptrH=8; c_ptrL=6
+  push bp; mov bp,sp
+  push ds
+  pushf
+  cli
+  mov     ax,[bp][a_ptrL]
+  xchg    ax,cs:[standard@haltChain]
+  mov     dx,[bp][a_ptrH]
+  xchg    dx,cs:[standard@haltChain][2]
+  lds     bx,[bp][c_ptrL]
+  mov     ds:[bx],ax
+  mov     ds:[bx][2],dx
+  popf
+  pop ds
+  pop bp; ret far 8
+
+
+section ; segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+extrn @Save8087
+
+public AsmLib$Disable8087ContextSave :
+  mov byte cs:[@Save8087],0
+  ret far 0
+
+public AsmLib$Enable8087ContextSave :
+  mov byte cs:[@Save8087],1
+  ret far 0
+
+(* the rest of rtl is highly system dependent *)
+
+section ; segment C_CODE(CODE,28H); group G_CODE(C_CODE); select C_CODE
+
+extrn @PrtAddrAbort; extrn msg99;
+
+public Standard$NULLPROC:
+public Standard@NULLPROC:
+  push bp
+  mov  dx,msg99
+  mov  bp,sp
+  jmp  @PrtAddrAbort
+
+section ;
+
+segment ENTERCODE(CODE,48H);
+segment C_CODE(CODE,28H);
+
+group G_CODE(C_CODE); select C_CODE
+
+(* Messages *)
+
+chstr : db  'ENVREH' (* enviroment runtime error handler *)
+m90   : db  '] Arithmetic overflow $'
+m91   : db  '] Stack Overflow$'
+m92   : db  '] Subrange Value Out Of Range$'
+m93   : db  '] Enumeration Value Out Of Range$'
+m94   : db  '] Dereference of Nil pointer $'
+m95   : db  '] Index Out Of Range$'
+m97   : db  '] No return in function$'
+imsg0 : db  '] Divide by zero$'
+public msg99 : db '] Attempt to call NULLPROC $'
+
+(* removed due to problems with some 286 compatibles
+imsg5 : db  '] Interrupt 5 : bounds exception$'
+imsg6 : db  '] Interrupt 6 : invalid opcode$'
+imsg0D: db  '] Interrupt 13 : segment overrun$'
+*)
+
+msg8  : db  '] User Break $'
+
+IrptNo        = 0
+IrptLoaded    = 1
+IrptMsg       = 2
+IrptHandlerIP = 4
+IrptChainIP   = 6
+IrptChainCS   = 8
+
+ID0 : db 0,0;   dw imsg0, Trap0,  0,0
+ID4 : db 4,0;   dw 0,     Int4,  0,0
+
+(* removed due to problems with some 286 compatibles
+ID5 : db 5,0;   dw imsg5, Trap5,  0,0
+ID6 : db 6,0;   dw imsg6, Trap6,  0,0
+ID0D: db 0DH,0; dw imsg0D,Trap0D, 0,0
+*)
+
+ID8 : db 8,0;   dw 0,     Trap8,  0,0
+
+ID1B: db 1BH,0; dw 0,     Trap1B, 0,0
+ID23: db 23H,0; dw 0,     Trap23, 0,0
+ID60: db 60H,0; dw 0,     Int60,  0,0
+ID61: db 61H,0; dw 0,     Int60,  0,0
+
+(* removed due to problems with some 286 compatibles
+LongJump:   db 0EAH      (* jmp *)
+LongJumpIP: dw 0
+LongJumpCS: dw 0
+*)
+
+public @InProgramFlag   :   db 1
+public @StopProgramFlag :   db 0
+public @PSP             :   dw 0
+
+SetIrpt :
+(* IN  CS:SI = Irpt Def *)
+  push ax
+  push bx
+  push dx
+  push ds
+  push es
+
+  push cs
+  pop ds
+  mov al,1
+  xchg al,[si][IrptLoaded]
+  or al,al
+  jne $AlreadySet
+
+  mov al,[si][IrptNo]
+  mov ah,35H                   (* get vector *)
+  int 21H
+  mov [si][IrptChainIP],bx
+  mov [si][IrptChainCS],es
+  mov al,[si][IrptNo]
+  mov dx,[si][IrptHandlerIP]
+  mov ah,25H                   (* set vector (DS = CS) *)
+  int 21H
+
+$AlreadySet:
+  pop es
+  pop ds
+  pop dx
+  pop bx
+  pop ax
+  ret near 0
+
+ResetIrpt :
+(* IN  CS:SI = Irpt Def *)
+  push ax
+  push dx
+  push ds
+  sub al,al
+  xchg al,cs:[si][IrptLoaded]
+  or al,al
+  jz $AlreadyCleared
+
+  mov al,cs:[si][IrptNo]
+  mov dx,cs:[si][IrptChainIP]
+  mov ds,cs:[si][IrptChainCS]
+  mov ah,25H                   (* set vector *)
+  int 21H
+
+$AlreadyCleared:
+  pop ds
+  pop dx
+  pop ax
+  ret near 0
+
+public @Int4Init :
+  push si
+  push di
+  push ds
+  push es
+
+  mov si,ID60
+  call SetIrpt
+  mov si,ID61
+  call SetIrpt
+  mov si,ID4
+  call SetIrpt
+  les di,cs:[ID4][IrptChainIP]
+  lea di,[di][5]
+  push cs
+  pop  ds
+  mov si, chstr
+  mov cx,3
+  repe
+  cmpsw
+  jne ret4
+  (* Enviroment has set up Int 4 so remove trap *)
+  mov si,ID4
+  call ResetIrpt
+  mov ax, @Abort
+  int 4H  (* Initialize error handler *)
+  db  9FH
+
+ret4:
+  pop es
+  pop ds
+  pop di
+  pop si
+  ret near 0
+
+public @ErrorCode : db 0
+public @ChainVector : dw NormalExit, C_CODE
+
+public @Abort:
+  mov byte cs:[@ErrorCode],1
+
+public Standard$HALT:
+public Standard@HALT:
+  push cs:[standard@haltChain][2]
+  push cs:[standard@haltChain][0]
+  mov word cs:[standard@haltChain][0],here
+  mov cs:[standard@haltChain][2],cs
+  ret far 0 (* ie jump to termination procedures *)
+here:
+  call @ResetBreakInterrupt
+  call @ResetProcessorTraps
+  mov si,ID4
+  call ResetIrpt
+  mov si,ID60
+  call ResetIrpt
+  mov si,ID61
+  call ResetIrpt
+skip:
+  jmp far cs:[@ChainVector]
+NormalExit:
+  mov ah,4CH
+  mov al,cs:[@ErrorCode]
+  int 21H
+
+RunTimeMessages : dw m90,m91,m92,m93,m94,m95,msg99,m97
+
+Int4 :
+  push  bp
+  mov   bp,sp
+  push  ds
+  push  es
+  push  si
+  push  di
+  push  ax
+  push  bx
+  push  cx
+  push  dx
+  call  @PrtAddr
+  les   si,[bp][2]
+  inc   word [bp][2]
+  mov   bl,es:[si]  (* base at 70H *)
+  sub   bh,bh
+  shl   bx,1
+  mov   dx,cs:[RunTimeMessages][bx][-90H*2]
+
+
+prtms:
+  call  @PrtDollarStr
+  cmp   byte es:[si],91H
+  jnz   acc
+  jmp   @Abort
+acc:
+  call  @Accept
+  pop  dx
+  pop  cx
+  pop  bx
+  pop  ax
+  pop  di
+  pop  si
+  pop  es
+  pop  ds
+  pop  bp
+Int60:
+  iret
+
+public standard@haltChain : dw Standard$HALT, C_CODE
+
+(* removed due to problems with some 286 compatibles
+Trap5:
+  push si
+  mov si,ID5
+  jmp TrapEntry
+
+Trap6:
+  push si
+  mov si,ID6
+  jmp TrapEntry
+
+Trap0D:
+  push si
+  mov si,ID0D
+  jmp TrapEntry
+*)
+
+Trap0 :
+
+  push si
+  mov si,ID0
+TrapEntry:
+  push bp
+  mov  bp,sp
+
+(* removed due to problems with some 286 compatibles
+  push ds
+  push ax
+  push bx
+  lds bx,[bp][4]
+  dec bx
+  dec bx
+  mov al,0CDH
+  mov ah,cs:[si][IrptNo]
+  cmp ax,[bx]
+  jne $HWinterrupt
+(*SWinterrupt*)
+  mov bx,cs:[si][IrptChainIP]
+  mov cs:[LongJumpIP],bx
+  mov bx,cs:[si][IrptChainCS]
+  mov cs:[LongJumpCS],bx
+  pop bx
+  pop ax
+  pop ds
+  pop bp
+  pop si
+  jmp LongJump
+$HWinterrupt:
+*)
+
+  sti
+  push cs
+  pop ds
+  push cs
+  pop es
+  mov dx,cs:[si][IrptMsg]
+  add bp,2
+public @PrtAddrAbort:
+  push dx
+  call @PrtAddr
+  pop dx
+  call @PrtDollarStr
+  jmp @Abort
+
+
+SetResetProcessorTraps :
+(* IN DX = Procedure to either set or reset interrupts *)
+  push ax
+  push si
+(* set Irpt 0 trap *)
+  mov si,ID0
+  call dx
+
+(* removed due to problems with some 286 compatibles
+
+(* determine if 286 machine *)
+  pushf
+  sub ax,ax
+  push ax
+  popf
+  pushf
+  pop ax
+  popf
+  and ah,0F0H
+  cmp ah,0F0H
+  je Not286Compatible (* 8088 or 8086 *)
+
+  mov si,ID5
+  call dx
+  mov si,ID6
+  call dx
+  mov si,ID0D
+  call dx
+
+Not286Compatible:
+
+*)
+
+  pop si
+  pop ax
+  ret near 0
+
+public @SetProcessorTraps :
+  push dx
+  mov dx,SetIrpt
+SetResetTraps:
+  call SetResetProcessorTraps
+  pop dx
+  ret near 0
+
+public @ResetProcessorTraps :
+  push dx
+  mov dx,ResetIrpt
+  jmp SetResetTraps
+
+public @SetBreakInterrupt :
+
+  push si
+  push es
+  push bx
+  mov si,ID1B
+  call SetIrpt
+  mov si,ID23
+  call SetIrpt
+  pop bx
+  pop es
+  pop si
+  ret 0
+
+public @ResetBreakInterrupt :
+  push si
+  mov si,ID8
+  call ResetIrpt
+  mov si,ID1B
+  call ResetIrpt
+  mov si,ID23
+  call ResetIrpt
+  pop si
+  ret 0
+
+Trap1B :
+  mov byte cs:[@StopProgramFlag], 1  (* Signal Break *)
+  push ax
+  push ds
+  sub ax, ax
+  mov ds, ax
+  mov byte cs:[ID8][IrptLoaded],1
+  mov ax, Trap8
+  xchg ax, ds:[8*4]
+  mov cs:[ID8][IrptChainIP], ax
+  mov ax, cs
+  xchg ax, ds:[8*4+2]
+  mov cs:[ID8][IrptChainCS], ax
+  pop ds
+  pop ax
+  iret
+
+Trap23 : (* Dos Break interrupt *)
+  push bp
+  mov bp,sp
+  mov byte cs:[@InProgramFlag], 1
+  jmp @UserBreak;
+
+Trap8 :
+  cmp byte cs:[@InProgramFlag], 1
+  je OkToBreak
+  jmp far cs:[ID8][IrptChainIP]
+OkToBreak:
+  mov al,20H
+  out 20H,al (* send eoi *)
+
+  push bp
+  mov bp,sp
+
+public @UserBreak:
+  call @ResetBreakInterrupt
+  mov byte cs:[@StopProgramFlag], 0  (* Allow DOS access *)
+  mov dx,msg8
+  jmp @PrtAddrAbort
+
+No = 78;
+Yes = 89;
+
+public @Accept :
+  mov  dx,msg2
+  call @PrtDollarStr
+AcceptAgain:  mov  ah,7
+  int  21H
+  cmp  al,No
+  je   Standard@HALTjmp
+  cmp  al,No+32
+  je   Standard@HALTjmp
+  cmp  al,Yes
+  je   Acceptret
+  cmp  al,Yes+32
+  jne  AcceptAgain
+Acceptret:
+  mov  dx,msg0
+  call @PrtDollarStr
+  ret 0
+Standard@HALTjmp:
+  jmp  Standard@HALT
+
+msg0 : db  13,10,'$'
+msg2 : db  '. Continue (y/n) $'
+
+@PrtChar :
+  push bx
+  push cx
+  push ax
+  push ds
+  push ss
+  pop  ds
+  push dx
+  mov dx,sp
+  mov bx, 2
+  mov cx, 1
+  mov ah, 40H
+  int 21H
+  pop dx
+  pop ds
+  pop ax
+  pop cx
+  pop bx
+  ret 0
+
+public @PrtDollarStr :
+  push bx
+  push dx
+  mov bx,dx
+PrtDollarLoop:
+  mov dl, [bx]
+  cmp dl, 36 (*'$'*)
+  je PrtDollarExit
+  call @PrtChar
+  inc bx
+  jmp PrtDollarLoop
+PrtDollarExit:
+  pop dx
+  pop bx
+  ret 0
+
+
+public @PrtHex :
+  push  si
+  mov  cl,4
+  rol  dx,cl
+  mov  bx,xtab
+  mov  si,4
+HexLoop:
+  mov  al,dl
+  and  al,0FH
+  db 2EH (*cs:*); xlat
+  push dx
+  mov  dl,al
+  call @PrtChar
+  pop  dx
+  rol  dx,cl
+  dec  si
+  jnz  HexLoop
+  pop  si
+  ret  0
+
+xtab : db  '0123456789ABCDEF'
+
+
+@PrtAddr :
+  push cs
+  pop  ds
+  mov  dx,msg1
+  call @PrtDollarStr
+  mov  dx,[bp][4]
+  call @PrtHex
+  mov  ax,cs
+  cmp  ax,[bp][4]
+  ja isMsdos
+  mov  dl, 47 (*'/'*)
+  call @PrtChar
+  mov  dx,[bp][4]
+  mov  ax,cs
+  sub  dx,ax
+  call @PrtHex
+isMsdos:
+  mov  dl, 58 (*':'*)
+  call @PrtChar
+  mov  dx,[bp][2]
+  jmp  @PrtHex
+
+msg1 :  db  'Run Time Error [$ '
+
+
+section ;
+
+segment ENTERCODE(CODE,28H);
+segment INITCODE(CODE,28H);
+group G_CODE(INITCODE)
+
+segment DataStart(Dummy,68H); group DGROUP(DataStart); select DataStart
+@DataStart:
+
+select INITCODE
+
+extrn @Int4Init
+extrn @PSP
+extrn @SetBreakInterrupt
+extrn @SetProcessorTraps
+extrn _DoBreakInit
+
+(* A few words of explanation about how initialisation works:
+   The linker packs the various INITCODE segments together,
+   ( for this reason they must be byte aligned ), in an order
+   which is the reverse of the order in which the object module
+   sections are included by recursively resolving externals,
+   starting with the section with the entry point, that is this section.
+   Thus this bit of code finishs with a jump to 0.
+*)
+
+rtl$init:
+  mov  cs:[@PSP],ds
+  cld  (* cld is assumed everywhere *)
+
+  (* set required break handler *)
+  test word cs:[_DoBreakInit],1
+  jz   setnullbreak
+  call @SetBreakInterrupt
+  jmp  skip
+setnullbreak:
+  mov ax,2523H           (* set break vector *)
+  mov dx,DummyBreak
+  push cs
+  pop ds
+  int 21H
+
+skip:
+  (* zero global variables if required *)
+  sub ax,ax
+  test word cs:[_DoBreakInit],2
+  jz   skip2
+  mov  bx,ss
+  mov  dx, seg @DataStart
+more:
+  mov  es,dx
+  mov  di, @DataStart
+  mov  cx,8
+  rep
+  stosw
+  inc  dx
+  cmp  dx,bx
+  jb   more
+
+skip2:
+  call @Int4Init          (* int4 is used to report run time errors *)
+  call @SetProcessorTraps (* traps 286 segment overruns and similar *)
+  sub  ax,ax
+  push ax     (* marks end when following stack frame chain *)
+  mov  bp,sp
+  jmp  ax     (* jump to other initializations !! *)
+
+DummyBreak :
+  iret
+
+select ENTERCODE
+(* The program entry point !! *)
+  jmp far rtl$init
+  db 'JPI Modula2' (* pad to 16 bytes *)
+end *
+

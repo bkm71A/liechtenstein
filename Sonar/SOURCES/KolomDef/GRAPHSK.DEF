@@ -1,0 +1,15 @@
+DEFINITION MODULE GraphSk ;
+
+VAR ii       : CARDINAL ;
+    Buffer   : ARRAY[0..45000] OF BYTE ;
+    NomIzobr : ARRAY[0..5]     OF RECORD Nom : CARDINAL       ;
+                                         addr: POINTER TO BYTE
+                                  END ;
+
+PROCEDURE Terka    (X1,Y1,X2,Y2   : CARDINAL) ;
+PROCEDURE Get_Image(X1,Y1,X2,Y2   : CARDINAL) ;
+PROCEDURE Put_Image(X1,Y1,X2,Y2   : CARDINAL) ;
+PROCEDURE Box    (X1,Y1,X2,Y2,Col : CARDINAL) ;
+PROCEDURE BoxFull(X1,Y1,X2,Y2,Col : CARDINAL) ;
+
+END GraphSk.

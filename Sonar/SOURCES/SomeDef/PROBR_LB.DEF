@@ -1,0 +1,48 @@
+DEFINITION MODULE Probr_lb;
+FROM Window   IMPORT  WinDef,WinType,SingleFrame,DoubleFrame,Color;
+VAR
+    control_stat:                             CARDINAL;
+    stat_control:                             BOOLEAN;
+    wt_hormenu,wt_inverhormenu:               WinType;
+    wt_zasw:                                  WinType;
+    wt_range,wt_invrange:                     WinType;
+    wt_wait:                                  WinType;
+    wt_attantion:                             WinType;
+    wt_out:                                   WinType;
+    contdisk_contr:                           INTEGER;
+    shablon_g:                                ARRAY [1..6] OF CHAR;
+    Glob_currentpath:                         ARRAY [1..63] OF CHAR;
+CONST
+ wd_zasw= WinDef(0,0,79,25,White,Black,FALSE,FALSE,FALSE,TRUE,SingleFrame,Green,Black);
+ wd_hormenu= WinDef(2,1,75,3,LightCyan,Blue,FALSE,FALSE,FALSE,TRUE,SingleFrame,Yellow,Blue);
+ wd_inverhormenu= WinDef(6,2,11,2,Black,Green,FALSE,FALSE,FALSE,FALSE,DoubleFrame,Red,Red);
+
+ wd_range=WinDef(0,0,0,0,LightCyan,Blue,FALSE,FALSE,TRUE,TRUE,SingleFrame,Yellow,Blue);
+ wd_invrange= WinDef(0,0,0,0,Black,Green,FALSE,FALSE,TRUE,FALSE,DoubleFrame,Red,Red);
+ wd_wait= WinDef(25,10,53,12,LightMagenta,Blue,FALSE,TRUE,FALSE,TRUE,SingleFrame,White,Blue) ;
+ wd_attantion=WinDef(15,8,65,14,White,Red,FALSE,FALSE,TRUE,TRUE,SingleFrame,Cyan,Red);
+
+
+PROCEDURE SetOnHorMenu(): CARDINAL;
+PROCEDURE SetOffHorMenu(shad_control: CARDINAL);
+PROCEDURE Soundock();
+
+PROCEDURE WaitingOn(): CARDINAL;
+PROCEDURE WaitingOff(shad_contr: CARDINAL);
+
+PROCEDURE InputMethod():   INTEGER;
+PROCEDURE InputShablon(quant: INTEGER; shablon: ARRAY OF CHAR);
+PROCEDURE InputDrive();
+
+PROCEDURE Zaglu();
+PROCEDURE Attantion(file_name: ARRAY OF CHAR): BOOLEAN;
+PROCEDURE File_error(): BOOLEAN;
+PROCEDURE File_menu(): CARDINAL;
+PROCEDURE Space_free(dig: LONGINT);
+
+END Probr_lb.
+
+(*
+PROCEDURE Fio_check(): BOOLEAN;
+*)
+

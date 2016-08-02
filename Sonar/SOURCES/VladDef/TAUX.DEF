@@ -1,0 +1,25 @@
+DEFINITION MODULE taux;
+TYPE idx1=RECORD
+          rank     : SHORTCARD;            (*должность*)
+          fnameptr : CARDINAL;             (*указатель на первого*)
+          END;
+     idx2=RECORD
+          surname  : ARRAY[0..19] OF CHAR; (*фамилия*)
+          rank     : SHORTCARD;            (*должность*)
+          nextptr  : CARDINAL;             (*указ. на следующего*)
+          dataptr  : LONGCARD;             (*указ. на данные*)
+          reserv   : ARRAY[0..2] OF CHAR;  (*резерв*)
+          END;
+     idx3=RECORD
+          choice2  : SHORTCARD;            (*выбор2*)
+          passport : LONGCARD;             (*номер пасспорта *)
+          passdate : CARDINAL;             (*дата выдачи *)
+          valid    : CARDINAL;             (*действителен до*)
+          berthdate: CARDINAL;             (*дата рождения*)
+          marital  : SHORTCARD;            (*сем. положение*)
+          cert     : ARRAY[0..5] OF ARRAY[0..1] OF CARDINAL;
+          english  : SHORTCARD;            (*знание английского*)
+          serv     : SHORTCARD;            (*выслуга*)
+          END;
+  PROCEDURE applic(VAR one:idx2;VAR two:idx3;VAR string:ARRAY OF CHAR):BOOLEAN;
+END taux.

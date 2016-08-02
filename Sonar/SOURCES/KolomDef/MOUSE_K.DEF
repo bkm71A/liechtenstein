@@ -1,0 +1,18 @@
+DEFINITION MODULE mouse_k;
+
+IMPORT SYSTEM ;
+
+VAR r : SYSTEM.Registers  ;
+
+PROCEDURE MousFunc  (a,b,c,d : CARDINAL)   ;
+
+PROCEDURE MousOn  ;
+PROCEDURE MousGet ;
+PROCEDURE MousOff ;
+PROCEDURE MousX(a,b:CARDINAL);
+PROCEDURE MousY(a,b:CARDINAL);
+
+PROCEDURE Trigger ;
+PROCEDURE Wait ;
+
+END mouse_k.

@@ -1,0 +1,51 @@
+MODULE ETIC;
+IMPORT FIO,IO;
+VAR freq,min,max,mo,a : REAL;
+    long              : LONGCARD;
+    i,res,commence,car: CARDINAL;
+    f1,f2             : FIO.File;
+    buf1,buf2         : ARRAY[1..2048] OF BYTE;
+    s1,s2             : ARRAY[0..30] OF CHAR;
+BEGIN
+IO.WrStr('Входной файл ');
+IO.RdItem(s1);
+f1:=FIO.Open(s1);
+FIO.AssignBuffer(f1,buf1);
+IO.WrStr('Выходной файл ');
+IO.RdItem(s2);
+f2:=FIO.Create(s2);
+FIO.AssignBuffer(f2,buf2);
+(* ПОШЛА                          ЗАПИСЬ *)
+FIO.WrStr(f2,'Декодировка файла  ');FIO.WrStr(f2,s1);FIO.WrLn(f2);
+res:=FIO.RdBin(f1,car,2);
+FIO.WrStr(f2,'Индекс начала служебной ');FIO.WrCard(f2,car,5);FIO.WrLn(f2);
+FIO.Seek(f1,22);
+res:=FIO.RdBin(f1,freq,4);
+FIO.WrStr(f2,'Частота дискретизации  ');FIO.WrReal(f2,freq,6,8);FIO.WrLn(f2);
+res:=FIO.RdBin(f1,long,4);
+FIO.WrStr(f2,'Длина реализации  ');FIO.WrLngCard(f2,long,10);FIO.WrLn(f2);
+FIO.Seek(f1,32);
+res:=FIO.RdBin(f1,commence,2);
+FIO.WrStr(f2,'Индекс начала эксперим ');FIO.WrCard(f2,commence,5);FIO.WrLn(f2);
+FIO.Seek(f1,36);
+res:=FIO.RdBin(f1,min,4);
+FIO.WrStr(f2,'минимум  ');FIO.WrReal(f2,min,8,10);FIO.WrLn(f2);
+res:=FIO.RdBin(f1,max,4);
+FIO.WrStr(f2,'максимум  ');FIO.WrReal(f2,max,8,10);FIO.WrLn(f2);
+res:=FIO.RdBin(f1,mo,4);
+FIO.WrStr(f2,'матожидание ');FIO.WrReal(f2,mo,8,10);FIO.WrLn(f2);
+res:=FIO.RdBin(f1,car,2);
+
+res:=FIO.RdBin(f1,max,4);
+FIO.WrStr(f2,'нижняя гран фильтра ');FIO.WrReal(f2,max,8,10);FIO.WrLn(f2);
+res:=FIO.RdBin(f1,mo,4);
+FIO.WrStr(f2,'верхняя гр фильтра  ');FIO.WrReal(f2,mo,8,10);FIO.WrLn(f2);
+res:=FIO.RdBin(f1,car,2);
+res:=FIO.RdBin(f1,mo,4);
+FIO.WrStr(f2,'разрешение по частоте ');FIO.WrReal(f2,mo,8,10);FIO.WrLn(f2);
+res:=FIO.RdBin(f1,mo,4);
+FIO.WrStr(f2,'ширина спектра ');FIO.WrReal(f2,mo,8,10);FIO.WrLn(f2);
+FIO.Seek(f1,LONGCARD(commence));
+FIO.Close(f1);
+FIO.Close(f2);
+END ETIC.

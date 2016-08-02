@@ -1,0 +1,13 @@
+DEFINITION MODULE AsmPrint;
+   (* печать гpафической копии экpана *)
+           IMPORT FIO ;
+
+PROCEDURE install_print ;          (* записывает в прогр. системный адрес LPT1 *)
+
+(* PROCEDURE Print_One_Byte_On_LPT1(bb:BYTE); (* выдать обин байт на принтер *) *)
+PROCEDURE Forward (ff:FIO.File) ;  (* выводит экран сверху вниз *)
+PROCEDURE Ready() : SHORTCARD ;    (* выдать готовность ГОТОВ=0FFH *)
+
+PROCEDURE Print_In_File(ff:FIO.File) ; (* выводит экран на печать слева направо *)
+
+END AsmPrint.

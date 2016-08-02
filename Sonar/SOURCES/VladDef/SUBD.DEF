@@ -1,0 +1,37 @@
+DEFINITION MODULE Subd;
+
+FROM Window   IMPORT WinType,WinDef,Open,Close,Use,PutOnTop,Color,SingleFrame;
+
+TYPE InfStr = RECORD
+              Number:  CARDINAL;  (* личный(порядковый) номер записи в базе *)
+              Status:  SHORTCARD; (* 0 - можно работать *)
+                                  (* 1 - информация в работе *)
+                                  (* 2 - информация использована *)
+              Datarec: ARRAY [0..12]  OF CHAR;(* дата записи информации в базу *)
+              Nameinf: ARRAY [0..35] OF CHAR;(* название товара(информации) *)
+              Addition:ARRAY [0..50] OF CHAR;(* особые замечания *)
+              END;
+VAR
+ wt_main:         WinType;
+ wt_hormenu:      WinType;
+ wt_inverhormenu: WinType;
+ wt_current:      WinType;
+ wt_blank:        WinType;
+ wt_field:        WinType;
+ record:          InfStr;
+CONST
+ wd_blank= WinDef(2,7,75,20,Black,Green,FALSE,FALSE,TRUE,FALSE,SingleFrame,Red,Red);
+ wd_field= WinDef(17, 8,27, 8,Black,LightGray,TRUE,FALSE,TRUE,FALSE,SingleFrame,Red,Red);
+
+ wd_current= WinDef(5,5,15,15,White,Red,TRUE,FALSE,TRUE,TRUE,SingleFrame,Yellow,Red);
+
+ wd_main=    WinDef(0,0,79,24,    White,Blue,FALSE,FALSE,FALSE,TRUE,SingleFrame,LightCyan,Blue);
+ wd_hormenu= WinDef(2,2,75, 4,LightCyan,Blue,FALSE,FALSE,FALSE,TRUE,SingleFrame,Yellow,Blue);
+ wd_inverhormenu= WinDef(6,3,11,3,White,Red,FALSE,FALSE,FALSE,FALSE,SingleFrame,Red,Red);
+
+PROCEDURE AppendBase(filename: ARRAY OF CHAR);
+PROCEDURE ViewAllBase(filename: ARRAY OF CHAR);
+
+
+
+END Subd.

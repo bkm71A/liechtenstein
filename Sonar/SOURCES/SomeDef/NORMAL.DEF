@@ -1,0 +1,11 @@
+DEFINITION MODULE Normal;
+(*
+  TYPE Table= ARRAY [0..11] OF REAL;
+  VAR alfa:   Table;
+*)
+
+
+PROCEDURE Check_hi2();
+PROCEDURE Check_shed();
+
+END Normal.

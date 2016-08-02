@@ -1,0 +1,8 @@
+DEFINITION MODULE TxtImage;
+VAR
+  spool: ARRAY [0..2000] OF WORD;
+
+PROCEDURE SaveScreen();
+PROCEDURE RestoreScreen();
+
+END TxtImage.

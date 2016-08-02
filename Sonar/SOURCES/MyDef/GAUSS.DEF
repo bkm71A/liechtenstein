@@ -1,0 +1,7 @@
+DEFINITION MODULE Gauss;
+PROCEDURE prover(VAR sname:ARRAY OF CHAR;VAR p:REAL):CARDINAL;
+(* Входные : файл даннных REAL,c этикеткой              *)
+(* Выход: вероятность что гипотеза верна                *)
+(* возвращает код ошибки: 1 - длина выборки  < 200  
+                          2 - на диске нет таблицы xi^2 *)
+END Gauss.

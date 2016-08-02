@@ -1,0 +1,26 @@
+DEFINITION MODULE MakeMenu; (* Copyright 1991 , M.V.N *)
+FROM Window  IMPORT WinDef,WinType,Color,
+                    SingleFrame,DoubleFrame,FrameStr,TitleMode;
+
+VAR
+      wt_menu,wt_invr:         WinType;
+CONST
+  wd_menu=WinDef(0,25,0,25,LightCyan,Blue,FALSE,FALSE,TRUE,TRUE,DoubleFrame,Blue,Blue);
+  wd_invr=WinDef(0,25,0,25,Black,Green,FALSE,FALSE,TRUE,FALSE,SingleFrame,Red,Red);
+
+PROCEDURE Vert_menu
+    (X1,Y1:            INTEGER; (* координаты верхнего левого угла *)
+     ForeText:         Color;   (* цвет имен полей в меню *)
+     QuantFields:      INTEGER; (* колличество полей в меню *)
+     Frame:            BOOLEAN; (* наличие рамки *)
+     FrameType:        FrameStr;(* тип рамки *)
+     ForeFr,BackFr:    Color;   (* цвет рамки и цвет фона рамки *)
+     Hidden:           BOOLEAN; (* скрывать окно после " Enter " ? *)
+     Shadow:           BOOLEAN; (* наличие тени *)
+     Title:            BOOLEAN; (* наличие заголовка  *)
+     TitlePos:         TitleMode;(* месторасположение заголовка *)
+     TitleName:        ARRAY OF CHAR;(* содержание заголовка *)
+     FieldsConteins:   ARRAY OF CHAR;(* стр. содержания полей (разделители +) *)
+     MaxLength:        INTEGER) : INTEGER;(* максимальная длинна имени поля *)
+
+END MakeMenu.

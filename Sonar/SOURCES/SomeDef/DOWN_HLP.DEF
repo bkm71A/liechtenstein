@@ -1,0 +1,33 @@
+DEFINITION MODULE Down_hlp;  (*  раздел подстрочных подсказок   *)
+
+FROM Window IMPORT WinDef,WinType,Color,DoubleFrame;
+VAR
+  wt_downhlp: WinType;
+  control   : CARDINAL ;
+CONST
+  wd_downhlp= WinDef(2,22,75,22,Black,Brown,FALSE,FALSE,FALSE,FALSE,DoubleFrame,Red,Red);
+
+PROCEDURE SetOnDownhlp(): CARDINAL;
+PROCEDURE SetOffDownhlp(shad_control: CARDINAL);
+
+PROCEDURE DownHelp0();
+PROCEDURE DownHelp01();
+PROCEDURE DownHelp011();
+PROCEDURE DownHelp012();
+PROCEDURE DownHelp02();
+PROCEDURE DownHelp03();
+PROCEDURE DownHelp04();
+PROCEDURE DownHelp120();
+PROCEDURE DownHelp121();
+PROCEDURE DownHelp122();
+PROCEDURE DownHelp124();
+PROCEDURE DownHelp125();
+PROCEDURE DownHelp220_30();
+PROCEDURE DownHelp221_31();
+PROCEDURE DownHelpLaw();
+PROCEDURE DownHelpAny();
+PROCEDURE DownHelpErase();
+PROCEDURE DownHelpPlus1();
+PROCEDURE DownHelpPlus2();
+
+END Down_hlp.
